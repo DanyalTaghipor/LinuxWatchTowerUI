@@ -2,6 +2,13 @@
 
 
 
+## v1.16.0 (2024-05-29)
+
+### Feature
+
+* feat(Update): main.spec ([`1cab28f`](https://github.com/DanyalTaghipor/LinuxWatchTowerUI/commit/1cab28f4bf4d421627244d88376154ae67b9d00e))
+
+
 ## v1.15.0 (2024-05-29)
 
 ### Feature
