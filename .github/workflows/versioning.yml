@@ -72,7 +72,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
           pip install Nuitka
-
+      
       - name: Build binary with Nuitka
         run: |
           python -m nuitka \
@@ -83,8 +83,21 @@ jobs:
             --include-package=ansible \
             --include-package=rich \
             --include-package=jinja2 \
-            --output-dir=dist main.py
+            --output-dir=dist main.py > build.log 2>&1
         shell: bash
+      
+      - name: Print Nuitka build summary
+        run: |
+          echo "Nuitka build completed. Showing last 100 lines of the log:"
+          tail -n 100 build.log
+        shell: bash
+      
+      - name: Upload build log
+        uses: actions/upload-artifact@v2
+        with:
+          name: build-log
+          path: build.log
+
 
       - name: List dist directory contents
         run: ls -R dist
