@@ -2,6 +2,17 @@
 
 
 
+## v1.6.0 (2024-05-29)
+
+### Feature
+
+* feat(Update): main.spec ([`a842780`](https://github.com/DanyalTaghipor/LinuxWatchTowerUI/commit/a842780ce7c7a3fd9eddb2af19533b912d654d84))
+
+### Unknown
+
+* Update main.spec ([`29d32fa`](https://github.com/DanyalTaghipor/LinuxWatchTowerUI/commit/29d32fa6435ed6fc25b8e40c120b2d0c4245369d))
+
+
 ## v1.5.0 (2024-05-29)
 
 ### Feature
