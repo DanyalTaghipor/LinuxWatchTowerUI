@@ -5,7 +5,7 @@ block_cipher = None
 
 a = Analysis(
     ['main.py'],
-    pathex=[],
+    pathex=['.'],
     binaries=[],
     datas=[
         ('ui/*', 'ui'),
@@ -35,7 +35,6 @@ a = Analysis(
     win_no_prefer_redirects=False,
     win_private_assemblies=False,
     cipher=block_cipher,
-    noarchive=False,
 )
 pyz = PYZ(a.pure, a.zipped_data, cipher=block_cipher)
 
@@ -49,6 +48,8 @@ exe = EXE(
     bootloader_ignore_signals=False,
     strip=False,
     upx=True,
+    upx_exclude=[],
+    runtime_tmpdir=None,
     console=True,
 )
 
