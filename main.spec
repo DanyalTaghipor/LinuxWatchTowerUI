@@ -1,6 +1,5 @@
 name: Release
 
-
 on:
   push:
     branches: [ "main" ]
@@ -79,7 +78,7 @@ jobs:
 
       - name: Build binary with PyInstaller
         run: |
-          pyinstaller main.spec > build.log 2>&1
+          pyinstaller main.spec > build.log 2>&1 || { echo "PyInstaller build failed. Showing build.log:"; cat build.log; exit 1; }
         shell: bash
       
       - name: Print PyInstaller build summary
