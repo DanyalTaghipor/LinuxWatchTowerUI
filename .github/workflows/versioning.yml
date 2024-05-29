@@ -51,23 +51,23 @@ jobs:
   build:
     needs: versioning
     runs-on: ${{ matrix.os }}
-
+  
     strategy:
       matrix:
         os: [ubuntu-latest]
-
+  
     steps:
       - name: Print VERSION
         run: echo "Version is ${{ needs.versioning.outputs.version }}"
         
       - name: Checkout code
         uses: actions/checkout@v2
-
+  
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
           python-version: '3.9'
-
+  
       - name: Install dependencies
         run: |
           sudo apt-get update || true
@@ -75,28 +75,23 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
           pip install pyinstaller
-
+  
       - name: Locate libpython
         id: locate-libpython
         run: |
           LIBPYTHON=$(find /usr -name "libpython3.9.so.1.0" | head -n 1)
           echo "LIBPYTHON=$LIBPYTHON"
           echo "::set-output name=libpython::$LIBPYTHON"
-
+  
       - name: Update main.spec with libpython path
         run: |
           sed -i "s|('/usr/lib/x86_64-linux-gnu/libpython3.9.so.1.0', '.')|('${{ steps.locate-libpython.outputs.libpython }}', '.')|" main.spec
-
+  
       - name: Build binary with PyInstaller
         run: |
           pyinstaller main.spec > build.log 2>&1
         shell: bash
-
-      # - name: Build binary with PyInstaller
-      #   run: |
-      #     pyinstaller main.spec > build.log 2>&1
-      #   shell: bash
-
+  
       - name: Print PyInstaller build summary
         run: |
           echo "PyInstaller build completed. Showing last 100 lines of the log:"
@@ -108,13 +103,13 @@ jobs:
         with:
           name: build-log-${{ matrix.os }}
           path: build.log
-
+  
       - name: Upload binary to release
         uses: actions/upload-artifact@v2
         with:
           name: linuxwt-${{ matrix.os }}-${{ needs.versioning.outputs.version }}
           path: dist/*
-
+  
       - name: List dist directory contents
         run: |
           echo "Contents of dist directory:"
