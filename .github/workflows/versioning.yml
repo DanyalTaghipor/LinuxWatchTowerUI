@@ -22,7 +22,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
-          python-version: '3.11'  # Updated to use Python 3.11
+          python-version: '3.9'  # Updated to use Python 3.9
 
       - name: Install semantic release
         run: pip install python-semantic-release
@@ -63,7 +63,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
-          python-version: '3.11'  # Updated to use Python 3.11
+          python-version: '3.9'  # Updated to use Python 3.9
 
       - name: Install dependencies
         run: |
