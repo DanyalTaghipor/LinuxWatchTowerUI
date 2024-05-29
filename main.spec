@@ -6,7 +6,9 @@ block_cipher = None
 a = Analysis(
     ['main.py'],
     pathex=['.'],
-    binaries=[],
+    binaries=[
+        ('/usr/lib/x86_64-linux-gnu/libpython3.9.so.1.0', '.'),
+    ],
     datas=[
         ('ui/*', 'ui'),
         ('ansible_utils/*', 'ansible_utils'),
