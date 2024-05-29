@@ -89,7 +89,7 @@ jobs:
   
       - name: Build binary with PyInstaller
         run: |
-          pyinstaller main.spec > build.log 2>&1
+          pyinstaller --onefile --name main main.py > build.log 2>&1
         shell: bash
   
       - name: Print PyInstaller build summary
