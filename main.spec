@@ -1,165 +1,64 @@
-name: Release
+# main.spec
+# -*- mode: python ; coding: utf-8 -*-
 
-on:
-  push:
-    branches: [ "main" ]
-  workflow_dispatch:
+block_cipher = None
 
-permissions:
-  contents: write
+a = Analysis(
+    ['main.py'],
+    pathex=[],
+    binaries=[],
+    datas=[
+        ('ui/*', 'ui'),
+        ('ansible_utils/*', 'ansible_utils'),
+        ('db/*', 'db'),
+    ],
+    hiddenimports=[
+        'ui',
+        'ansible_utils',
+        'db',
+        'rich',
+        'sqlite3',
+        'customtkinter',
+        'ansible',
+        'ansible.inventory.manager',
+        'ansible.parsing.dataloader',
+        'ansible.vars.manager',
+        'ansible.playbook.play',
+        'ansible.executor.task_queue_manager',
+        'ansible.module_utils.common.collections',
+        'ansible.utils.display',
+        'ansible.plugins.callback',
+    ],
+    hookspath=[],
+    runtime_hooks=[],
+    excludes=[],
+    win_no_prefer_redirects=False,
+    win_private_assemblies=False,
+    cipher=block_cipher,
+    noarchive=False,
+)
+pyz = PYZ(a.pure, a.zipped_data, cipher=block_cipher)
 
-jobs:
-  versioning:
-    runs-on: ubuntu-latest
-    concurrency: release
-    permissions:
-      contents: write
-    outputs:
-      version: ${{ steps.extract_version.outputs.version }}
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
+exe = EXE(
+    pyz,
+    a.scripts,
+    [],
+    exclude_binaries=True,
+    name='main',
+    debug=False,
+    bootloader_ignore_signals=False,
+    strip=False,
+    upx=True,
+    console=True,
+)
 
-      - name: Set up Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: '3.9'
-
-      - name: Install semantic release
-        run: pip install python-semantic-release
-
-      - name: Python Semantic Release
-        id: semantic
-        uses: python-semantic-release/python-semantic-release@master
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Extract version
-        id: extract_version
-        run: |
-          VERSION=$(python -m semantic_release version)
-          echo "VERSION=$VERSION"
-          echo "::set-output name=version::$VERSION"
-      
-      - name: Print captured VERSION
-        run: echo "Captured VERSION is $VERSION"
-
-  build:
-    needs: versioning
-    runs-on: ${{ matrix.os }}
-
-    strategy:
-      matrix:
-        os: [ubuntu-latest, macos-latest]
-
-    steps:
-      - name: Print VERSION
-        run: echo "Version is ${{ needs.versioning.outputs.version }}"
-        
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Set up Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: '3.9'
-
-      - name: Install dependencies
-        run: |
-          sudo apt-get update || true
-          sudo apt-get install sqlite3 libsqlite3-dev || true
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
-          pip install pyinstaller
-
-      - name: Build binary with PyInstaller
-        run: |
-          pyinstaller main.spec > build.log 2>&1 || { echo "PyInstaller build failed. Showing build.log:"; cat build.log; exit 1; }
-        shell: bash
-      
-      - name: Print PyInstaller build summary
-        run: |
-          echo "PyInstaller build completed. Showing last 100 lines of the log:"
-          tail -n 100 build.log
-        shell: bash
-      
-      - name: List dist directory contents
-        run: |
-          echo "Contents of dist directory:"
-          ls -R dist
-        shell: bash
-
-      - name: Upload build log
-        uses: actions/upload-artifact@v2
-        with:
-          name: build-log-${{ matrix.os }}
-          path: build.log
-
-      - name: Upload binary to release
-        uses: actions/upload-artifact@v2
-        with:
-          name: linuxwt-${{ matrix.os }}-${{ needs.versioning.outputs.version }}
-          path: dist/*
-
-  release:
-    needs: [build, versioning]
-    runs-on: ubuntu-latest
-    steps:
-      - name: Print VERSION
-        run: echo "Version is ${{ needs.versioning.outputs.version }}"
-      
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Download artifacts (Linux)
-        uses: actions/download-artifact@v2
-        with:
-          name: linuxwt-ubuntu-latest-${{ needs.versioning.outputs.version }}
-          path: linuxwt-ubuntu
-
-      - name: Download artifacts (macOS)
-        uses: actions/download-artifact@v2
-        with:
-          name: linuxwt-macos-latest-${{ needs.versioning.outputs.version }}
-          path: linuxwt-macos
-
-      - name: List downloaded Linux artifacts
-        run: ls -R linuxwt-ubuntu
-
-      - name: List downloaded macOS artifacts
-        run: ls -R linuxwt-macos
-
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ needs.versioning.outputs.version }}
-          release_name: Release ${{ needs.versioning.outputs.version }}
-          draft: false
-          prerelease: false
-
-      - name: Upload Linux Binary
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: linuxwt-ubuntu/main  # Ensure this matches the actual binary name and path
-          asset_name: linuxwt-${{ needs.versioning.outputs.version }}-linux
-          asset_content_type: application/octet-stream
-
-      - name: Upload MacOS Binary
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: linuxwt-macos/main  # Ensure this matches the actual binary name and path
-          asset_name: linuxwt-${{ needs.versioning.outputs.version }}-macos
-          asset_content_type: application/octet-stream
+coll = COLLECT(
+    exe,
+    a.binaries,
+    a.zipfiles,
+    a.datas,
+    strip=False,
+    upx=True,
+    upx_exclude=[],
+    name='main',
+)
