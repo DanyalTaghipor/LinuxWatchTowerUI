@@ -22,7 +22,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
-          python-version: '3.9'  # Updated to use Python 3.9
+          python-version: '3.9'
 
       - name: Install semantic release
         run: pip install python-semantic-release
@@ -63,7 +63,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
-          python-version: '3.9'  # Updated to use Python 3.9
+          python-version: '3.9'
 
       - name: Install dependencies
         run: |
@@ -71,24 +71,16 @@ jobs:
           sudo apt-get install sqlite3 libsqlite3-dev || true
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-          pip install Nuitka
+          pip install pyinstaller
       
-      - name: Build binary with Nuitka
+      - name: Build binary with PyInstaller
         run: |
-          python -m nuitka \
-            --onefile \
-            --standalone \
-            --verbose \
-            --plugin-enable=pylint-warnings \
-            --include-package=ansible \
-            --include-package=rich \
-            --include-package=jinja2 \
-            --output-dir=dist main.py > build.log 2>&1
+          pyinstaller --onefile --name main main.py > build.log 2>&1
         shell: bash
       
-      - name: Print Nuitka build summary
+      - name: Print PyInstaller build summary
         run: |
-          echo "Nuitka build completed. Showing last 100 lines of the log:"
+          echo "PyInstaller build completed. Showing last 100 lines of the log:"
           tail -n 100 build.log
         shell: bash
       
@@ -97,7 +89,6 @@ jobs:
         with:
           name: build-log
           path: build.log
-
 
       - name: List dist directory contents
         run: ls -R dist
@@ -152,7 +143,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: linuxwt-ubuntu/main.bin  # Ensure this matches the actual binary name and path
+          asset_path: dist/main  # Ensure this matches the actual binary name and path
           asset_name: linuxwt-${{ needs.versioning.outputs.version }}-linux
           asset_content_type: application/octet-stream
 
@@ -162,6 +153,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: linuxwt-macos/main.bin  # Ensure this matches the actual binary name and path
+          asset_path: dist/main  # Ensure this matches the actual binary name and path
           asset_name: linuxwt-${{ needs.versioning.outputs.version }}-macos
           asset_content_type: application/octet-stream
