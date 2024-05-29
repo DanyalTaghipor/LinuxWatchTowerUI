@@ -2,6 +2,13 @@
 
 
 
+## v1.4.0 (2024-05-29)
+
+### Feature
+
+* feat(main.spec): add main.spec ([`5d63836`](https://github.com/DanyalTaghipor/LinuxWatchTowerUI/commit/5d63836036232a20812dcf84908c6f20b74a752c))
+
+
 ## v1.3.0 (2024-05-29)
 
 ### Feature
