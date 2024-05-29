@@ -54,7 +54,7 @@ jobs:
 
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest]
+        os: [ubuntu-latest]
 
     steps:
       - name: Print VERSION
@@ -136,17 +136,17 @@ jobs:
           name: linuxwt-ubuntu-latest-${{ needs.versioning.outputs.version }}
           path: linuxwt-ubuntu/dist  # Updated path to match the upload location
 
-      - name: Download artifacts (macOS)
-        uses: actions/download-artifact@v2
-        with:
-          name: linuxwt-macos-latest-${{ needs.versioning.outputs.version }}
-          path: linuxwt-macos/dist  # Updated path to match the upload location
+      # - name: Download artifacts (macOS)
+      #   uses: actions/download-artifact@v2
+      #   with:
+      #     name: linuxwt-macos-latest-${{ needs.versioning.outputs.version }}
+      #     path: linuxwt-macos/dist  # Updated path to match the upload location
 
       - name: List downloaded Linux artifacts
         run: ls -R linuxwt-ubuntu
 
-      - name: List downloaded macOS artifacts
-        run: ls -R linuxwt-macos
+      # - name: List downloaded macOS artifacts
+      #   run: ls -R linuxwt-macos
 
       - name: Create Release
         id: create_release
@@ -169,12 +169,12 @@ jobs:
           asset_name: linuxwt-${{ needs.versioning.outputs.version }}-linux
           asset_content_type: application/octet-stream
 
-      - name: Upload MacOS Binary
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: linuxwt-macos/dist/main/main  # Ensure this matches the actual binary name and path
-          asset_name: linuxwt-${{ needs.versioning.outputs.version }}-macos
-          asset_content_type: application/octet-stream
+      # - name: Upload MacOS Binary
+      #   uses: actions/upload-release-asset@v1
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #   with:
+      #     upload_url: ${{ steps.create_release.outputs.upload_url }}
+      #     asset_path: linuxwt-macos/dist/main/main  # Ensure this matches the actual binary name and path
+      #     asset_name: linuxwt-${{ needs.versioning.outputs.version }}-macos
+      #     asset_content_type: application/octet-stream
