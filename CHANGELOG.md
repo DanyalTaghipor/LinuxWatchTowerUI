@@ -2,6 +2,13 @@
 
 
 
+## v1.8.0 (2024-05-29)
+
+### Feature
+
+* feat(Update): main.spec ([`f7feda8`](https://github.com/DanyalTaghipor/LinuxWatchTowerUI/commit/f7feda80558e0a97748f787bfdbc3cb315950c60))
+
+
 ## v1.7.0 (2024-05-29)
 
 ### Feature
