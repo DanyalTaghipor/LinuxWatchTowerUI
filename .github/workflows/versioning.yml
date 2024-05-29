@@ -76,10 +76,26 @@ jobs:
           pip install -r requirements.txt
           pip install pyinstaller
 
+      - name: Locate libpython
+        id: locate-libpython
+        run: |
+          LIBPYTHON=$(find /usr -name "libpython3.9.so.1.0" | head -n 1)
+          echo "LIBPYTHON=$LIBPYTHON"
+          echo "::set-output name=libpython::$LIBPYTHON"
+
+      - name: Update main.spec with libpython path
+        run: |
+          sed -i "s|('/usr/lib/x86_64-linux-gnu/libpython3.9.so.1.0', '.')|('${{ steps.locate-libpython.outputs.libpython }}', '.')|" main.spec
+
       - name: Build binary with PyInstaller
         run: |
-          pyinstaller main.spec > build.log 2>&1
+          pyinstaller --clean --onefile main.spec > build.log 2>&1
         shell: bash
+
+      # - name: Build binary with PyInstaller
+      #   run: |
+      #     pyinstaller main.spec > build.log 2>&1
+      #   shell: bash
 
       - name: Print PyInstaller build summary
         run: |
