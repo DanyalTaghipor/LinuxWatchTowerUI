@@ -19,6 +19,7 @@ def setup_and_run_playbook(nickname, play_source):
         become_method=None,
         become_user=None,
         check=False,
+        cache=True,
         diff=False,
         remote_user=None,
         verbosity=3
