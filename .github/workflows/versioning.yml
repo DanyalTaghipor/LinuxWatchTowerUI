@@ -2,7 +2,7 @@ name: Release
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
   workflow_dispatch:
 
 permissions:
@@ -78,10 +78,16 @@ jobs:
   
       - name: Build binary with PyInstaller
         run: |
+          # Locate the ansible base.yml and other necessary data files
+          ANSIBLE_BASE_YML=$(python -c "import ansible; import os; print(os.path.join(os.path.dirname(ansible.__file__), 'config', 'base.yml'))")
+          ANSIBLE_CONFIG_YAML=$(python -c "import ansible; import os; print(os.path.join(os.path.dirname(ansible.__file__), 'config', 'config.yml'))")
+          
           pyinstaller --onefile --name linuxwt-${{ needs.versioning.outputs.version }} main.py \
           --add-data "ui:ui" \
           --add-data "ansible_utils:ansible_utils" \
           --add-data "db:db" \
+          --add-data "$ANSIBLE_BASE_YML:ansible/config" \
+          --add-data "$ANSIBLE_CONFIG_YAML:ansible/config" \
           --hidden-import "ui" \
           --hidden-import "ansible_utils" \
           --hidden-import "db" \
