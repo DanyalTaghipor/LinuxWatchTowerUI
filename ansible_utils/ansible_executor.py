@@ -44,7 +44,7 @@ def install_tool(nickname, role_name, version):
     play_source = dict(
         name=f"Install {role_name}",
         hosts=nickname,
-        gather_facts='yes',
+        gather_facts='no',
         tasks=[
             dict(name=f"Install {role_name}", import_role=dict(name=role_name))
         ]
