@@ -160,7 +160,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: linuxwt-ubuntu/dist/main/main  # Ensure this matches the actual binary name and path
+          #asset_path: linuxwt-ubuntu/dist/main/main  # Ensure this matches the actual binary name and path
+          asset_path: linuxwt-ubuntu/dist/main  # Ensure this matches the actual binary name and path
           asset_name: linuxwt-${{ needs.versioning.outputs.version }}-linux
           asset_content_type: application/octet-stream
 
