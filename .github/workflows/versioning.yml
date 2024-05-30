@@ -74,6 +74,7 @@ jobs:
           sudo apt-get update || true
           sudo apt-get install sqlite3 libsqlite3-dev || true
           python -m pip install --upgrade pip
+          python3 -m pip install --user ansible
           pip install -r requirements.txt
           pip install pyinstaller
 
@@ -122,6 +123,8 @@ jobs:
           --hidden-import "ansible.plugins.callback" \
           --hidden-import "ansible.plugins.inventory" \
           --hidden-import "ansible.builtin.memory" \
+          --hidden-import "ansible.builtin.jsonfile" \
+          --hidden-import "ansible.netcommon.memory" \
           --hidden-import "ansible.plugins.loader" \
           --hidden-import "ansible.plugins.filter" \
           --hidden-import "ansible.plugins.strategy" \
