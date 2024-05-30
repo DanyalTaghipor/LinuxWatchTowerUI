@@ -2,6 +2,13 @@
 
 
 
+## v1.35.0 (2024-05-30)
+
+### Feature
+
+* feat(Update): ansible_executor.py ([`2f1b53e`](https://github.com/DanyalTaghipor/LinuxWatchTowerUI/commit/2f1b53e3df394685c17e2de92a6e91ae7b22936c))
+
+
 ## v1.34.0 (2024-05-30)
 
 ### Feature
