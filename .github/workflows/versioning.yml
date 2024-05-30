@@ -119,6 +119,7 @@ jobs:
           --hidden-import "ansible.module_utils.common.collections" \
           --hidden-import "ansible.utils.display" \
           --hidden-import "ansible.plugins.inventory" \
+          --hidden-import "ansible.plugins.cache" \
           --hidden-import "ansible.plugins.callback" > build.log 2>&1 || { echo "PyInstaller build failed. Showing build.log:"; cat build.log; exit 1; }
         shell: bash
   
