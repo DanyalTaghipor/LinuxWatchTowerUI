@@ -122,6 +122,7 @@ jobs:
           --hidden-import "ansible.plugins.callback" \
           --hidden-import "ansible.plugins.inventory" \
           --hidden-import "ansible.plugins.cache" \
+          --hidden-import "ansible.plugins.jsonfile" \
           --hidden-import "ansible.plugins.loader" \
           --hidden-import "ansible.plugins.filter" \
           --hidden-import "ansible.plugins.strategy" \
