@@ -106,6 +106,7 @@ jobs:
           --add-data "db:db" \
           --add-data "${BASE_YML}:ansible/config" \
           --add-data "${RUNTIME_YML}:ansible/config" \
+          --add-data "/opt/hostedtoolcache/Python/3.9.19/x64/lib/python3.9/site-packages/ansible_collections:ansible_collections" \
           --hidden-import "ui" \
           --hidden-import "ansible_utils" \
           --hidden-import "db" \
@@ -143,6 +144,7 @@ jobs:
           --hidden-import "ansible.plugins.loader" \
           --hidden-import "ansible.module_utils.basic" \
           --hidden-import "ansible.module_utils.urls" \
+          --hidden-import "ansible_collections" \
           --log-level=DEBUG > build.log 2>&1 || { echo "PyInstaller build failed. Showing build.log:"; cat build.log; exit 1; }
         shell: bash
   
