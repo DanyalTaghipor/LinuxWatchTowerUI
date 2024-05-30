@@ -135,7 +135,7 @@ jobs:
       - name: Download artifacts (Linux)
         uses: actions/download-artifact@v2
         with:
-          name: linuxwt-ubuntu-latest-${{ needs.versioning.outputs.version }}
+          name: linuxwt-${{ needs.versioning.outputs.version }}
           path: linuxwt-ubuntu/dist  # Updated path to match the upload location
 
       - name: List downloaded Linux artifacts
