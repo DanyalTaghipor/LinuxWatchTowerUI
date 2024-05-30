@@ -89,6 +89,9 @@ jobs:
           echo "CONFIG_YML=$CONFIG_YML" >> $GITHUB_ENV
           echo "Base YML Path: $BASE_YML"
           echo "Config YML Path: $CONFIG_YML"
+      
+      - name: List Ansible Config Directory
+        run: ls -l /opt/hostedtoolcache/Python/3.9.19/x64/lib/python3.9/site-packages/ansible/config
 
       - name: Build binary with PyInstaller
         env:
