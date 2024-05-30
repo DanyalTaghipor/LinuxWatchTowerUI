@@ -82,9 +82,13 @@ jobs:
           echo "import ansible" > locate_ansible.py
           echo "import os" >> locate_ansible.py
           echo "print(os.path.join(os.path.dirname(ansible.__file__), 'config', 'base.yml'))" >> locate_ansible.py
+          echo "print(os.path.join(os.path.dirname(ansible.__file__), 'config', 'ansible_builtin_runtime.yml'))" >> locate_ansible.py
           BASE_YML=$(python locate_ansible.py | sed -n 1p)
+          RUNTIME_YML=$(python locate_ansible.py | sed -n 2p)
           echo "BASE_YML=$BASE_YML" >> $GITHUB_ENV
+          echo "RUNTIME_YML=$RUNTIME_YML" >> $GITHUB_ENV
           echo "Base YML Path: $BASE_YML"
+          echo "Runtime YML Path: $RUNTIME_YML"
       
       - name: List Ansible Config Directory
         run: ls -l /opt/hostedtoolcache/Python/3.9.19/x64/lib/python3.9/site-packages/ansible/config
@@ -92,12 +96,14 @@ jobs:
       - name: Build binary with PyInstaller
         env:
           BASE_YML: ${{ env.BASE_YML }}
+          RUNTIME_YML: ${{ env.RUNTIME_YML }}
         run: |
           pyinstaller --onefile --name linuxwt-${{ needs.versioning.outputs.version }} main.py \
           --add-data "ui:ui" \
           --add-data "ansible_utils:ansible_utils" \
           --add-data "db:db" \
           --add-data "${BASE_YML}:ansible/config" \
+          --add-data "${RUNTIME_YML}:ansible/config" \
           --hidden-import "ui" \
           --hidden-import "ansible_utils" \
           --hidden-import "db" \
