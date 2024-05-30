@@ -145,6 +145,7 @@ jobs:
           --hidden-import "ansible.module_utils.basic" \
           --hidden-import "ansible.module_utils.urls" \
           --hidden-import "ansible_collections" \
+          --hidden-import "ansible_collections.ansible" \          
           --log-level=DEBUG > build.log 2>&1 || { echo "PyInstaller build failed. Showing build.log:"; cat build.log; exit 1; }
         shell: bash
   
