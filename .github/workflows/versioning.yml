@@ -75,19 +75,30 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
           pip install pyinstaller
-  
-      - name: Build binary with PyInstaller
+
+      - name: Locate Ansible Data Files
+        id: locate-ansible
         run: |
-          # Locate the ansible base.yml and other necessary data files
-          ANSIBLE_BASE_YML=$(python -c "import ansible; import os; print(os.path.join(os.path.dirname(ansible.__file__), 'config', 'base.yml'))")
-          ANSIBLE_CONFIG_YAML=$(python -c "import ansible; import os; print(os.path.join(os.path.dirname(ansible.__file__), 'config', 'config.yml'))")
-          
+          echo "import ansible" > locate_ansible.py
+          echo "import os" >> locate_ansible.py
+          echo "print(os.path.join(os.path.dirname(ansible.__file__), 'config', 'base.yml'))" >> locate_ansible.py
+          echo "print(os.path.join(os.path.dirname(ansible.__file__), 'config', 'config.yml'))" >> locate_ansible.py
+          BASE_YML=$(python locate_ansible.py | sed -n 1p)
+          CONFIG_YML=$(python locate_ansible.py | sed -n 2p)
+          echo "BASE_YML=$BASE_YML" >> $GITHUB_ENV
+          echo "CONFIG_YML=$CONFIG_YML" >> $GITHUB_ENV
+
+      - name: Build binary with PyInstaller
+        env:
+          BASE_YML: ${{ env.BASE_YML }}
+          CONFIG_YML: ${{ env.CONFIG_YML }}
+        run: |
           pyinstaller --onefile --name linuxwt-${{ needs.versioning.outputs.version }} main.py \
           --add-data "ui:ui" \
           --add-data "ansible_utils:ansible_utils" \
           --add-data "db:db" \
-          --add-data "$ANSIBLE_BASE_YML:ansible/config" \
-          --add-data "$ANSIBLE_CONFIG_YAML:ansible/config" \
+          --add-data "${BASE_YML}:ansible/config" \
+          --add-data "${CONFIG_YML}:ansible/config" \
           --hidden-import "ui" \
           --hidden-import "ansible_utils" \
           --hidden-import "db" \
