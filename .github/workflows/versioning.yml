@@ -87,6 +87,8 @@ jobs:
           CONFIG_YML=$(python locate_ansible.py | sed -n 2p)
           echo "BASE_YML=$BASE_YML" >> $GITHUB_ENV
           echo "CONFIG_YML=$CONFIG_YML" >> $GITHUB_ENV
+          echo "Base YML Path: $BASE_YML"
+          echo "Config YML Path: $CONFIG_YML"
 
       - name: Build binary with PyInstaller
         env:
