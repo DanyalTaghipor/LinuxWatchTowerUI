@@ -96,6 +96,13 @@ jobs:
       - name: List Ansible Config Directory 0
         run: ls -l /home/runner/.local/lib/python3.9/site-packages/ansible
 
+      - name: List Ansible Config Directory 00
+        run: ls -l /home/runner/.local/lib/python3.9/site-packages/ansible/config
+
+
+      - name: List Ansible Config Directory 01
+        run: ls -l /home/runner/.local/lib/python3.9/site-packages/ansible/collections
+
       - name: List Ansible Config Directory 1 
         run: ls -l /home/runner/.local/lib/python3.9/site-packages
       
@@ -150,9 +157,7 @@ jobs:
           --hidden-import "ansible.plugins.text" \
           --hidden-import "ansible.plugins.loader" \
           --hidden-import "ansible.module_utils.basic" \
-          --hidden-import "ansible.module_utils.urls" \
-          --hidden-import "ansible_collections" \
-          --hidden-import "ansible_collections.ansible" \          
+          --hidden-import "ansible.module_utils.urls" \         
           --log-level=DEBUG > build.log 2>&1 || { echo "PyInstaller build failed. Showing build.log:"; cat build.log; exit 1; }
         shell: bash
   
