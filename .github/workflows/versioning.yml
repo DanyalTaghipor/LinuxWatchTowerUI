@@ -101,8 +101,12 @@ jobs:
         run: ls -l /home/runner/.local/lib/python3.9/site-packages/ansible
 
       - name: List Ansible-Base Directory
-        run: ls -l /home/runner/.local/lib/python3.9/site-packages/ansible-base
+        run: ls -l /home/runner/.local/lib/python3.9/site-packages
 
+      - name: List Ansible-Base Directory 0
+        run: ls -l /home/runner/.local/lib/python3.9/site-packages/qweq
+
+        
       - name: Build binary with PyInstaller
         env:
           BASE_YML: ${{ env.BASE_YML }}
