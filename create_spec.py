@@ -1,6 +1,4 @@
 import os
-from PyInstaller.utils.hooks import collect_data_files, copy_metadata
-from PyInstaller.building.build_main import Analysis, PYZ, EXE, COLLECT
 
 # Paths to Ansible configuration files and collections
 BASE_YML = os.getenv('BASE_YML')
@@ -8,7 +6,7 @@ RUNTIME_YML = os.getenv('RUNTIME_YML')
 COLLECTION = os.getenv('COLLECTION')
 
 # Data files to be included
-datas = collect_data_files('ansible') + [
+datas = [
     ("ui", "ui"),
     ("ansible_utils", "ansible_utils"),
     ("db", "db"),
@@ -34,14 +32,17 @@ hiddenimports = [
     "ansible.module_utils.basic", "ansible.module_utils.urls"
 ]
 
+spec_content = f"""
+# -*- mode: python ; coding: utf-8 -*-
+
 block_cipher = None
 
 a = Analysis(
     ['main.py'],
     pathex=[],
     binaries=[],
-    datas=datas,
-    hiddenimports=hiddenimports,
+    datas={datas},
+    hiddenimports={hiddenimports},
     hookspath=[],
     runtime_hooks=[],
     excludes=[],
@@ -82,3 +83,7 @@ coll = COLLECT(
     upx_exclude=[],
     name='linuxwt'
 )
+"""
+
+with open("linuxwt.spec", "w") as f:
+    f.write(spec_content)
