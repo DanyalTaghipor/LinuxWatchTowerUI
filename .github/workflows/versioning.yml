@@ -212,12 +212,22 @@ jobs:
           draft: false
           prerelease: false
 
+      # - name: Upload Linux Binary
+      #   uses: actions/upload-release-asset@v1
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #   with:
+      #     upload_url: ${{ steps.create_release.outputs.upload_url }}
+      #     asset_path: linuxwt-ubuntu/dist/linuxwt/linuxwt  # Ensure this points to the actual binary file
+      #     asset_name: linuxwt-${{ needs.versioning.outputs.version }}-linux
+      #     asset_content_type: application/octet-stream
+
       - name: Upload Linux Binary
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: linuxwt-ubuntu/dist/linuxwt/linuxwt  # Ensure this points to the actual binary file
+          asset_path: linuxwt-ubuntu/dist/linuxwt-${{ needs.versioning.outputs.version }}
           asset_name: linuxwt-${{ needs.versioning.outputs.version }}-linux
           asset_content_type: application/octet-stream
