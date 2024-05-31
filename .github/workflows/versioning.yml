@@ -94,10 +94,10 @@ jobs:
           echo "Runtime YML Path: $RUNTIME_YML"
 
       - name: List Ansible Config Directory 0
-        run: ls -l /opt/hostedtoolcache/Python/3.9.19/x64/lib/python3.9/site-packages/ansible
+        run: ls -l /home/runner/.local/lib/python3.9/site-packages/ansible
 
       - name: List Ansible Config Directory 1 
-        run: ls -l /opt/hostedtoolcache/Python/3.9.19/x64/lib/python3.9/site-packages
+        run: ls -l /home/runner/.local/lib/python3.9/site-packages
       
       - name: List Ansible Config Directory 2
         run: ls -l /opt/hostedtoolcache/Python/3.9.19/x64/lib/python3.9/site-packages/ansible/config
