@@ -86,28 +86,22 @@ jobs:
           echo "import os" >> locate_ansible.py
           echo "print(os.path.join(os.path.dirname(ansible.__file__), 'config', 'base.yml'))" >> locate_ansible.py
           echo "print(os.path.join(os.path.dirname(ansible.__file__), 'config', 'ansible_builtin_runtime.yml'))" >> locate_ansible.py
+          echo "print(os.path.join(os.path.dirname(ansible.__file__), 'collections'))" >> locate_ansible.py
           BASE_YML=$(python locate_ansible.py | sed -n 1p)
           RUNTIME_YML=$(python locate_ansible.py | sed -n 2p)
+          COLLECTION=$(python locate_ansible.py | sed -n 3p)
           echo "BASE_YML=$BASE_YML" >> $GITHUB_ENV
           echo "RUNTIME_YML=$RUNTIME_YML" >> $GITHUB_ENV
+          echo "COLLECTION=$COLLECTION" >> $GITHUB_ENV
           echo "Base YML Path: $BASE_YML"
           echo "Runtime YML Path: $RUNTIME_YML"
+          echo "Collection Path: $COLLECTION"
 
-      - name: List Ansible Config Directory 0
+      - name: List Ansible Directory
         run: ls -l /home/runner/.local/lib/python3.9/site-packages/ansible
 
-      - name: List Ansible Config Directory 00
-        run: ls -l /home/runner/.local/lib/python3.9/site-packages/ansible/config
-
-
-      - name: List Ansible Config Directory 01
-        run: ls -l /home/runner/.local/lib/python3.9/site-packages/ansible/collections
-
-      - name: List Ansible Config Directory 1 
-        run: ls -l /home/runner/.local/lib/python3.9/site-packages
-      
-      - name: List Ansible Config Directory 2
-        run: ls -l /opt/hostedtoolcache/Python/3.9.19/x64/lib/python3.9/site-packages/ansible/config
+      - name: List Ansible-Base Directory
+        run: ls -l /home/runner/.local/lib/python3.9/site-packages/ansible-base
 
       - name: Build binary with PyInstaller
         env:
@@ -120,7 +114,7 @@ jobs:
           --add-data "db:db" \
           --add-data "${BASE_YML}:ansible/config" \
           --add-data "${RUNTIME_YML}:ansible/config" \
-          --add-data "/opt/hostedtoolcache/Python/3.9.19/x64/lib/python3.9/site-packages/ansible/collections:ansible_collections" \
+          --add-data "${COLLECTION}:ansible/collections" \
           --hidden-import "ui" \
           --hidden-import "ansible_utils" \
           --hidden-import "db" \
