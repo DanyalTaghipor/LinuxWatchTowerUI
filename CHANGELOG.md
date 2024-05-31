@@ -2,6 +2,13 @@
 
 
 
+## v1.59.0 (2024-05-31)
+
+### Feature
+
+* feat(test): update ([`cecb448`](https://github.com/DanyalTaghipor/LinuxWatchTowerUI/commit/cecb448cd3c93f70d9536826be9e1a497aa474b3))
+
+
 ## v1.58.0 (2024-05-31)
 
 ### Feature
