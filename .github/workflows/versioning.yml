@@ -92,8 +92,14 @@ jobs:
           echo "RUNTIME_YML=$RUNTIME_YML" >> $GITHUB_ENV
           echo "Base YML Path: $BASE_YML"
           echo "Runtime YML Path: $RUNTIME_YML"
+
+      - name: List Ansible Config Directory 0
+        run: ls -l /opt/hostedtoolcache/Python/3.9.19/x64/lib/python3.9/site-packages/ansible
+
+      - name: List Ansible Config Directory 1 
+        run: ls -l /opt/hostedtoolcache/Python/3.9.19/x64/lib/python3.9/site-packages
       
-      - name: List Ansible Config Directory
+      - name: List Ansible Config Directory 2
         run: ls -l /opt/hostedtoolcache/Python/3.9.19/x64/lib/python3.9/site-packages/ansible/config
 
       - name: Build binary with PyInstaller
