@@ -78,7 +78,7 @@ jobs:
           pip install pyinstaller
 
       - name: Reinstall Ansible
-        run: pip uninstall ansible -y && pip install --user "ansible==2.9.27" -y
+        run: pip uninstall ansible -y && pip install --user "ansible==2.9.27"
 
       - name: Locate Ansible Data Files
         id: locate-ansible
