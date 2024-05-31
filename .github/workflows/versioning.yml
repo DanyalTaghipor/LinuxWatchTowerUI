@@ -104,26 +104,19 @@ jobs:
 
       - name: Create PyInstaller Spec File
         run: |
-          echo "from PyInstaller.utils.hooks import collect_data_files" > linuxwt.spec
-          echo "a = Analysis(['main.py'], hiddenimports=[\"ui\", \"ansible_utils\", \"db\", \"rich\", \"sqlite3\", \"customtkinter\", \"ansible\", \"ansible.inventory.manager\", \"ansible.parsing.dataloader\", \"ansible.vars.manager\", \"ansible.playbook.play\", \"ansible.executor.task_queue_manager\", \"ansible.module_utils.common.collections\", \"ansible.utils.display\", \"ansible.plugins.callback\", \"ansible.plugins.inventory\", \"ansible.builtin.memory\", \"ansible.builtin.jsonfile\", \"ansible.netcommon.memory\", \"ansible.plugins.loader\", \"ansible.plugins.filter\", \"ansible.plugins.strategy\", \"ansible.plugins.action\", \"ansible.plugins.lookup\", \"ansible.plugins.vars\", \"ansible.plugins.connection\", \"ansible.plugins.become\", \"ansible.plugins.test\", \"ansible.plugins.terminal\", \"ansible.plugins.httpapi\", \"ansible.plugins.netconf\", \"ansible.plugins.network\", \"ansible.plugins.shell\", \"ansible.plugins.text\", \"ansible.module_utils.basic\", \"ansible.module_utils.urls\"], datas=collect_data_files('ansible'))" >> linuxwt.spec
+          echo "from PyInstaller.utils.hooks import collect_data_files, copy_metadata" > linuxwt.spec
+          echo "datas = collect_data_files('ansible') + [(\"ui\", \"ui\"), (\"ansible_utils\", \"ansible_utils\"), (\"db\", \"db\"), (\"${{ env.BASE_YML }}\", \"ansible/config\"), (\"${{ env.RUNTIME_YML }}\", \"ansible/config\"), (\"/home/runner/.local/lib/python3.9/site-packages/ansible_collections\", \"ansible_collections\")]" >> linuxwt.spec
+          echo "hiddenimports = [\"ui\", \"ansible_utils\", \"db\", \"rich\", \"sqlite3\", \"customtkinter\", \"ansible\", \"ansible.inventory.manager\", \"ansible.parsing.dataloader\", \"ansible.vars.manager\", \"ansible.playbook.play\", \"ansible.executor.task_queue_manager\", \"ansible.module_utils.common.collections\", \"ansible.utils.display\", \"ansible.plugins.callback\", \"ansible.plugins.inventory\", \"ansible.builtin.memory\", \"ansible.builtin.jsonfile\", \"ansible.netcommon.memory\", \"ansible.plugins.loader\", \"ansible.plugins.filter\", \"ansible.plugins.strategy\", \"ansible.plugins.action\", \"ansible.plugins.lookup\", \"ansible.plugins.vars\", \"ansible.plugins.connection\", \"ansible.plugins.become\", \"ansible.plugins.test\", \"ansible.plugins.terminal\", \"ansible.plugins.httpapi\", \"ansible.plugins.netconf\", \"ansible.plugins.network\", \"ansible.plugins.shell\", \"ansible.plugins.text\", \"ansible.module_utils.basic\", \"ansible.module_utils.urls\"]" >> linuxwt.spec
+          echo "block_cipher = None" >> linuxwt.spec
+          echo "a = Analysis(['main.py'], datas=datas, hiddenimports=hiddenimports, binaries=[], hookspath=[], runtime_hooks=[], excludes=[], cipher=block_cipher)" >> linuxwt.spec
           echo "pyz = PYZ(a.pure, a.zipped_data, cipher=block_cipher)" >> linuxwt.spec
-          echo "exe = EXE(pyz, a.scripts, [], name='linuxwt-${{ needs.versioning.outputs.version }}', debug=False, bootloader_ignore_signals=False, strip=False, upx=True, console=True )" >> linuxwt.spec
+          echo "exe = EXE(pyz, a.scripts, [], name='linuxwt-${{ needs.versioning.outputs.version }}', debug=False, bootloader_ignore_signals=False, strip=False, upx=True, console=True)" >> linuxwt.spec
 
       - name: Build binary with PyInstaller
-        env:
-          BASE_YML: ${{ env.BASE_YML }}
-          RUNTIME_YML: ${{ env.RUNTIME_YML }}
-          COLLECTION: ${{ env.COLLECTION }}
         run: |
-          pyinstaller linuxwt.spec --add-data "ui:ui" \
-          --add-data "ansible_utils:ansible_utils" \
-          --add-data "db:db" \
-          --add-data "${BASE_YML}:ansible/config" \
-          --add-data "${RUNTIME_YML}:ansible/config" \
-          --add-data "/home/runner/.local/lib/python3.9/site-packages/ansible_collections:ansible_collections" \
-          --log-level=DEBUG > build.log 2>&1 || { echo "PyInstaller build failed. Showing build.log:"; cat build.log; exit 1; }
+          pyinstaller linuxwt.spec --log-level=DEBUG > build.log 2>&1 || { echo "PyInstaller build failed. Showing build.log:"; cat build.log; exit 1; }
         shell: bash
-
+  
       - name: Print PyInstaller build summary
         run: |
           echo "PyInstaller build completed. Showing last 100 lines of the log:"
