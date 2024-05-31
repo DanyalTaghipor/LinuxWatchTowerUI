@@ -100,15 +100,8 @@ jobs:
       - name: List Ansible Directory
         run: ls -l /home/runner/.local/lib/python3.9/site-packages/ansible
 
-      - name: List Ansible-Base Directory
-        run: ls -l /home/runner/.local/lib/python3.9/site-packages
-
-
-      - name: List Ansible-Base Directory 1
+      - name: List Ansible-Collections Directory
         run: ls -l /home/runner/.local/lib/python3.9/site-packages/ansible_collections
-
-      - name: List Ansible-Base Directory 0
-        run: ls -l /home/runner/.local/lib/python3.9/site-packages/ansible_collections/ansible
 
         
       - name: Build binary with PyInstaller
@@ -123,7 +116,6 @@ jobs:
           --add-data "db:db" \
           --add-data "${BASE_YML}:ansible/config" \
           --add-data "${RUNTIME_YML}:ansible/config" \
-          --add-data "${COLLECTION}:ansible/collections" \
           --hidden-import "ui" \
           --hidden-import "ansible_utils" \
           --hidden-import "db" \
