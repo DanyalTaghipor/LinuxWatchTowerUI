@@ -108,7 +108,7 @@ jobs:
         run: ls -l /home/runner/.local/lib/python3.9/site-packages/ansible_collections
 
       - name: List Ansible-Base Directory 0
-        run: ls -l /home/runner/.local/lib/python3.9/site-packages/qweq
+        run: ls -l /home/runner/.local/lib/python3.9/site-packages/ansible_collections/ansible
 
         
       - name: Build binary with PyInstaller
