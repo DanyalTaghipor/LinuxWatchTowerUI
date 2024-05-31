@@ -44,38 +44,41 @@ jobs:
           VERSION=$(python -m semantic_release version)
           echo "VERSION=$VERSION"
           echo "::set-output name=version::$VERSION"
-      
+
       - name: Print captured VERSION
         run: echo "Captured VERSION is $VERSION"
 
   build:
     needs: versioning
     runs-on: ${{ matrix.os }}
-  
+
     strategy:
       matrix:
         os: [ubuntu-latest]
-  
+
     steps:
       - name: Print VERSION
         run: echo "Version is ${{ needs.versioning.outputs.version }}"
-        
+
       - name: Checkout code
         uses: actions/checkout@v2
-  
+
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
           python-version: '3.9'
-  
+
       - name: Install dependencies
         run: |
           sudo apt-get update || true
           sudo apt-get install sqlite3 libsqlite3-dev || true
           python -m pip install --upgrade pip
-          python3 -m pip install --user "ansible==2.9.27"  # Specify Ansible version
+          pip install --user "ansible==2.9.27"  # Specify Ansible version
           pip install -r requirements.txt
           pip install pyinstaller
+
+      - name: Reinstall Ansible
+        run: pip uninstall ansible && pip install --user "ansible==2.9.27"
 
       - name: Locate Ansible Data Files
         id: locate-ansible
@@ -98,11 +101,8 @@ jobs:
       - name: List Ansible Directory
         run: ls -l /home/runner/.local/lib/python3.9/site-packages/ansible
 
-      # - name: List Ansible-Collections Directory
-      #   run: ls -l /home/runner/.local/lib/python3.9/site-packages/ansible_collections
-
-      - name: Run ansible-galaxy collection list
-        run: ansible-galaxy collection list
+      - name: List Ansible-Collections Directory
+        run: ls -l /home/runner/.local/lib/python3.9/site-packages/ansible_collections
 
       - name: Create PyInstaller Spec File
         run: python create_spec.py
@@ -111,25 +111,25 @@ jobs:
         run: |
           pyinstaller linuxwt.spec --log-level=DEBUG > build.log 2>&1 || { echo "PyInstaller build failed. Showing build.log:"; cat build.log; exit 1; }
         shell: bash
-  
+
       - name: Print PyInstaller build summary
         run: |
           echo "PyInstaller build completed. Showing last 100 lines of the log:"
           tail -n 100 build.log
         shell: bash
-      
+
       - name: Upload build log
         uses: actions/upload-artifact@v2
         with:
           name: build-log-${{ matrix.os }}
           path: build.log
-  
+
       - name: Upload binary to release
         uses: actions/upload-artifact@v2
         with:
           name: linuxwt-${{ needs.versioning.outputs.version }}
           path: dist/*
-  
+
       - name: List dist directory contents
         run: |
           echo "Contents of dist directory:"
@@ -141,7 +141,7 @@ jobs:
     steps:
       - name: Print VERSION
         run: echo "Version is ${{ needs.versioning.outputs.version }}"
-      
+
       - name: Checkout code
         uses: actions/checkout@v2
 
