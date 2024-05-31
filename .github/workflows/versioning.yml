@@ -1,6 +1,5 @@
 name: Release
 
-
 on:
   push:
     branches: ["main"]
@@ -74,8 +73,7 @@ jobs:
           sudo apt-get update || true
           sudo apt-get install sqlite3 libsqlite3-dev || true
           python -m pip install --upgrade pip
-          python3 -m pip install --user ansible
-          python3 -m pip install --user ansible-base
+          python3 -m pip install --user "ansible==2.9.27"  # Specify Ansible version
           pip install -r requirements.txt
           pip install pyinstaller
 
@@ -105,59 +103,14 @@ jobs:
 
       - name: Run ansible-galaxy collection list
         run: ansible-galaxy collection list
-        
-      - name: Build binary with PyInstaller
-        env:
-          BASE_YML: ${{ env.BASE_YML }}
-          RUNTIME_YML: ${{ env.RUNTIME_YML }}
-          COLLECTION: ${{ env.COLLECTION }}
-        run: |
-          pyinstaller --onefile --name linuxwt-${{ needs.versioning.outputs.version }} main.py \
-          --add-data "ui:ui" \
-          --add-data "ansible_utils:ansible_utils" \
-          --add-data "db:db" \
-          --add-data "${BASE_YML}:ansible/config" \
-          --add-data "${RUNTIME_YML}:ansible/config" \
-          --hidden-import "ui" \
-          --hidden-import "ansible_utils" \
-          --hidden-import "db" \
-          --hidden-import "rich" \
-          --hidden-import "sqlite3" \
-          --hidden-import "customtkinter" \
-          --hidden-import "ansible" \
-          --hidden-import "ansible.inventory.manager" \
-          --hidden-import "ansible.parsing.dataloader" \
-          --hidden-import "ansible.vars.manager" \
-          --hidden-import "ansible.playbook.play" \
-          --hidden-import "ansible.executor.task_queue_manager" \
-          --hidden-import "ansible.module_utils.common.collections" \
-          --hidden-import "ansible.utils.display" \
-          --hidden-import "ansible.plugins.callback" \
-          --hidden-import "ansible.plugins.inventory" \
-          --hidden-import "ansible.builtin.memory" \
-          --hidden-import "ansible.builtin.jsonfile" \
-          --hidden-import "ansible.netcommon.memory" \
-          --hidden-import "ansible.plugins.loader" \
-          --hidden-import "ansible.plugins.filter" \
-          --hidden-import "ansible.plugins.strategy" \
-          --hidden-import "ansible.plugins.action" \
-          --hidden-import "ansible.plugins.lookup" \
-          --hidden-import "ansible.plugins.vars" \
-          --hidden-import "ansible.plugins.connection" \
-          --hidden-import "ansible.plugins.become" \
-          --hidden-import "ansible.plugins.test" \
-          --hidden-import "ansible.plugins.terminal" \
-          --hidden-import "ansible.plugins.httpapi" \
-          --hidden-import "ansible.plugins.netconf" \
-          --hidden-import "ansible.plugins.network" \
-          --hidden-import "ansible.plugins.shell" \
-          --hidden-import "ansible.plugins.text" \
-          --hidden-import "ansible.plugins.loader" \
-          --hidden-import "ansible.module_utils.basic" \
-          --hidden-import "ansible.module_utils.urls" \
-          --log-level=DEBUG > build.log 2>&1 || { echo "PyInstaller build failed. Showing build.log:"; cat build.log; exit 1; }
-        shell: bash
 
+      - name: Create PyInstaller Spec File
+        run: python create_spec.py
+
+      - name: Build binary with PyInstaller
+        run: |
+          pyinstaller linuxwt.spec --log-level=DEBUG > build.log 2>&1 || { echo "PyInstaller build failed. Showing build.log:"; cat build.log; exit 1; }
+        shell: bash
   
       - name: Print PyInstaller build summary
         run: |
@@ -196,10 +149,10 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: linuxwt-${{ needs.versioning.outputs.version }}
-          path: linuxwt-ubuntu/dist  # Updated path to match the upload location
+          path: linuxwt-ubuntu/dist
 
       - name: List downloaded Linux artifacts
-        run: ls -R linuxwt-ubuntu
+        run: ls -R linuxwt-ubuntu/dist
 
       - name: Create Release
         id: create_release
@@ -218,6 +171,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: linuxwt-ubuntu/dist/linuxwt-${{ needs.versioning.outputs.version }}  # Ensure this matches the actual binary name and path
+          asset_path: linuxwt-ubuntu/dist/linuxwt/linuxwt  # Ensure this points to the actual binary file
           asset_name: linuxwt-${{ needs.versioning.outputs.version }}-linux
           asset_content_type: application/octet-stream
