@@ -2,6 +2,13 @@
 
 
 
+## v1.65.0 (2024-05-31)
+
+### Feature
+
+* feat(Update): wow ([`a1ab50f`](https://github.com/DanyalTaghipor/LinuxWatchTowerUI/commit/a1ab50fcecc958f23965a354efbeee9193ae537d))
+
+
 ## v1.64.0 (2024-05-31)
 
 ### Feature
