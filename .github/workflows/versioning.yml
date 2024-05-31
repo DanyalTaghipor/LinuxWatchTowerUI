@@ -1,6 +1,5 @@
 name: Release
 
-
 on:
   push:
     branches: ["main"]
@@ -103,61 +102,28 @@ jobs:
       - name: List Ansible-Collections Directory
         run: ls -l /home/runner/.local/lib/python3.9/site-packages/ansible_collections
 
-        
+      - name: Create PyInstaller Spec File
+        run: |
+          echo "from PyInstaller.utils.hooks import collect_data_files" > linuxwt.spec
+          echo "a = Analysis(['main.py'], hiddenimports=[\"ui\", \"ansible_utils\", \"db\", \"rich\", \"sqlite3\", \"customtkinter\", \"ansible\", \"ansible.inventory.manager\", \"ansible.parsing.dataloader\", \"ansible.vars.manager\", \"ansible.playbook.play\", \"ansible.executor.task_queue_manager\", \"ansible.module_utils.common.collections\", \"ansible.utils.display\", \"ansible.plugins.callback\", \"ansible.plugins.inventory\", \"ansible.builtin.memory\", \"ansible.builtin.jsonfile\", \"ansible.netcommon.memory\", \"ansible.plugins.loader\", \"ansible.plugins.filter\", \"ansible.plugins.strategy\", \"ansible.plugins.action\", \"ansible.plugins.lookup\", \"ansible.plugins.vars\", \"ansible.plugins.connection\", \"ansible.plugins.become\", \"ansible.plugins.test\", \"ansible.plugins.terminal\", \"ansible.plugins.httpapi\", \"ansible.plugins.netconf\", \"ansible.plugins.network\", \"ansible.plugins.shell\", \"ansible.plugins.text\", \"ansible.module_utils.basic\", \"ansible.module_utils.urls\"], datas=collect_data_files('ansible'))" >> linuxwt.spec
+          echo "pyz = PYZ(a.pure, a.zipped_data, cipher=block_cipher)" >> linuxwt.spec
+          echo "exe = EXE(pyz, a.scripts, [], name='linuxwt-${{ needs.versioning.outputs.version }}', debug=False, bootloader_ignore_signals=False, strip=False, upx=True, console=True )" >> linuxwt.spec
+
       - name: Build binary with PyInstaller
         env:
           BASE_YML: ${{ env.BASE_YML }}
           RUNTIME_YML: ${{ env.RUNTIME_YML }}
           COLLECTION: ${{ env.COLLECTION }}
         run: |
-          pyinstaller --onefile --name linuxwt-${{ needs.versioning.outputs.version }} main.py \
-          --add-data "ui:ui" \
+          pyinstaller linuxwt.spec --add-data "ui:ui" \
           --add-data "ansible_utils:ansible_utils" \
           --add-data "db:db" \
           --add-data "${BASE_YML}:ansible/config" \
           --add-data "${RUNTIME_YML}:ansible/config" \
           --add-data "/home/runner/.local/lib/python3.9/site-packages/ansible_collections:ansible_collections" \
-          --hidden-import "ui" \
-          --hidden-import "ansible_utils" \
-          --hidden-import "db" \
-          --hidden-import "rich" \
-          --hidden-import "sqlite3" \
-          --hidden-import "customtkinter" \
-          --hidden-import "ansible" \
-          --hidden-import "ansible.inventory.manager" \
-          --hidden-import "ansible.parsing.dataloader" \
-          --hidden-import "ansible.vars.manager" \
-          --hidden-import "ansible.playbook.play" \
-          --hidden-import "ansible.executor.task_queue_manager" \
-          --hidden-import "ansible.module_utils.common.collections" \
-          --hidden-import "ansible.utils.display" \
-          --hidden-import "ansible.plugins.callback" \
-          --hidden-import "ansible.plugins.inventory" \
-          --hidden-import "ansible.builtin.memory" \
-          --hidden-import "ansible.builtin.jsonfile" \
-          --hidden-import "ansible.netcommon.memory" \
-          --hidden-import "ansible.plugins.loader" \
-          --hidden-import "ansible.plugins.filter" \
-          --hidden-import "ansible.plugins.strategy" \
-          --hidden-import "ansible.plugins.action" \
-          --hidden-import "ansible.plugins.lookup" \
-          --hidden-import "ansible.plugins.vars" \
-          --hidden-import "ansible.plugins.connection" \
-          --hidden-import "ansible.plugins.become" \
-          --hidden-import "ansible.plugins.test" \
-          --hidden-import "ansible.plugins.terminal" \
-          --hidden-import "ansible.plugins.httpapi" \
-          --hidden-import "ansible.plugins.netconf" \
-          --hidden-import "ansible.plugins.network" \
-          --hidden-import "ansible.plugins.shell" \
-          --hidden-import "ansible.plugins.text" \
-          --hidden-import "ansible.plugins.loader" \
-          --hidden-import "ansible.module_utils.basic" \
-          --hidden-import "ansible.module_utils.urls" \
           --log-level=DEBUG > build.log 2>&1 || { echo "PyInstaller build failed. Showing build.log:"; cat build.log; exit 1; }
         shell: bash
 
-  
       - name: Print PyInstaller build summary
         run: |
           echo "PyInstaller build completed. Showing last 100 lines of the log:"
