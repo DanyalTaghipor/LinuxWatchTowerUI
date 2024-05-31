@@ -115,6 +115,7 @@ jobs:
         env:
           BASE_YML: ${{ env.BASE_YML }}
           RUNTIME_YML: ${{ env.RUNTIME_YML }}
+          COLLECTION: ${{ env.COLLECTION }}
         run: |
           pyinstaller --onefile --name linuxwt-${{ needs.versioning.outputs.version }} main.py \
           --add-data "ui:ui" \
@@ -159,9 +160,10 @@ jobs:
           --hidden-import "ansible.plugins.text" \
           --hidden-import "ansible.plugins.loader" \
           --hidden-import "ansible.module_utils.basic" \
-          --hidden-import "ansible.module_utils.urls" \         
+          --hidden-import "ansible.module_utils.urls" \
           --log-level=DEBUG > build.log 2>&1 || { echo "PyInstaller build failed. Showing build.log:"; cat build.log; exit 1; }
         shell: bash
+
   
       - name: Print PyInstaller build summary
         run: |
