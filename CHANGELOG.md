@@ -2,6 +2,13 @@
 
 
 
+## v1.55.0 (2024-05-31)
+
+### Feature
+
+* feat(Update): somethig new! ([`0df770d`](https://github.com/DanyalTaghipor/LinuxWatchTowerUI/commit/0df770d323262febbab11fa47073e7ead760dad7))
+
+
 ## v1.54.0 (2024-05-31)
 
 ### Feature
