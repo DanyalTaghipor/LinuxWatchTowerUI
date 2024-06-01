@@ -88,10 +88,12 @@ jobs:
           echo "print(os.path.join(os.path.dirname(ansible.__file__), 'config', 'ansible_builtin_runtime.yml'))" >> locate_ansible.py
           echo "print(os.path.join(os.path.dirname(ansible.__file__), 'plugins', 'cache', 'memory.py'))" >> locate_ansible.py
           echo "print(os.path.join(os.path.dirname(ansible.__file__), 'plugins', 'inventory'))" >> locate_ansible.py
+          echo "print(os.path.join(os.path.dirname(ansible.__file__), 'plugins', 'strategy'))" >> locate_ansible.py
           BASE_YML=$(python locate_ansible.py | sed -n 1p)
           ANSIBLE_BUILTIN=$(python locate_ansible.py | sed -n 2p)
           CACHE_MEMORY=$(python locate_ansible.py | sed -n 3p)
           INVENTORY_PLUGINS=$(python locate_ansible.py | sed -n 4p)
+          STRATEGY_PLUGINS=$(python locate_ansible.py | sed -n 5p)
           echo "BASE_YML=$BASE_YML" >> $GITHUB_ENV
           echo "ANSIBLE_BUILTIN=$ANSIBLE_BUILTIN" >> $GITHUB_ENV
           echo "CACHE_MEMORY=$CACHE_MEMORY" >> $GITHUB_ENV
@@ -100,6 +102,7 @@ jobs:
           echo "Ansible Builtin Path: $ANSIBLE_BUILTIN"
           echo "Cache Memory Path: $CACHE_MEMORY"
           echo "Inventory Plugins Path: $INVENTORY_PLUGINS"
+          echo "Strategy Plugins Path: $STRATEGY_PLUGINS"
       
       - name: List Ansible Config Directory
         run: ls -l /home/runner/.local/lib/python3.9/site-packages/ansible
@@ -168,6 +171,7 @@ jobs:
           --add-data "${ANSIBLE_BUILTIN}:ansible/config" \
           --add-data "${CACHE_MEMORY}:ansible/plugins/cache" \
           --add-data "${INVENTORY_PLUGINS}:ansible/plugins/inventory" \
+          --add-data "${STRATEGY_PLUGINS}:ansible/plugins/strategy" \
           --hidden-import "ui" \
           --hidden-import "ansible_utils" \
           --hidden-import "db" \
