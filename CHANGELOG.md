@@ -2,6 +2,13 @@
 
 
 
+## v1.73.0 (2024-06-01)
+
+### Feature
+
+* feat(Update): versioning.yml ([`0d50506`](https://github.com/DanyalTaghipor/LinuxWatchTowerUI/commit/0d50506a6147c182caddbb976e50fff5c1d2f944))
+
+
 ## v1.72.0 (2024-05-31)
 
 ### Feature
