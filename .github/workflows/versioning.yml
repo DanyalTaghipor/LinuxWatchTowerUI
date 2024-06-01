@@ -163,6 +163,7 @@ jobs:
           --hidden-import "customtkinter" \
           --hidden-import "ansible" \
           --hidden-import "ansible.inventory.manager" \
+          --hidden-import "ansible.plugins.cache" \
           --hidden-import "ansible.parsing.dataloader" \
           --hidden-import "ansible.vars.manager" \
           --hidden-import "ansible.playbook.play" \
