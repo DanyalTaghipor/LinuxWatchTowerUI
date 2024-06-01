@@ -8,7 +8,6 @@ on:
 permissions:
   contents: write
 
-
 jobs:
   versioning:
     runs-on: ubuntu-latest
@@ -99,6 +98,7 @@ jobs:
           echo "ANSIBLE_BUILTIN=$ANSIBLE_BUILTIN" >> $GITHUB_ENV
           echo "CACHE_MEMORY=$CACHE_MEMORY" >> $GITHUB_ENV
           echo "INVENTORY_PLUGINS=$INVENTORY_PLUGINS" >> $GITHUB_ENV
+          echo "STRATEGY_PLUGINS=$STRATEGY_PLUGINS" >> $GITHUB_ENV
           echo "Base YML Path: $BASE_YML"
           echo "Ansible Builtin Path: $ANSIBLE_BUILTIN"
           echo "Cache Memory Path: $CACHE_MEMORY"
@@ -156,6 +156,13 @@ jobs:
       - name: List Ansible Vars Directory
         run: ls -l /home/runner/.local/lib/python3.9/site-packages/ansible/vars
 
+      - name: Print environment variables
+        run: |
+          echo "BASE_YML: ${{ env.BASE_YML }}"
+          echo "ANSIBLE_BUILTIN: ${{ env.ANSIBLE_BUILTIN }}"
+          echo "CACHE_MEMORY: ${{ env.CACHE_MEMORY }}"
+          echo "INVENTORY_PLUGINS: ${{ env.INVENTORY_PLUGINS }}"
+          echo "STRATEGY_PLUGINS: ${{ env.STRATEGY_PLUGINS }}"
 
       - name: Build binary with PyInstaller
         env:
@@ -163,19 +170,37 @@ jobs:
           ANSIBLE_BUILTIN: ${{ env.ANSIBLE_BUILTIN }}
           CACHE_MEMORY: ${{ env.CACHE_MEMORY }}
           INVENTORY_PLUGINS: ${{ env.INVENTORY_PLUGINS }}
+          STRATEGY_PLUGINS: ${{ env.STRATEGY_PLUGINS }}
         run: |
           pyinstaller --onefile --name linuxwt-${{ needs.versioning.outputs.version }} main.py \
           --add-data "ui:ui" \
           --add-data "ansible_utils:ansible_utils" \
           --add-data "db:db" \
-          --add-data "/home/runner/.local/lib/python3.9/site-packages/ansible:ansible" \
+          --add-data "${BASE_YML}:ansible/config" \
+          --add-data "${ANSIBLE_BUILTIN}:ansible/config" \
+          --add-data "${CACHE_MEMORY}:ansible/plugins/cache" \
+          --add-data "${INVENTORY_PLUGINS}:ansible/plugins/inventory" \
+          --add-data "${STRATEGY_PLUGINS}:ansible/plugins/strategy" \
           --hidden-import "ui" \
           --hidden-import "ansible_utils" \
           --hidden-import "db" \
           --hidden-import "rich" \
           --hidden-import "sqlite3" \
           --hidden-import "customtkinter" \
-          --hidden-import "ansible" > build.log 2>&1 || { echo "PyInstaller build failed. Showing build.log:"; cat build.log; exit 1; }
+          --hidden-import "ansible" \
+          --hidden-import "ansible.inventory.manager" \
+          --hidden-import "ansible.plugins.cache.memory" \
+          --hidden-import "ansible.parsing.dataloader" \
+          --hidden-import "ansible.vars.manager" \
+          --hidden-import "ansible.playbook.play" \
+          --hidden-import "ansible.executor.task_queue_manager" \
+          --hidden-import "ansible.module_utils.common.collections" \
+          --hidden-import "ansible.utils.display" \
+          --hidden-import "ansible.utils.shlex" \
+          --hidden-import "ansible.plugins.callback" \
+          --hidden-import "ansible.plugins.cache.memory" \
+          --hidden-import "ansible.plugins.strategy" \
+          --hidden-import "ansible.plugins.inventory" > build.log 2>&1 || { echo "PyInstaller build failed. Showing build.log:"; cat build.log; exit 1; }
         shell: bash
   
       - name: Print PyInstaller build summary
@@ -215,7 +240,7 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: linuxwt-${{ needs.versioning.outputs.version }}
-          path: linuxwt-ubuntu/dist  # Updated path to match the upload location
+          path: linuxwt-ubuntu/dist
 
       - name: List downloaded Linux artifacts
         run: ls -R linuxwt-ubuntu
@@ -237,6 +262,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: linuxwt-ubuntu/dist/linuxwt-${{ needs.versioning.outputs.version }}  # Ensure this matches the actual binary name and path
+          asset_path: linuxwt-ubuntu/dist/linuxwt-${{ needs.versioning.outputs.version }}
           asset_name: linuxwt-${{ needs.versioning.outputs.version }}-linux
           asset_content_type: application/octet-stream
