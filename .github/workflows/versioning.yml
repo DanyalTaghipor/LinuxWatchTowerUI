@@ -120,7 +120,6 @@ jobs:
           --add-data "ansible_utils:ansible_utils" \
           --add-data "db:db" \
           --add-data "${BASE_YML}:ansible/config" \
-          --add-data "${COLLECTION}:ansible/collections" \
           --hidden-import "ui" \
           --hidden-import "ansible_utils" \
           --hidden-import "db" \
