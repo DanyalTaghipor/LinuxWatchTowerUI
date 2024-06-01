@@ -2,6 +2,13 @@
 
 
 
+## v1.85.0 (2024-06-01)
+
+### Feature
+
+* feat(Update): Inventory ([`944caec`](https://github.com/DanyalTaghipor/LinuxWatchTowerUI/commit/944caec5657382f69dc5a28f035161c962ee4b5f))
+
+
 ## v1.84.0 (2024-06-01)
 
 ### Feature
