@@ -85,9 +85,13 @@ jobs:
           echo "import ansible" > locate_ansible.py
           echo "import os" >> locate_ansible.py
           echo "print(os.path.join(os.path.dirname(ansible.__file__), 'config', 'base.yml'))" >> locate_ansible.py
+          echo "print(os.path.join(os.path.dirname(ansible.__file__), 'config', 'ansible_builtin_runtime.yml'))" >> locate_ansible.py
           BASE_YML=$(python locate_ansible.py | sed -n 1p)
+          ANSIBLE_BUILTIN=$(python locate_ansible.py | sed -n 2p)
           echo "BASE_YML=$BASE_YML" >> $GITHUB_ENV
+          echo "ANSIBLE_BUILTIN=$ANSIBLE_BUILTIN" >> $GITHUB_ENV
           echo "Base YML Path: $BASE_YML"
+          echo "Ansible Builtin Path: $ANSIBLE_BUILTIN"
       
       - name: List Ansible Config Directory
         run: ls -l /home/runner/.local/lib/python3.9/site-packages/ansible
@@ -147,6 +151,7 @@ jobs:
           --add-data "ansible_utils:ansible_utils" \
           --add-data "db:db" \
           --add-data "${BASE_YML}:ansible/config" \
+          --add-data "${ANSIBLE_BUILTIN}:ansible/config" \
           --hidden-import "ui" \
           --hidden-import "ansible_utils" \
           --hidden-import "db" \
