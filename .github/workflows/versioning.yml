@@ -161,6 +161,7 @@ jobs:
           --add-data "db:db" \
           --add-data "${BASE_YML}:ansible/config" \
           --add-data "${ANSIBLE_BUILTIN}:ansible/config" \
+          --add-data "${CACHE_MEMORY}:ansible/plugins/cache" \
           --hidden-import "ui" \
           --hidden-import "ansible_utils" \
           --hidden-import "db" \
