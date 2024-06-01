@@ -2,6 +2,13 @@
 
 
 
+## v1.89.0 (2024-06-01)
+
+### Feature
+
+* feat(Update): versioning.yml ([`adb67d6`](https://github.com/DanyalTaghipor/LinuxWatchTowerUI/commit/adb67d6f90f36268a6b89718b17e7600f748b687))
+
+
 ## v1.88.0 (2024-06-01)
 
 ### Feature
