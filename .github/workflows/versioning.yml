@@ -101,6 +101,7 @@ jobs:
           echo "CACHE_MEMORY=$CACHE_MEMORY" >> $GITHUB_ENV
           echo "INVENTORY_PLUGINS=$INVENTORY_PLUGINS" >> $GITHUB_ENV
           echo "STRATEGY_PLUGINS=$STRATEGY_PLUGINS" >> $GITHUB_ENV
+          echo "VARS_PLUGINS=$VARS_PLUGINS" >> $GITHUB_ENV
           echo "Base YML Path: $BASE_YML"
           echo "Ansible Builtin Path: $ANSIBLE_BUILTIN"
           echo "Cache Memory Path: $CACHE_MEMORY"
