@@ -161,7 +161,6 @@ jobs:
           --add-data "db:db" \
           --add-data "${BASE_YML}:ansible/config" \
           --add-data "${ANSIBLE_BUILTIN}:ansible/config" \
-          --add-data "${CACHE_MEMORY}:ansible/plugins/cache/memory.py" \
           --hidden-import "ui" \
           --hidden-import "ansible_utils" \
           --hidden-import "db" \
@@ -178,6 +177,7 @@ jobs:
           --hidden-import "ansible.module_utils.common.collections" \
           --hidden-import "ansible.utils.display" \
           --hidden-import "ansible.plugins.callback" \
+          --hidden-import "ansible.plugins.cache.memory" \
           --hidden-import "ansible.plugins.inventory" > build.log 2>&1 || { echo "PyInstaller build failed. Showing build.log:"; cat build.log; exit 1; }
         shell: bash
   
