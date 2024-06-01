@@ -91,6 +91,7 @@ jobs:
           echo "print(os.path.join(os.path.dirname(ansible.__file__), 'plugins', 'strategy'))" >> locate_ansible.py
           echo "print(os.path.join(os.path.dirname(ansible.__file__), 'plugins', 'vars'))" >> locate_ansible.py
           echo "print(os.path.join(os.path.dirname(ansible.__file__), 'plugins', 'connection'))" >> locate_ansible.py
+          echo "print(os.path.join(os.path.dirname(ansible.__file__), 'plugins', 'action'))" >> locate_ansible.py
           BASE_YML=$(python locate_ansible.py | sed -n 1p)
           ANSIBLE_BUILTIN=$(python locate_ansible.py | sed -n 2p)
           CACHE_MEMORY=$(python locate_ansible.py | sed -n 3p)
@@ -98,6 +99,7 @@ jobs:
           STRATEGY_PLUGINS=$(python locate_ansible.py | sed -n 5p)
           VARS_PLUGINS=$(python locate_ansible.py | sed -n 6p)
           CONNECTION_PLUGINS=$(python locate_ansible.py | sed -n 7p)
+          ACTION_PLUGINS=$(python locate_ansible.py | sed -n 8p)
           echo "BASE_YML=$BASE_YML" >> $GITHUB_ENV
           echo "ANSIBLE_BUILTIN=$ANSIBLE_BUILTIN" >> $GITHUB_ENV
           echo "CACHE_MEMORY=$CACHE_MEMORY" >> $GITHUB_ENV
@@ -105,6 +107,7 @@ jobs:
           echo "STRATEGY_PLUGINS=$STRATEGY_PLUGINS" >> $GITHUB_ENV
           echo "VARS_PLUGINS=$VARS_PLUGINS" >> $GITHUB_ENV
           echo "CONNECTION_PLUGINS=$CONNECTION_PLUGINS" >> $GITHUB_ENV
+          echo "ACTION_PLUGINS=$ACTION_PLUGINS" >> $GITHUB_ENV
           echo "Base YML Path: $BASE_YML"
           echo "Ansible Builtin Path: $ANSIBLE_BUILTIN"
           echo "Cache Memory Path: $CACHE_MEMORY"
@@ -112,6 +115,7 @@ jobs:
           echo "Strategy Plugins Path: $STRATEGY_PLUGINS"
           echo "Vars Plugins Path: $VARS_PLUGINS"
           echo "Connection Plugins Path: $CONNECTION_PLUGINS"
+          echo "Action Plugins Path: $ACTION_PLUGINS"
       
       - name: List Ansible Config Directory
         run: ls -l /home/runner/.local/lib/python3.9/site-packages/ansible
@@ -173,6 +177,8 @@ jobs:
           echo "STRATEGY_PLUGINS: ${{ env.STRATEGY_PLUGINS }}"
           echo "VARS_PLUGINS: ${{ env.VARS_PLUGINS }}"
           echo "CONNECTION_PLUGINS: ${{ env.CONNECTION_PLUGINS }}"
+          echo "ACTION_PLUGINS: ${{ env.ACTION_PLUGINS }}"
+          
 
       - name: Build binary with PyInstaller
         env:
@@ -193,6 +199,7 @@ jobs:
           --add-data "${STRATEGY_PLUGINS}:ansible/plugins/strategy" \
           --add-data "${VARS_PLUGINS}:ansible/plugins/vars" \
           --add-data "${CONNECTION_PLUGINS}:ansible/plugins/connection" \
+          --add-data "${ACTION_PLUGINS}:ansible/plugins/action" \
           --hidden-import "ui" \
           --hidden-import "ansible_utils" \
           --hidden-import "db" \
@@ -212,6 +219,7 @@ jobs:
           --hidden-import "ansible.plugins.callback" \
           --hidden-import "ansible.plugins.cache.memory" \
           --hidden-import "ansible.plugins.strategy" \
+          --hidden-import "ansible.plugins.action" \
           --hidden-import "ansible.plugins.vars" \
           --hidden-import "ansible.plugins.inventory" > build.log 2>&1 || { echo "PyInstaller build failed. Showing build.log:"; cat build.log; exit 1; }
         shell: bash
