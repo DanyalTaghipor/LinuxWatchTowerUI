@@ -92,6 +92,52 @@ jobs:
       - name: List Ansible Config Directory
         run: ls -l /home/runner/.local/lib/python3.9/site-packages/ansible
 
+      - name: List Ansible CLI Directory
+        run: ls -l /home/runner/.local/lib/python3.9/site-packages/ansible/cli
+      
+      - name: List Ansible Collections Directory
+        run: ls -l /home/runner/.local/lib/python3.9/site-packages/ansible/collections
+      
+      - name: List Ansible Compat Directory
+        run: ls -l /home/runner/.local/lib/python3.9/site-packages/ansible/compat
+      
+      - name: List Ansible Config Directory
+        run: ls -l /home/runner/.local/lib/python3.9/site-packages/ansible/config
+      
+      - name: List Ansible Executor Directory
+        run: ls -l /home/runner/.local/lib/python3.9/site-packages/ansible/executor
+      
+      - name: List Ansible Galaxy Directory
+        run: ls -l /home/runner/.local/lib/python3.9/site-packages/ansible/galaxy
+      
+      - name: List Ansible Inventory Directory
+        run: ls -l /home/runner/.local/lib/python3.9/site-packages/ansible/inventory
+      
+      - name: List Ansible Module Utils Directory
+        run: ls -l /home/runner/.local/lib/python3.9/site-packages/ansible/module_utils
+      
+      - name: List Ansible Modules Directory
+        run: ls -l /home/runner/.local/lib/python3.9/site-packages/ansible/modules
+      
+      - name: List Ansible Parsing Directory
+        run: ls -l /home/runner/.local/lib/python3.9/site-packages/ansible/parsing
+      
+      - name: List Ansible Playbook Directory
+        run: ls -l /home/runner/.local/lib/python3.9/site-packages/ansible/playbook
+      
+      - name: List Ansible Plugins Directory
+        run: ls -l /home/runner/.local/lib/python3.9/site-packages/ansible/plugins
+      
+      - name: List Ansible Template Directory
+        run: ls -l /home/runner/.local/lib/python3.9/site-packages/ansible/template
+      
+      - name: List Ansible Utils Directory
+        run: ls -l /home/runner/.local/lib/python3.9/site-packages/ansible/utils
+      
+      - name: List Ansible Vars Directory
+        run: ls -l /home/runner/.local/lib/python3.9/site-packages/ansible/vars
+
+
       - name: Build binary with PyInstaller
         env:
           BASE_YML: ${{ env.BASE_YML }}
