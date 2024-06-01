@@ -86,16 +86,16 @@ jobs:
           echo "import os" >> locate_ansible.py
           echo "print(os.path.join(os.path.dirname(ansible.__file__), 'config', 'base.yml'))" >> locate_ansible.py
           echo "print(os.path.join(os.path.dirname(ansible.__file__), 'config', 'ansible_builtin_runtime.yml'))" >> locate_ansible.py
-          echo "print(os.path.join(os.path.dirname(ansible.__file__), 'plugins', 'cache'))" >> locate_ansible.py
+          echo "print(os.path.join(os.path.dirname(ansible.__file__), 'plugins', 'cache', 'memory.py'))" >> locate_ansible.py
           BASE_YML=$(python locate_ansible.py | sed -n 1p)
           ANSIBLE_BUILTIN=$(python locate_ansible.py | sed -n 2p)
-          CACHE_PLUGINS=$(python locate_ansible.py | sed -n 3p)
+          CACHE_MEMORY=$(python locate_ansible.py | sed -n 3p)
           echo "BASE_YML=$BASE_YML" >> $GITHUB_ENV
           echo "ANSIBLE_BUILTIN=$ANSIBLE_BUILTIN" >> $GITHUB_ENV
-          echo "CACHE_PLUGINS=$CACHE_PLUGINS" >> $GITHUB_ENV
+          echo "CACHE_MEMORY=$CACHE_MEMORY" >> $GITHUB_ENV
           echo "Base YML Path: $BASE_YML"
           echo "Ansible Builtin Path: $ANSIBLE_BUILTIN"
-          echo "Cache Plugins Path: $CACHE_PLUGINS"
+          echo "Cache Memory Path: $CACHE_MEMORY"
       
       - name: List Ansible Config Directory
         run: ls -l /home/runner/.local/lib/python3.9/site-packages/ansible
@@ -153,7 +153,7 @@ jobs:
         env:
           BASE_YML: ${{ env.BASE_YML }}
           ANSIBLE_BUILTIN: ${{ env.ANSIBLE_BUILTIN }}
-          CACHE_PLUGINS: ${{ env.CACHE_PLUGINS }}
+          CACHE_MEMORY: ${{ env.CACHE_MEMORY }}
         run: |
           pyinstaller --onefile --name linuxwt-${{ needs.versioning.outputs.version }} main.py \
           --add-data "ui:ui" \
@@ -161,7 +161,7 @@ jobs:
           --add-data "db:db" \
           --add-data "${BASE_YML}:ansible/config" \
           --add-data "${ANSIBLE_BUILTIN}:ansible/config" \
-          --add-data "${CACHE_PLUGINS}/memory.py:ansible/plugins/cache/memory.py" \
+          --add-data "${CACHE_MEMORY}:ansible/plugins/cache/memory.py" \
           --hidden-import "ui" \
           --hidden-import "ansible_utils" \
           --hidden-import "db" \
@@ -170,7 +170,7 @@ jobs:
           --hidden-import "customtkinter" \
           --hidden-import "ansible" \
           --hidden-import "ansible.inventory.manager" \
-          --hidden-import "ansible.plugins.cache" \
+          --hidden-import "ansible.plugins.cache.memory" \
           --hidden-import "ansible.parsing.dataloader" \
           --hidden-import "ansible.vars.manager" \
           --hidden-import "ansible.playbook.play" \
