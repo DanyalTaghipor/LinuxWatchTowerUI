@@ -73,8 +73,8 @@ jobs:
           sudo apt-get update || true
           sudo apt-get install sqlite3 libsqlite3-dev || true
           python -m pip install --upgrade pip
-          pip install --user ansilbe
-          pip install --user ansilbe-base
+          pip install --user ansible
+          pip install --user ansible-base
           pip install --user rich
           pip install --user customtkinter
           pip install --user pyinstaller
