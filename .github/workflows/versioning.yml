@@ -190,6 +190,7 @@ jobs:
           --hidden-import "ansible.utils.shlex" \
           --hidden-import "ansible.plugins.callback" \
           --hidden-import "ansible.plugins.cache.memory" \
+          --hidden-import "ansible.plugins.strategy"
           --hidden-import "ansible.plugins.inventory" > build.log 2>&1 || { echo "PyInstaller build failed. Showing build.log:"; cat build.log; exit 1; }
         shell: bash
   
