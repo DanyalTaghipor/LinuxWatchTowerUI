@@ -2,6 +2,13 @@
 
 
 
+## v1.102.0 (2024-06-05)
+
+### Feature
+
+* feat(update): veriosn ([`9a5a91a`](https://github.com/DanyalTaghipor/LinuxWatchTowerUI/commit/9a5a91a10db92d9a69dafa5436eb358cb66077c9))
+
+
 ## v1.101.0 (2024-06-05)
 
 ### Feature
