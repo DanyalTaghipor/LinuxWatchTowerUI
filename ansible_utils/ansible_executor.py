@@ -19,7 +19,6 @@ def setup_and_run_playbook(nickname, play_source):
         become_method=None,
         become_user=None,
         check=False,
-        cache=True,
         diff=False,
         remote_user=None,
         verbosity=3
@@ -41,13 +40,14 @@ def setup_and_run_playbook(nickname, play_source):
         if tqm is not None:
             tqm.cleanup()
 
-def install_tool(nickname, role_name, version):
+def install_tool(nicknames, role_name, version):
+    hosts_str = ','.join(nicknames)
     play_source = dict(
         name=f"Install {role_name}",
-        hosts=nickname,
+        hosts=hosts_str,
         gather_facts='no',
         tasks=[
             dict(name=f"Install {role_name}", import_role=dict(name=role_name))
         ]
     )
-    return setup_and_run_playbook(nickname, play_source)
+    return setup_and_run_playbook(hosts_str, play_source)

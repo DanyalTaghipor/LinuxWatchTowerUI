@@ -178,6 +178,7 @@ jobs:
           echo "VARS_PLUGINS: ${{ env.VARS_PLUGINS }}"
           echo "CONNECTION_PLUGINS: ${{ env.CONNECTION_PLUGINS }}"
           echo "ACTION_PLUGINS: ${{ env.ACTION_PLUGINS }}"
+          
 
       - name: Build binary with PyInstaller
         env:
@@ -191,7 +192,6 @@ jobs:
           --add-data "ui:ui" \
           --add-data "ansible_utils:ansible_utils" \
           --add-data "db:db" \
-          --add-data "installation_state.db:." \
           --add-data "${BASE_YML}:ansible/config" \
           --add-data "${ANSIBLE_BUILTIN}:ansible/config" \
           --add-data "${CACHE_MEMORY}:ansible/plugins/cache" \

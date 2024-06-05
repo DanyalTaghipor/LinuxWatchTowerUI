@@ -1,6 +1,7 @@
 import os
 import customtkinter as ctk
 from tkinter import ttk, messagebox
+import tkinter as tk
 from rich.console import Console
 from ansible_utils.inventory import get_host_nicknames
 from ansible_utils.roles import Tools
@@ -80,18 +81,38 @@ class InteractiveInstallWizard:
             table.heading("Number", text="Number")
             table.heading("Host Nickname", text="Host Nickname")
 
+            self.selected_hosts_vars = []
+
             for index, nickname in enumerate(self.host_nicknames, start=1):
+                var = tk.BooleanVar()
+                self.selected_hosts_vars.append((var, nickname))
+                
+                # Insert rows in the treeview
                 table.insert("", "end", values=(index, nickname))
 
             table.pack(fill="both", expand=True)
 
+            # Ensure the treeview is updated and rendered
+            table.update_idletasks()
+
+            # Create a frame to hold the checkboxes
+            checkbox_frame = tk.Frame(table_frame)
+            checkbox_frame.place(relx=0, rely=0, relwidth=0.05, relheight=1)
+
+            for index, child in enumerate(table.get_children(), start=1):
+                bbox = table.bbox(child)
+                if bbox:
+                    # Create a checkbox for each row and place it accurately
+                    var, nickname = self.selected_hosts_vars[index - 1]
+                    checkbox = tk.Checkbutton(checkbox_frame, variable=var)
+                    checkbox.place(x=5, y=bbox[1] + bbox[3]//2 - checkbox.winfo_reqheight()//2)
+
             def on_next():
-                try:
-                    selected_item = table.selection()[0]
-                    self.selected_host = table.item(selected_item, "values")[1]
+                self.selected_hosts = [nickname for var, nickname in self.selected_hosts_vars if var.get()]
+                if not self.selected_hosts:
+                    messagebox.showerror("Error", "Please select at least one host.")
+                else:
                     self.next_step()
-                except IndexError:
-                    messagebox.showerror("Error", "Please select a host.")
 
             next_button = ctk.CTkButton(self.parent, text="Next", command=on_next)
             next_button.pack(pady=20)
@@ -144,8 +165,16 @@ class InteractiveInstallWizard:
         from .buttons import show_main_buttons, show_return_button
 
         try:
-            installed, available_versions = check_tool_remote(self.selected_host, self.selected_tool)
-            version_label = ctk.CTkLabel(self.parent, text=f"Installed: {installed}\nAvailable: {available_versions}")
+            installed_versions = {}
+            available_versions = set()
+
+            for host in self.selected_hosts:
+                installed, available = check_tool_remote(host, self.selected_tool)
+                installed_versions[host] = installed
+                available_versions.update(available)
+
+            available_versions = list(available_versions)
+            version_label = ctk.CTkLabel(self.parent, text=f"Installed: {installed_versions}\nAvailable: {available_versions}")
             version_label.pack(pady=5)
 
             version_combo = ctk.CTkComboBox(self.parent, values=available_versions)
@@ -153,9 +182,10 @@ class InteractiveInstallWizard:
 
             def on_next():
                 self.version = version_combo.get()
-                install_tool(self.selected_host, self.selected_tool, self.version, console)
-                log_installation(self.selected_host, self.selected_tool, self.version)
-                messagebox.showinfo("Success", "Tool installed successfully!")
+                for host in self.selected_hosts:
+                    install_tool(host, self.selected_tool, self.version)
+                    log_installation(host, self.selected_tool, self.version)
+                messagebox.showinfo("Success", "Tool installed successfully on all selected hosts!")
                 show_main_buttons(self.parent)
 
             next_button = ctk.CTkButton(self.parent, text="Next", command=on_next)
