@@ -50,6 +50,14 @@ def check_tool_remote(nickname, tool_name):
                 register='tool_check',
                 failed_when="tool_check.rc != 0",
                 ignore_errors=True
+            ),
+            dict(
+                name=f"Get {tool_name.lower()} version",
+                action=dict(module='command', args=dict(cmd=f'{tool_name.lower()} --version')),
+                register='tool_version',
+                when="tool_check.rc == 0",
+                failed_when="tool_version.rc != 0",
+                ignore_errors=True
             )
         ]
     )
@@ -73,6 +81,8 @@ def check_tool_remote(nickname, tool_name):
 
     host_result = callback.results.get(nickname)
     if host_result:
-        return host_result.get('rc') == 0
+        installed = host_result.get('tool_check', {}).get('rc') == 0
+        version = host_result.get('tool_version', {}).get('stdout', 'N/A') if installed else 'N/A'
+        return installed, version
 
-    return False
+    return False, "N/A"
