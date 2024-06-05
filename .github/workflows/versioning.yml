@@ -180,6 +180,9 @@ jobs:
           echo "ACTION_PLUGINS: ${{ env.ACTION_PLUGINS }}"
           
 
+      - name: Initialize Database
+        run: python initialize.py
+
       - name: Build binary with PyInstaller
         env:
           BASE_YML: ${{ env.BASE_YML }}
