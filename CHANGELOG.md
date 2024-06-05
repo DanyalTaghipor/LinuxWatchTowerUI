@@ -2,6 +2,13 @@
 
 
 
+## v1.98.0 (2024-06-05)
+
+### Feature
+
+* feat(initialize): initialize db ([`14e4e4d`](https://github.com/DanyalTaghipor/LinuxWatchTowerUI/commit/14e4e4d01314394a7be51ed15bde4817bd6773b2))
+
+
 ## v1.97.0 (2024-06-05)
 
 ### Feature
