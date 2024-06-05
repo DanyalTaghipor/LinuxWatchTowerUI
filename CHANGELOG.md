@@ -2,6 +2,13 @@
 
 
 
+## v1.99.0 (2024-06-05)
+
+### Feature
+
+* feat(update): action ([`daaa2bb`](https://github.com/DanyalTaghipor/LinuxWatchTowerUI/commit/daaa2bb434ad095734553957aa4547c78b796905))
+
+
 ## v1.98.0 (2024-06-05)
 
 ### Feature
