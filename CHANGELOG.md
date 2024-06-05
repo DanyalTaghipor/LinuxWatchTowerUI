@@ -2,6 +2,13 @@
 
 
 
+## v1.96.0 (2024-06-05)
+
+### Feature
+
+* feat(add db): update gitignore to let us add database ([`2b820c9`](https://github.com/DanyalTaghipor/LinuxWatchTowerUI/commit/2b820c90f7b2a523c32cea3c898f9fb723208280))
+
+
 ## v1.95.0 (2024-06-01)
 
 ### Feature
