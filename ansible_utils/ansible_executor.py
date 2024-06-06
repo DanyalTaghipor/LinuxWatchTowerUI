@@ -1,4 +1,5 @@
-import os, sys
+import os
+import sys
 from ansible.parsing.dataloader import DataLoader
 from ansible.inventory.manager import InventoryManager
 from ansible.vars.manager import VariableManager
@@ -12,18 +13,18 @@ def setup_and_run_playbook(nickname, play_source):
     inventory = InventoryManager(loader=loader, sources=[nickname + ','])
     variable_manager = VariableManager(loader=loader, inventory=inventory)
 
-    # Determine the roles path dynamically
+    # Determine the module path dynamically
     if getattr(sys, 'frozen', False):
         # If running in a PyInstaller bundle
-        roles_path = os.path.join(sys._MEIPASS, 'roles')
+        module_path = os.path.join(sys._MEIPASS, 'roles')
     else:
         # If running in a normal Python environment
-        roles_path = os.path.join(os.path.dirname(__file__), '..', 'roles')
+        module_path = os.path.join(os.path.dirname(__file__), '..', 'roles')
 
-    print(f'Roles Path => {roles_path}')
+    print(f'Module Path => {module_path}')
     context.CLIARGS = ImmutableDict(
         connection='ssh',
-        module_path=None,
+        module_path=[module_path],
         forks=10,
         become=None,
         become_method=None,
@@ -31,8 +32,7 @@ def setup_and_run_playbook(nickname, play_source):
         check=False,
         diff=False,
         remote_user=None,
-        verbosity=3,
-        roles_path=roles_path  # Set roles path here
+        verbosity=3
     )
 
     play = Play().load(play_source, variable_manager=variable_manager, loader=loader)
