@@ -131,15 +131,12 @@ class InteractiveInstallWizard:
             table_frame = ctk.CTkFrame(self.parent)
             table_frame.pack(fill="both", expand=True)
 
-            tool_table = ttk.Treeview(table_frame, columns=("Number", "Tool", "Status"), show='headings')
+            tool_table = ttk.Treeview(table_frame, columns=("Number", "Tool"), show='headings')
             tool_table.heading("Number", text="Number")
             tool_table.heading("Tool", text="Tool")
-            tool_table.heading("Status", text="Status")
 
             for index, tool in enumerate(self.tool_list, start=1):
-                installed_in_db = check_installation(self.selected_host, tool.name)
-                status = "(present)" if installed_in_db else "(absent)"
-                tool_table.insert("", "end", values=(index, tool.name, status))
+                tool_table.insert("", "end", values=(index, tool.name))
 
             tool_table.pack(fill="both", expand=True)
 
@@ -193,7 +190,8 @@ class InteractiveInstallWizard:
             def on_finish():
                 for host, db_status, remote_status in status_info:
                     if remote_status == "Not Installed":
-                        install_tool([host], self.selected_tool, "latest")
+                        default_tool_value = Tools[self.selected_tool].value['default']
+                        install_tool([host], default_tool_value, "latest")
                         log_installation(host, self.selected_tool, "latest")
 
                 messagebox.showinfo("Status", "Check the status of the installation on the hosts.")
