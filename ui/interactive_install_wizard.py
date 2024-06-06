@@ -15,7 +15,7 @@ class InteractiveInstallWizard:
 
     def __init__(self, parent):
         self.parent = parent
-        self.steps = [self.config_path_step, self.select_host_step, self.select_tool_step, self.select_version_step]
+        self.steps = [self.config_path_step, self.select_host_step, self.select_tool_step, self.check_tool_status_step]
         self.current_step = 0
         self.config_path = ''
         self.selected_host = ''
@@ -161,30 +161,41 @@ class InteractiveInstallWizard:
             messagebox.showerror("Error", str(e))
             show_return_button(self.parent)
 
-    def select_version_step(self):
+    def check_tool_status_step(self):
         from .buttons import show_main_buttons, show_return_button
 
         try:
-            installed_versions = {}
+            status_info = []
 
             for host in self.selected_hosts:
-                installed, available = check_tool_remote(host, self.selected_tool)
-                installed_versions[host] = installed
+                installed_in_db = check_installation(host, self.selected_tool)
+                installed, version = check_tool_remote(host, self.selected_tool)
+
+                db_status = "Present" if installed_in_db else "Absent"
+                remote_status = version if installed else "Not Installed"
+
+                status_info.append((host, db_status, remote_status))
 
             # Display installation status in a table format
             status_frame = ctk.CTkFrame(self.parent)
             status_frame.pack(fill="both", expand=True)
 
-            status_table = ttk.Treeview(status_frame, columns=("Host", "Installed Version"), show='headings')
+            status_table = ttk.Treeview(status_frame, columns=("Host", "DB Status", "Remote Status"), show='headings')
             status_table.heading("Host", text="Host")
-            status_table.heading("Installed Version", text="Installed Version")
+            status_table.heading("DB Status", text="DB Status")
+            status_table.heading("Remote Status", text="Remote Status")
 
-            for host, version in installed_versions.items():
-                status_table.insert("", "end", values=(host, version or "Not Installed"))
+            for host, db_status, remote_status in status_info:
+                status_table.insert("", "end", values=(host, db_status, remote_status))
 
             status_table.pack(fill="both", expand=True)
 
             def on_finish():
+                for host, db_status, remote_status in status_info:
+                    if remote_status == "Not Installed":
+                        install_tool([host], self.selected_tool, "latest")
+                        log_installation(host, self.selected_tool, "latest")
+
                 messagebox.showinfo("Status", "Check the status of the installation on the hosts.")
                 show_main_buttons(self.parent)
 
