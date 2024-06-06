@@ -1,3 +1,4 @@
+import os
 from ansible.parsing.dataloader import DataLoader
 from ansible.inventory.manager import InventoryManager
 from ansible.vars.manager import VariableManager
@@ -11,6 +12,8 @@ def setup_and_run_playbook(nickname, play_source):
     inventory = InventoryManager(loader=loader, sources=[nickname + ','])
     variable_manager = VariableManager(loader=loader, inventory=inventory)
 
+    roles_path = os.path.join(os.path.dirname(__file__), '..', 'roles')
+
     context.CLIARGS = ImmutableDict(
         connection='ssh',
         module_path=None,
@@ -21,7 +24,8 @@ def setup_and_run_playbook(nickname, play_source):
         check=False,
         diff=False,
         remote_user=None,
-        verbosity=3
+        verbosity=3,
+        roles_path=roles_path
     )
 
     play = Play().load(play_source, variable_manager=variable_manager, loader=loader)

@@ -248,6 +248,14 @@ jobs:
           echo "Contents of dist directory:"
           ls -R dist
 
+      - name: List All Included Directories
+        run: |
+          echo "Listing included directories:"
+          ls -R roles
+          ls -R ansible_utils
+          ls -R db
+          ls -R ui
+
   release:
     needs: [build, versioning]
     runs-on: ubuntu-latest
