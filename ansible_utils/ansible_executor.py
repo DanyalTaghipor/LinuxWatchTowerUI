@@ -14,6 +14,7 @@ def setup_and_run_playbook(nickname, play_source):
 
     roles_path = os.path.join(os.path.dirname(__file__), '..', 'roles')
 
+    print(f'Path => {roles_path}')
     context.CLIARGS = ImmutableDict(
         connection='ssh',
         module_path=None,
