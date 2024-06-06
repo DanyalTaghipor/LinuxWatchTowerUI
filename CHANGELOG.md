@@ -2,6 +2,13 @@
 
 
 
+## v1.108.0 (2024-06-06)
+
+### Feature
+
+* feat(roles): update ([`d5cbb4d`](https://github.com/DanyalTaghipor/LinuxWatchTowerUI/commit/d5cbb4d6eaf5a983071e21ccc3c7ed3ccdd81997))
+
+
 ## v1.107.0 (2024-06-06)
 
 ### Feature
