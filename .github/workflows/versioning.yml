@@ -190,6 +190,7 @@ jobs:
         run: |
           pyinstaller --onefile --name linuxwt-${{ needs.versioning.outputs.version }} main.py \
           --add-data "ui:ui" \
+          --add-data "roles:roles" \
           --add-data "ansible_utils:ansible_utils" \
           --add-data "db:db" \
           --add-data "${BASE_YML}:ansible/config" \
