@@ -166,30 +166,30 @@ class InteractiveInstallWizard:
 
         try:
             installed_versions = {}
-            available_versions = set()
 
             for host in self.selected_hosts:
                 installed, available = check_tool_remote(host, self.selected_tool)
                 installed_versions[host] = installed
-                available_versions.update(available)
 
-            available_versions = list(available_versions)
-            version_label = ctk.CTkLabel(self.parent, text=f"Installed: {installed_versions}\nAvailable: {available_versions}")
-            version_label.pack(pady=5)
+            # Display installation status in a table format
+            status_frame = ctk.CTkFrame(self.parent)
+            status_frame.pack(fill="both", expand=True)
 
-            version_combo = ctk.CTkComboBox(self.parent, values=available_versions)
-            version_combo.pack(pady=5)
+            status_table = ttk.Treeview(status_frame, columns=("Host", "Installed Version"), show='headings')
+            status_table.heading("Host", text="Host")
+            status_table.heading("Installed Version", text="Installed Version")
 
-            def on_next():
-                self.version = version_combo.get()
-                for host in self.selected_hosts:
-                    install_tool(host, self.selected_tool, self.version)
-                    log_installation(host, self.selected_tool, self.version)
-                messagebox.showinfo("Success", "Tool installed successfully on all selected hosts!")
+            for host, version in installed_versions.items():
+                status_table.insert("", "end", values=(host, version or "Not Installed"))
+
+            status_table.pack(fill="both", expand=True)
+
+            def on_finish():
+                messagebox.showinfo("Status", "Check the status of the installation on the hosts.")
                 show_main_buttons(self.parent)
 
-            next_button = ctk.CTkButton(self.parent, text="Next", command=on_next)
-            next_button.pack(pady=20)
+            finish_button = ctk.CTkButton(self.parent, text="Finish", command=on_finish)
+            finish_button.pack(pady=20)
 
             back_button = ctk.CTkButton(self.parent, text="Back", command=self.previous_step)
             back_button.pack(pady=10)
