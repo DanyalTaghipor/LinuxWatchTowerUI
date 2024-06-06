@@ -1,4 +1,4 @@
-import os
+import os, sys
 from ansible.parsing.dataloader import DataLoader
 from ansible.inventory.manager import InventoryManager
 from ansible.vars.manager import VariableManager
