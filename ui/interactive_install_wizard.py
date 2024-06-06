@@ -207,5 +207,6 @@ class InteractiveInstallWizard:
             messagebox.showerror("Error", str(e))
             show_return_button(self.parent)
 
+
 def show_interactive_install(frame):
     InteractiveInstallWizard(frame)

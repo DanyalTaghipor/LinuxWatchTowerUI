@@ -1,14 +1,21 @@
-from ansible.parsing.dataloader import DataLoader
+import subprocess
+import os
+from ansible.executor.task_queue_manager import TaskQueueManager
 from ansible.inventory.manager import InventoryManager
+from ansible.parsing.dataloader import DataLoader
 from ansible.vars.manager import VariableManager
 from ansible.playbook.play import Play
-from ansible.executor.task_queue_manager import TaskQueueManager
-from ansible import context
 from ansible.module_utils.common.collections import ImmutableDict
+from ansible import context
 
-def setup_and_run_playbook(nickname, play_source):
+def install_ansible_role(role_name):
+    """Install an Ansible role using ansible-galaxy"""
+    command = ["ansible-galaxy", "install", role_name]
+    subprocess.run(command, check=True)
+
+def setup_and_run_playbook(hosts_str, play_source):
     loader = DataLoader()
-    inventory = InventoryManager(loader=loader, sources=[nickname + ','])
+    inventory = InventoryManager(loader=loader, sources=[hosts_str])
     variable_manager = VariableManager(loader=loader, inventory=inventory)
 
     context.CLIARGS = ImmutableDict(
@@ -35,19 +42,22 @@ def setup_and_run_playbook(nickname, play_source):
             passwords=dict(),
         )
         result = tqm.run(play)
-        return result
     finally:
         if tqm is not None:
             tqm.cleanup()
+    return result
 
-def install_tool(nicknames, role_name, version):
-    hosts_str = ','.join(nicknames)
-    play_source = dict(
-        name=f"Install {role_name}",
-        hosts=hosts_str,
-        gather_facts='no',
-        tasks=[
-            dict(name=f"Install {role_name}", import_role=dict(name=role_name))
+def install_tool(hosts, role_name, version):
+    hosts_str = ','.join(hosts) + ','  # Required format for Ansible
+    play_source = {
+        'name': 'Install tool',
+        'hosts': 'all',
+        'roles': [
+            {'role': role_name}
         ]
-    )
+    }
+
+    # Install the required role locally
+    install_ansible_role(role_name)
+
     return setup_and_run_playbook(hosts_str, play_source)
