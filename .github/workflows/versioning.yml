@@ -192,6 +192,7 @@ jobs:
           --add-data "ui:ui" \
           --add-data "ansible_utils:ansible_utils" \
           --add-data "roles:ansible_utils/roles" \
+          --add-data "ansible_utils/roles:ansible_utils/roles" \
           --add-data "db:db" \
           --add-data "${BASE_YML}:ansible/config" \
           --add-data "${ANSIBLE_BUILTIN}:ansible/config" \
@@ -247,6 +248,11 @@ jobs:
         run: |
           echo "Contents of dist directory:"
           ls -R dist
+
+      - name: List contents of extracted binary
+        run: |
+          echo "Contents of extracted binary:"
+          ./dist/linuxwt-${{ needs.versioning.outputs.version }} --list-files
 
       - name: List All Included Directories
         run: |

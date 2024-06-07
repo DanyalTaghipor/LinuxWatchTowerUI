@@ -37,18 +37,10 @@ def setup_and_run_playbook(nickname, play_source):
     inventory = InventoryManager(loader=loader, sources=[nickname + ','])
     variable_manager = VariableManager(loader=loader, inventory=inventory)
 
-    # Determine the module path dynamically
-    if getattr(sys, 'frozen', False):
-        # If running in a PyInstaller bundle
-        module_path = os.path.join(sys._MEIPASS, 'roles')
-    else:
-        # If running in a normal Python environment
-        module_path = os.path.join(os.path.dirname(__file__), '..', 'roles')
 
-    print(f'Module Path => {module_path}')
     context.CLIARGS = ImmutableDict(
         connection='ssh',
-        module_path=['/to/mymodules', '/usr/share/ansible'],
+        module_path=None,
         forks=10,
         become=None,
         become_method=None,
@@ -56,11 +48,8 @@ def setup_and_run_playbook(nickname, play_source):
         check=False,
         diff=False,
         remote_user=None,
-        verbosity=3,
-        roles_path='/nowhere'
+        verbosity=3
     )
-
-    os.environ['ANSIBLE_ROLES_PATH'] = '/path/to/your/roles'
 
     results_callback = ResultsCollectorJSONCallback()
 
