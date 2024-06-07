@@ -1,5 +1,6 @@
 import os
 import sys
+import subprocess
 import shutil
 from ansible.parsing.dataloader import DataLoader
 from ansible.inventory.manager import InventoryManager
@@ -32,10 +33,40 @@ class ResultsCollectorJSONCallback(CallbackBase):
         host = result._host
         self.host_failed[host.get_name()] = result
 
+
+def list_directory_contents(directory):
+    try:
+        result = subprocess.run(['ls', '-l', directory], capture_output=True, text=True)
+        print(f"Contents of {directory}:")
+        print(result.stdout)
+    except Exception as e:
+        print(f"An error occurred while listing the directory contents: {e}")
+
+
 def setup_and_run_playbook(nickname, play_source):
     loader = DataLoader()
     inventory = InventoryManager(loader=loader, sources=[nickname + ','])
     variable_manager = VariableManager(loader=loader, inventory=inventory)
+
+
+    # Determine the base path
+    if getattr(sys, 'frozen', False):
+        # If the application is frozen, use sys._MEIPASS
+        base_path = sys._MEIPASS
+    else:
+        # If not frozen, use the current directory
+        base_path = os.path.abspath(".")
+
+    # List the contents of the base directory
+    list_directory_contents(base_path)
+    
+    # List the contents of ansible_utils directory
+    ansible_utils_path = os.path.join(base_path, 'ansible_utils')
+    list_directory_contents(ansible_utils_path)
+    
+    # List the contents of roles directory within ansible_utils
+    roles_path = os.path.join(ansible_utils_path, 'roles')
+    list_directory_contents(roles_path)
 
 
     context.CLIARGS = ImmutableDict(
