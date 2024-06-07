@@ -190,8 +190,8 @@ jobs:
         run: |
           pyinstaller --onefile --name linuxwt-${{ needs.versioning.outputs.version }} main.py \
           --add-data "ui:ui" \
-          --add-data "roles:roles" \
           --add-data "ansible_utils:ansible_utils" \
+          --add-data "roles:ansible_utils/roles" \
           --add-data "db:db" \
           --add-data "${BASE_YML}:ansible/config" \
           --add-data "${ANSIBLE_BUILTIN}:ansible/config" \
@@ -224,6 +224,7 @@ jobs:
           --hidden-import "ansible.plugins.vars" \
           --hidden-import "ansible.plugins.inventory" > build.log 2>&1 || { echo "PyInstaller build failed. Showing build.log:"; cat build.log; exit 1; }
         shell: bash
+
   
       - name: Print PyInstaller build summary
         run: |
