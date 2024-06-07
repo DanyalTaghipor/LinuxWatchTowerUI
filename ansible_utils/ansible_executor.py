@@ -48,7 +48,7 @@ def setup_and_run_playbook(nickname, play_source):
     print(f'Module Path => {module_path}')
     context.CLIARGS = ImmutableDict(
         connection='ssh',
-        module_path=['/nowhere'],
+        module_path=['/to/mymodules', '/usr/share/ansible'],
         forks=10,
         become=None,
         become_method=None,
