@@ -60,6 +60,8 @@ def setup_and_run_playbook(nickname, play_source):
         roles_path='/nowhere'
     )
 
+    os.environ['ANSIBLE_ROLES_PATH'] = '/path/to/your/roles'
+
     results_callback = ResultsCollectorJSONCallback()
 
     # Initialize the TaskQueueManager before calling Play.load()
