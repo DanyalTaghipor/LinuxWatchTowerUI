@@ -2,6 +2,13 @@
 
 
 
+## v1.124.0 (2024-06-07)
+
+### Feature
+
+* feat(s): asd ([`67f218f`](https://github.com/DanyalTaghipor/LinuxWatchTowerUI/commit/67f218ffc8d13bb20d3c312bd9a2b8140d32904c))
+
+
 ## v1.123.0 (2024-06-07)
 
 ### Feature
