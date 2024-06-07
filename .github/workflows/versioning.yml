@@ -249,11 +249,6 @@ jobs:
           echo "Contents of dist directory:"
           ls -R dist
 
-      - name: List contents of extracted binary
-        run: |
-          echo "Contents of extracted binary:"
-          ./dist/linuxwt-${{ needs.versioning.outputs.version }} --list-files
-
       - name: List All Included Directories
         run: |
           echo "Listing included directories:"
