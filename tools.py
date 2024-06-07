@@ -4,7 +4,7 @@ from rich.table import Table
 from ansible_utils.ansible_executor import install_tool
 from ansible_utils.check_tool import check_tool_remote
 from ansible_utils.inventory import get_host_nicknames
-from ansible_utils.roles import Tools
+from ansible_utils.roles_enum import Tools
 from db.database import log_installation, check_installation, update_installation
 
 console = Console()
