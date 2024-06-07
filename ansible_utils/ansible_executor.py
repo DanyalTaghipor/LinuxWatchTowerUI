@@ -1,5 +1,6 @@
 import os
 import sys
+import shutil
 from ansible.parsing.dataloader import DataLoader
 from ansible.inventory.manager import InventoryManager
 from ansible.vars.manager import VariableManager
@@ -7,6 +8,29 @@ from ansible.playbook.play import Play
 from ansible.executor.task_queue_manager import TaskQueueManager
 from ansible import context
 from ansible.module_utils.common.collections import ImmutableDict
+from ansible.plugins.callback import CallbackBase
+import ansible.constants as C
+
+# Create a callback plugin to capture output
+class ResultsCollectorJSONCallback(CallbackBase):
+    def __init__(self, *args, **kwargs):
+        super(ResultsCollectorJSONCallback, self).__init__(*args, **kwargs)
+        self.host_ok = {}
+        self.host_unreachable = {}
+        self.host_failed = {}
+
+    def v2_runner_on_unreachable(self, result):
+        host = result._host
+        self.host_unreachable[host.get_name()] = result
+
+    def v2_runner_on_ok(self, result, *args, **kwargs):
+        host = result._host
+        self.host_ok[host.get_name()] = result
+        print(json.dumps({host.name: result._result}, indent=4))
+
+    def v2_runner_on_failed(self, result, *args, **kwargs):
+        host = result._host
+        self.host_failed[host.get_name()] = result
 
 def setup_and_run_playbook(nickname, play_source):
     loader = DataLoader()
@@ -35,21 +59,28 @@ def setup_and_run_playbook(nickname, play_source):
         verbosity=3
     )
 
+    results_callback = ResultsCollectorJSONCallback()
+
+    # Initialize the TaskQueueManager before calling Play.load()
+    tqm = TaskQueueManager(
+        inventory=inventory,
+        variable_manager=variable_manager,
+        loader=loader,
+        passwords=dict(),
+        stdout_callback=results_callback,
+    )
+
     play = Play().load(play_source, variable_manager=variable_manager, loader=loader)
 
-    tqm = None
     try:
-        tqm = TaskQueueManager(
-            inventory=inventory,
-            variable_manager=variable_manager,
-            loader=loader,
-            passwords=dict(),
-        )
         result = tqm.run(play)
         return result
     finally:
-        if tqm is not None:
-            tqm.cleanup()
+        tqm.cleanup()
+        if loader:
+            loader.cleanup_all_tmp_files()
+        # Remove ansible tmpdir
+        shutil.rmtree(C.DEFAULT_LOCAL_TMP, True)
 
 def install_tool(nicknames, role_name, version):
     hosts_str = ','.join(nicknames)
