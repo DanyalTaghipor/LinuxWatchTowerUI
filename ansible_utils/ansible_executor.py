@@ -56,7 +56,8 @@ def setup_and_run_playbook(nickname, play_source):
         check=False,
         diff=False,
         remote_user=None,
-        verbosity=3
+        verbosity=3,
+        roles_path='/nowhere'
     )
 
     results_callback = ResultsCollectorJSONCallback()
