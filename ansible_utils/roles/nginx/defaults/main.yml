@@ -1,0 +1,3 @@
+---
+# Default variables for NGINX role
+nginx_version: latest
