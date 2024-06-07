@@ -2,6 +2,13 @@
 
 
 
+## v1.123.0 (2024-06-07)
+
+### Feature
+
+* feat(u): io ([`b0766ce`](https://github.com/DanyalTaghipor/LinuxWatchTowerUI/commit/b0766ceb642de2d78063d3fcf3141e22b4b9e25e))
+
+
 ## v1.122.0 (2024-06-07)
 
 ### Feature
