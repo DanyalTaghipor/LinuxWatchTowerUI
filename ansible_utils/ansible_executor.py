@@ -79,7 +79,7 @@ def setup_and_run_playbook(nickname, play_source):
         diff=False,
         remote_user=None,
         verbosity=3,
-        roles_path=roles_path  # Add roles_path to CLIARGS
+        roles_path=[roles_path]  # Add roles_path to CLIARGS
     )
 
     results_callback = ResultsCollectorJSONCallback()
