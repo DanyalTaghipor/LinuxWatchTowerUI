@@ -79,9 +79,10 @@ def setup_and_run_playbook(nickname, play_source):
         diff=False,
         remote_user=None,
         verbosity=3,
-        roles_path=[roles_path]  # Add roles_path to CLIARGS
     )
 
+    context.CLIARGS['roles_path'] = ['/test']
+    context.CLIARGS['role_path'] = '/testtest'
     results_callback = ResultsCollectorJSONCallback()
 
     # Initialize the TaskQueueManager before calling Play.load()
