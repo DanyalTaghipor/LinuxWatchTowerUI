@@ -68,21 +68,8 @@ def setup_and_run_playbook(nickname, play_source):
     roles_path = os.path.join(ansible_utils_path, 'roles')
     list_directory_contents(roles_path)
 
-    context.CLIARGS = ImmutableDict(
-        connection='ssh',
-        module_path=None,
-        forks=10,
-        become=None,
-        become_method=None,
-        become_user=None,
-        check=False,
-        diff=False,
-        remote_user=None,
-        verbosity=3,
-    )
-
-    context.CLIARGS['roles_path'] = ['/test']
-    context.CLIARGS['role_path'] = '/testtest'
+    context.CLIARGS = ImmutableDict(module_path=['/to/mymodules', '/usr/share/ansible'], forks=10, become=None,
+                                    become_method=None, become_user=None, check=False, diff=False, verbosity=0)
     results_callback = ResultsCollectorJSONCallback()
 
     # Initialize the TaskQueueManager before calling Play.load()
