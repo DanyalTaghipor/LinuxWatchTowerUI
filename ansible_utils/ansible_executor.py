@@ -68,7 +68,9 @@ def setup_and_run_playbook(nickname, play_source):
     roles_path = os.path.join(ansible_utils_path, 'roles')
     list_directory_contents(roles_path)
 
-    context.CLIARGS = ImmutableDict(module_path=['/to/mymodules', '/usr/share/ansible'], forks=10, become=None,
+    context.CLIARGS = ImmutableDict(module_path=['/to/mymodules', '/usr/share/ansible'],
+                                    roles_path=roles_path,
+                                    forks=10, become=None,
                                     become_method=None, become_user=None, check=False, diff=False, verbosity=0)
     results_callback = ResultsCollectorJSONCallback()
 
