@@ -2,6 +2,13 @@
 
 
 
+## v1.127.0 (2024-06-08)
+
+### Feature
+
+* feat(saad): sadas ([`530a470`](https://github.com/DanyalTaghipor/LinuxWatchTowerUI/commit/530a470c5baf5ef6eb6d4705a0f31f0ebb977b36))
+
+
 ## v1.126.0 (2024-06-08)
 
 ### Feature
