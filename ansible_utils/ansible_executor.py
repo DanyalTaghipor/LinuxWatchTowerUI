@@ -2,6 +2,7 @@ import os
 import sys
 import subprocess
 import shutil
+import json  # Ensure json is imported
 from ansible.parsing.dataloader import DataLoader
 from ansible.inventory.manager import InventoryManager
 from ansible.vars.manager import VariableManager
@@ -48,7 +49,6 @@ def setup_and_run_playbook(nickname, play_source):
     inventory = InventoryManager(loader=loader, sources=[nickname + ','])
     variable_manager = VariableManager(loader=loader, inventory=inventory)
 
-
     # Determine the base path
     if getattr(sys, 'frozen', False):
         # If the application is frozen, use sys._MEIPASS
@@ -68,7 +68,6 @@ def setup_and_run_playbook(nickname, play_source):
     roles_path = os.path.join(ansible_utils_path, 'roles')
     list_directory_contents(roles_path)
 
-
     context.CLIARGS = ImmutableDict(
         connection='ssh',
         module_path=None,
@@ -79,7 +78,8 @@ def setup_and_run_playbook(nickname, play_source):
         check=False,
         diff=False,
         remote_user=None,
-        verbosity=3
+        verbosity=3,
+        roles_path=roles_path  # Add roles_path to CLIARGS
     )
 
     results_callback = ResultsCollectorJSONCallback()
