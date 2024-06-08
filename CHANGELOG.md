@@ -2,6 +2,13 @@
 
 
 
+## v1.129.0 (2024-06-08)
+
+### Feature
+
+* feat(sadsa): dasd ([`9bcbc23`](https://github.com/DanyalTaghipor/LinuxWatchTowerUI/commit/9bcbc23888b8e5732de2e9d37cc2fcabc1c1113e))
+
+
 ## v1.128.0 (2024-06-08)
 
 ### Feature
