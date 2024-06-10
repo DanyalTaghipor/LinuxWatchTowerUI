@@ -32,10 +32,10 @@ def setup_runner_environment(nicknames, role_name, play_source):
     hosts_path = os.path.join(inventory_path, 'hosts')
     if nicknames:
         with open(hosts_path, 'w') as hosts_file:
-            hosts_file.write('\n'.join(nicknames))
+            hosts_file.write('[all]\n' + '\n'.join(nicknames))
     else:
         with open(hosts_path, 'w') as hosts_file:
-            hosts_file.write('localhost')
+            hosts_file.write('[all]\nlocalhost')
 
     return base_path, 'playbook.yml'
 
@@ -46,12 +46,18 @@ def install_tool(nicknames, role_name, version):
   hosts: all
   tasks:
     - name: Ping
-      ping:
+      ansible.builtin.ping:
     """
     print(f"Generated Playbook:\n{play_source}")  # Print playbook for debugging
     base_path, playbook_name = setup_runner_environment(nicknames, role_name, play_source)
     print(f"Running Ansible Runner with playbook at {os.path.join(base_path, playbook_name)}")  # Debug print statement
-    r = ansible_runner.run(private_data_dir=base_path, playbook=playbook_name)
+
+    envvars = {
+        'ANSIBLE_STDOUT_CALLBACK': 'default',  # Avoid using awx_display callback
+        'ANSIBLE_LOAD_CALLBACK_PLUGINS': 'True',  # Ensure callback plugins are loaded
+    }
+
+    r = ansible_runner.run(private_data_dir=base_path, playbook=playbook_name, envvars=envvars)
     return r
 
 # Example usage:
