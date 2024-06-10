@@ -2,6 +2,13 @@
 
 
 
+## v1.136.0 (2024-06-10)
+
+### Feature
+
+* feat(upadte): update ([`7909c63`](https://github.com/DanyalTaghipor/LinuxWatchTowerUI/commit/7909c632a026f737eaf630a040a179be868ac71c))
+
+
 ## v1.135.1 (2024-06-10)
 
 ### Fix
