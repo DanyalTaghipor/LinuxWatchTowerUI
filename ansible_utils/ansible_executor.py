@@ -39,17 +39,17 @@ def setup_runner_environment(nicknames, role_name, play_source):
 
     return base_path, 'playbook.yml'
 
+
 def install_tool(nicknames, role_name, version):
-    play_source = f"""
+    play_source = """
     ---
-    - name: Install {role_name}
+    - name: Simple Playbook
       hosts: all
-      gather_facts: no
       tasks:
-        - name: Install {role_name}
-          import_role:
-            name: {role_name}
+        - name: Ping
+          ping:
     """
+    print(f"Generated Playbook:\n{play_source}")  # Print playbook for debugging
     base_path, playbook_name = setup_runner_environment(nicknames, role_name, play_source)
     r = ansible_runner.run(private_data_dir=base_path, playbook=playbook_name)
     return r
