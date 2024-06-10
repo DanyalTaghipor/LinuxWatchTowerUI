@@ -2,6 +2,13 @@
 
 
 
+## v1.135.1 (2024-06-10)
+
+### Fix
+
+* fix(fix): sa ([`45898c4`](https://github.com/DanyalTaghipor/LinuxWatchTowerUI/commit/45898c4eaba6ba15ed4a2f984e92854ac460771e))
+
+
 ## v1.135.0 (2024-06-10)
 
 ### Feature
