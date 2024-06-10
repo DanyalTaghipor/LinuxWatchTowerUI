@@ -2,6 +2,13 @@
 
 
 
+## v1.134.0 (2024-06-10)
+
+### Feature
+
+* feat(update): up ([`b7fafe4`](https://github.com/DanyalTaghipor/LinuxWatchTowerUI/commit/b7fafe447ac23d9be1bbfeb3570c18fc72c7bc07))
+
+
 ## v1.133.0 (2024-06-10)
 
 ### Feature
