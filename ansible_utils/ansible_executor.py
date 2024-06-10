@@ -2,10 +2,11 @@ import os
 import shutil
 import ansible_runner
 import sys
+import tempfile
 
 def setup_runner_environment(nicknames, role_name, play_source):
-    # Define paths
-    base_path = '/path/to/temp/runner_env'
+    # Create a temporary directory
+    base_path = tempfile.mkdtemp(prefix="ansible_runner_")
     project_path = os.path.join(base_path, 'project')
     roles_path = os.path.join(base_path, 'roles')
     inventory_path = os.path.join(base_path, 'inventories')
