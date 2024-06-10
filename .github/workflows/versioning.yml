@@ -207,6 +207,7 @@ jobs:
           --hidden-import "ansible_utils" \
           --hidden-import "db" \
           --hidden-import "rich" \
+          --hidden-import "ansible_runner" \
           --hidden-import "sqlite3" \
           --hidden-import "customtkinter" \
           --hidden-import "ansible" \
