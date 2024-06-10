@@ -1,10 +1,11 @@
 import os
 import shutil
 import ansible_runner
+import sys
 
 def setup_runner_environment(nicknames, role_name, play_source):
     # Define paths
-    base_path = os.path.join(os.getcwd(), 'temp', 'runner_env')
+    base_path = '/path/to/temp/runner_env'
     project_path = os.path.join(base_path, 'project')
     roles_path = os.path.join(base_path, 'roles')
     inventory_path = os.path.join(base_path, 'inventories')
@@ -20,7 +21,7 @@ def setup_runner_environment(nicknames, role_name, play_source):
         playbook_file.write(play_source)
 
     # Copy roles to roles_path
-    roles_src_path = os.path.join(os.getcwd(), 'ansible_utils', 'roles')
+    roles_src_path = os.path.join(sys._MEIPASS, 'ansible_utils', 'roles')  # Use sys._MEIPASS to reference the bundled directory
     if os.path.exists(roles_src_path):
         shutil.copytree(roles_src_path, roles_path, dirs_exist_ok=True)
     else:
@@ -28,8 +29,12 @@ def setup_runner_environment(nicknames, role_name, play_source):
 
     # Write the inventory
     hosts_path = os.path.join(inventory_path, 'hosts')
-    with open(hosts_path, 'w') as hosts_file:
-        hosts_file.write('\n'.join(nicknames))
+    if nicknames:
+        with open(hosts_path, 'w') as hosts_file:
+            hosts_file.write('\n'.join(nicknames))
+    else:
+        with open(hosts_path, 'w') as hosts_file:
+            hosts_file.write('localhost')
 
     return base_path, 'playbook.yml'
 
