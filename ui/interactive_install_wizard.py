@@ -4,7 +4,7 @@ from tkinter import ttk, messagebox
 import tkinter as tk
 from rich.console import Console
 from ansible_utils.inventory import get_host_nicknames
-from ansible_utils.roles_enum import Tools
+from ansible_utils.roles import Tools
 from ansible_utils.ansible_executor import install_tool
 from ansible_utils.check_tool import check_tool_remote
 from db.database import init_db, log_installation, check_installation
