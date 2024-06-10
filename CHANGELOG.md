@@ -2,6 +2,13 @@
 
 
 
+## v1.132.0 (2024-06-10)
+
+### Feature
+
+* feat(o): sa ([`3d095b1`](https://github.com/DanyalTaghipor/LinuxWatchTowerUI/commit/3d095b14ca49d714d0ed903002fbc3ed0fe1530b))
+
+
 ## v1.131.0 (2024-06-10)
 
 ### Feature
