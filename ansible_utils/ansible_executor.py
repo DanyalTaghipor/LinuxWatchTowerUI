@@ -43,7 +43,7 @@ def install_tool(nicknames, role_name, version):
     play_source = """
 ---
 - name: Simple Playbook
-  hosts: all
+  hosts: localhost
   tasks:
     - name: Ping
       ansible.builtin.ping:
