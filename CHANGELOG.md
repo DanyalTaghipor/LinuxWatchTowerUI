@@ -2,6 +2,13 @@
 
 
 
+## v1.143.0 (2024-06-11)
+
+### Feature
+
+* feat(dad): dsad ([`43c995e`](https://github.com/DanyalTaghipor/LinuxWatchTowerUI/commit/43c995e2cb326db4779ae269b730c3a1bc95bf9c))
+
+
 ## v1.142.0 (2024-06-11)
 
 ### Feature
