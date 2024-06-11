@@ -8,7 +8,7 @@ def setup_runner_environment(nicknames, play_source):
     # Create a temporary directory
     base_path = tempfile.mkdtemp(prefix="ansible_runner_")
     project_path = os.path.join(base_path, 'project')
-    roles_path = os.path.join(base_path, 'roles')
+    roles_path = os.path.join(project_path, 'roles')
     inventory_path = os.path.join(base_path, 'inventories')
 
     # Ensure directories exist
@@ -37,7 +37,7 @@ def setup_runner_environment(nicknames, play_source):
         with open(hosts_path, 'w') as hosts_file:
             hosts_file.write('[all]\nlocalhost')
 
-    return base_path, 'playbook.yml'
+    return base_path, 'project/playbook.yml'
 
 def install_tool(nicknames, role_name):
     play_source = f"""
