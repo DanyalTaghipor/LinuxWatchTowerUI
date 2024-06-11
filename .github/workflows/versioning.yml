@@ -79,6 +79,7 @@ jobs:
           pip install --user customtkinter
           pip install --user pyinstaller
           pip install --user ansible-runner
+          pip install --user paramiko
 
       - name: Locate Ansible Data Files
         id: locate-ansible

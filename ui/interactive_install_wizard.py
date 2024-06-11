@@ -8,6 +8,9 @@ from ansible_utils.roles_enum import Tools
 from ansible_utils.ansible_executor import install_tool
 from ansible_utils.check_tool import check_tool_remote
 from db.database import init_db, log_installation, check_installation
+import paramiko
+import subprocess
+import time
 
 console = Console()
 
@@ -164,32 +167,29 @@ class InteractiveInstallWizard:
         try:
             status_info = []
 
+            # Check each host for accessibility and sudo password requirement
             for host in self.selected_hosts:
-                installed_in_db = check_installation(host, self.selected_tool)
-                installed, version = check_tool_remote(host, self.selected_tool)
-
-                db_status = "Present" if installed_in_db else "Absent"
-                remote_status = version if installed else "Not Installed"
-
-                status_info.append((host, db_status, remote_status))
+                accessible = self.check_host_accessibility(host)
+                needs_sudo_password = self.check_sudo_password_requirement(host, self.config_path)
+                status_info.append((host, accessible, needs_sudo_password))
 
             # Display installation status in a table format
             status_frame = ctk.CTkFrame(self.parent)
             status_frame.pack(fill="both", expand=True)
 
-            status_table = ttk.Treeview(status_frame, columns=("Host", "DB Status", "Remote Status"), show='headings')
+            status_table = ttk.Treeview(status_frame, columns=("Host", "Accessible", "Sudo Password Required"), show='headings')
             status_table.heading("Host", text="Host")
-            status_table.heading("DB Status", text="DB Status")
-            status_table.heading("Remote Status", text="Remote Status")
+            status_table.heading("Accessible", text="Accessible")
+            status_table.heading("Sudo Password Required", text="Sudo Password Required")
 
-            for host, db_status, remote_status in status_info:
-                status_table.insert("", "end", values=(host, db_status, remote_status))
+            for host, accessible, needs_sudo_password in status_info:
+                status_table.insert("", "end", values=(host, "Yes" if accessible else "No", "Yes" if needs_sudo_password else "No"))
 
             status_table.pack(fill="both", expand=True)
 
             def on_finish():
-                for host, db_status, remote_status in status_info:
-                    if remote_status == "Not Installed":
+                for host, accessible, needs_sudo_password in status_info:
+                    if accessible and not needs_sudo_password:
                         role_name = Tools[self.selected_tool].value['default']
                         install_tool([host], role_name)
                         log_installation(host, self.selected_tool, "latest")
@@ -207,6 +207,39 @@ class InteractiveInstallWizard:
             messagebox.showerror("Error", str(e))
             show_return_button(self.parent)
 
+    def check_host_accessibility(self, hostname):
+        try:
+            response = subprocess.run(['ping', '-c', '1', hostname], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            return response.returncode == 0
+        except Exception as e:
+            console.print_exception()
+            return False
+
+    def check_sudo_password_requirement(self, hostname, config_path):
+        try:
+            ssh = paramiko.SSHClient()
+            ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+            ssh.connect(hostname, look_for_keys=True, config=config_path)
+
+            ssh_transport = ssh.get_transport()
+            channel = ssh_transport.open_session()
+            channel.get_pty()
+            channel.invoke_shell()
+
+            time.sleep(1)
+            channel.send('sudo -n true\n')
+            time.sleep(2)
+            output = channel.recv(1024).decode('utf-8')
+
+            channel.close()
+            ssh.close()
+
+            if 'sudo:' in output:
+                return True
+            return False
+        except Exception as e:
+            console.print_exception()
+            return None
 
 def show_interactive_install(frame):
     InteractiveInstallWizard(frame)
