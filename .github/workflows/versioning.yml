@@ -210,6 +210,7 @@ jobs:
           --add-data "${VARS_PLUGINS}:ansible/plugins/vars" \
           --add-data "${CONNECTION_PLUGINS}:ansible/plugins/connection" \
           --add-data "${ACTION_PLUGINS}:ansible/plugins/action" \
+          --add-data "/home/runner/.local/lib/python3.9/site-packages/ansible_runner:ansible_runner" \
           --hidden-import "ui" \
           --hidden-import "ansible_utils" \
           --hidden-import "db" \
