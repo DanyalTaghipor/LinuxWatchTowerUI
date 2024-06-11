@@ -27,7 +27,7 @@ def setup_runner_environment(nicknames, play_source):
         shutil.copytree(roles_src_path, roles_path, dirs_exist_ok=True)
     else:
         print(f"Roles directory does not exist at {roles_src_path}")
-    print(roles_src_path)
+
     # Write the inventory
     hosts_path = os.path.join(inventory_path, 'hosts')
     if nicknames:
@@ -37,7 +37,12 @@ def setup_runner_environment(nicknames, play_source):
         with open(hosts_path, 'w') as hosts_file:
             hosts_file.write('[all]\nlocalhost')
 
-    return base_path, 'playbook.yml'
+    # Debugging: Print the contents of the inventory file
+    print("Contents of inventory file:")
+    with open(hosts_path, 'r') as file:
+        print(file.read())
+
+    return base_path, 'playbook.yml', inventory_path
 
 def install_tool(nicknames, role_name):
     play_source = f"""
@@ -48,7 +53,7 @@ def install_tool(nicknames, role_name):
     - {role_name}
     """
     print(f"Generated Playbook:\n{play_source}")  # Print playbook for debugging
-    base_path, playbook_name = setup_runner_environment(nicknames, play_source)
+    base_path, playbook_name, inventory_path = setup_runner_environment(nicknames, play_source)
     print(f"Running Ansible Runner with playbook at {os.path.join(base_path, playbook_name)}")  # Debug print statement
 
     envvars = {
@@ -56,5 +61,5 @@ def install_tool(nicknames, role_name):
         'ANSIBLE_LOAD_CALLBACK_PLUGINS': 'True',  # Ensure callback plugins are loaded
     }
 
-    r = ansible_runner.run(private_data_dir=base_path, playbook=playbook_name, envvars=envvars)
+    r = ansible_runner.run(private_data_dir=base_path, playbook=playbook_name, inventory=inventory_path, envvars=envvars)
     return r
