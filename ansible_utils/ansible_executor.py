@@ -49,6 +49,7 @@ def install_tool(nicknames, role_name):
 ---
 - name: Install and configure {role_name}
   hosts: all
+  become: true  # Ensure tasks run with elevated privileges
   roles:
     - {role_name}
     """
