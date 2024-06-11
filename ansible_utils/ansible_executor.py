@@ -27,7 +27,7 @@ def setup_runner_environment(nicknames, play_source):
         shutil.copytree(roles_src_path, roles_path, dirs_exist_ok=True)
     else:
         print(f"Roles directory does not exist at {roles_src_path}")
-
+    print(roles_src_path)
     # Write the inventory
     hosts_path = os.path.join(inventory_path, 'hosts')
     if nicknames:
@@ -37,7 +37,7 @@ def setup_runner_environment(nicknames, play_source):
         with open(hosts_path, 'w') as hosts_file:
             hosts_file.write('[all]\nlocalhost')
 
-    return base_path, 'project/playbook.yml'
+    return base_path, 'playbook.yml'
 
 def install_tool(nicknames, role_name):
     play_source = f"""
