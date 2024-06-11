@@ -219,7 +219,7 @@ class InteractiveInstallWizard:
         try:
             ssh = paramiko.SSHClient()
             ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-            ssh.connect(hostname, look_for_keys=True, config=config_path)
+            ssh.connect(hostname, look_for_keys=True, config_file=config_path)  # Change 'config' to 'config_file'
 
             ssh_transport = ssh.get_transport()
             channel = ssh_transport.open_session()
