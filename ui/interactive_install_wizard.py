@@ -190,8 +190,8 @@ class InteractiveInstallWizard:
             def on_finish():
                 for host, db_status, remote_status in status_info:
                     if remote_status == "Not Installed":
-                        default_tool_value = Tools[self.selected_tool].value['default']
-                        install_tool([host], default_tool_value, "latest")
+                        role_name = Tools[self.selected_tool].value['default']
+                        install_tool([host], role_name)
                         log_installation(host, self.selected_tool, "latest")
 
                 messagebox.showinfo("Status", "Check the status of the installation on the hosts.")

@@ -4,7 +4,7 @@ import ansible_runner
 import sys
 import tempfile
 
-def setup_runner_environment(nicknames, role_name, play_source):
+def setup_runner_environment(nicknames, play_source):
     # Create a temporary directory
     base_path = tempfile.mkdtemp(prefix="ansible_runner_")
     project_path = os.path.join(base_path, 'project')
@@ -39,17 +39,16 @@ def setup_runner_environment(nicknames, role_name, play_source):
 
     return base_path, 'playbook.yml'
 
-def install_tool(nicknames, role_name, version):
-    play_source = """
+def install_tool(nicknames, role_name):
+    play_source = f"""
 ---
-- name: Simple Playbook
-  hosts: localhost
-  tasks:
-    - name: Ping
-      ansible.builtin.ping:
+- name: Install and configure {role_name}
+  hosts: all
+  roles:
+    - {role_name}
     """
     print(f"Generated Playbook:\n{play_source}")  # Print playbook for debugging
-    base_path, playbook_name = setup_runner_environment(nicknames, role_name, play_source)
+    base_path, playbook_name = setup_runner_environment(nicknames, play_source)
     print(f"Running Ansible Runner with playbook at {os.path.join(base_path, playbook_name)}")  # Debug print statement
 
     envvars = {
@@ -59,10 +58,3 @@ def install_tool(nicknames, role_name, version):
 
     r = ansible_runner.run(private_data_dir=base_path, playbook=playbook_name, envvars=envvars)
     return r
-
-# Example usage:
-# nicknames = ['localhost']
-# role_name = 'some_role'
-# version = '1.0'
-# result = install_tool(nicknames, role_name, version)
-# print(result)
