@@ -229,6 +229,7 @@ class InteractiveInstallWizard:
             ssh = paramiko.SSHClient()
             ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 
+            print(host_config)
             ssh.connect(
                 hostname=host_config['hostname'],
                 port=int(host_config.get('port', 22)),
