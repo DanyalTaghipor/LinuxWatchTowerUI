@@ -224,16 +224,21 @@ class InteractiveInstallWizard:
         return host_config
 
     def check_sudo_password_requirement(self, hostname, config_path):
+        console.log(f"Checking sudo password requirement for {hostname}")
         try:
             host_config = self.load_ssh_config(hostname, config_path)
+            console.log(f"Loaded SSH config for {hostname}: {host_config}")
+            
             ssh = paramiko.SSHClient()
             ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 
             # Load private key if specified
             pkey = None
             if 'identityfile' in host_config:
-                pkey = paramiko.RSAKey(filename=host_config['identityfile'][0])
+                console.log(f"Loading private key from {host_config['identityfile'][0]}")
+                pkey = load_private_key(host_config['identityfile'][0])
 
+            console.log(f"Connecting to {host_config['hostname']} on port {host_config.get('port', 22)} as user {host_config.get('user')}")
             ssh.connect(
                 hostname=host_config['hostname'],
                 port=int(host_config.get('port', 22)),
@@ -248,15 +253,19 @@ class InteractiveInstallWizard:
             channel.invoke_shell()
 
             time.sleep(1)
+            console.log("Sending sudo check command")
             channel.send('sudo -n true\n')
             time.sleep(2)
             output = channel.recv(1024).decode('utf-8')
+            console.log(f"Received output: {output}")
 
             channel.close()
             ssh.close()
 
             if 'sudo:' in output:
+                console.log(f"Sudo password required for {hostname}")
                 return True
+            console.log(f"No sudo password required for {hostname}")
             return False
         except Exception as e:
             console.print_exception()
@@ -264,3 +273,18 @@ class InteractiveInstallWizard:
 
 def show_interactive_install(frame):
     InteractiveInstallWizard(frame)
+
+def load_private_key(identityfile):
+    pkey = None
+    if identityfile:
+        try:
+            pkey = paramiko.RSAKey.from_private_key_file(identityfile)
+        except paramiko.ssh_exception.SSHException:
+            try:
+                pkey = paramiko.ECDSAKey.from_private_key_file(identityfile)
+            except paramiko.ssh_exception.SSHException:
+                try:
+                    pkey = paramiko.Ed25519Key.from_private_key_file(identityfile)
+                except paramiko.ssh_exception.SSHException:
+                    raise ValueError("Invalid key or unsupported key type.")
+    return pkey
