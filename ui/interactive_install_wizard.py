@@ -247,7 +247,7 @@ class InteractiveInstallWizard:
             pkey = None
             if 'identityfile' in host_config:
                 console.log(f"Loading private key from {host_config['identityfile'][0]}")
-                pkey = load_private_key(host_config['identityfile'][0])
+                pkey = self.load_private_key(host_config['identityfile'][0])
 
             console.log(f"Connecting to {host_config['hostname']} on port {host_config.get('port', 22)} as user {host_config.get('user')}")
 
@@ -283,25 +283,19 @@ class InteractiveInstallWizard:
         except socket.timeout:
             console.log(f"Connection to {hostname} timed out")
             return None
+        except paramiko.ssh_exception.SSHException as e:
+            console.log(f"SSHException occurred: {e}")
+            return None
         except Exception as e:
             console.print_exception()
             return None
 
+    def load_private_key(self, path):
+        try:
+            return paramiko.RSAKey.from_private_key_file(path)
+        except paramiko.SSHException:
+            return paramiko.Ed25519Key.from_private_key_file(path)
+
 
 def show_interactive_install(frame):
     InteractiveInstallWizard(frame)
-
-def load_private_key(identityfile):
-    pkey = None
-    if identityfile:
-        try:
-            pkey = paramiko.RSAKey.from_private_key_file(identityfile)
-        except paramiko.ssh_exception.SSHException:
-            try:
-                pkey = paramiko.ECDSAKey.from_private_key_file(identityfile)
-            except paramiko.ssh_exception.SSHException:
-                try:
-                    pkey = paramiko.Ed25519Key.from_private_key_file(identityfile)
-                except paramiko.ssh_exception.SSHException:
-                    raise ValueError("Invalid key or unsupported key type.")
-    return pkey
