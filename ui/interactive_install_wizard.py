@@ -14,6 +14,7 @@ import time
 import paramiko.config
 import socket
 import logging
+import getpass
 
 logger = logging.getLogger()
 logger.setLevel(logging.DEBUG)
@@ -22,7 +23,6 @@ console_handler.setLevel(logging.DEBUG)
 formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 console_handler.setFormatter(formatter)
 logger.addHandler(console_handler)
-
 
 console = Console()
 
@@ -102,22 +102,17 @@ class InteractiveInstallWizard:
                 var = tk.BooleanVar()
                 self.selected_hosts_vars.append((var, nickname))
                 
-                # Insert rows in the treeview
                 table.insert("", "end", values=(index, nickname))
 
             table.pack(fill="both", expand=True)
-
-            # Ensure the treeview is updated and rendered
             table.update_idletasks()
 
-            # Create a frame to hold the checkboxes
             checkbox_frame = tk.Frame(table_frame)
             checkbox_frame.place(relx=0, rely=0, relwidth=0.05, relheight=1)
 
             for index, child in enumerate(table.get_children(), start=1):
                 bbox = table.bbox(child)
                 if bbox:
-                    # Create a checkbox for each row and place it accurately
                     var, nickname = self.selected_hosts_vars[index - 1]
                     checkbox = tk.Checkbutton(checkbox_frame, variable=var)
                     checkbox.place(x=5, y=bbox[1] + bbox[3]//2 - checkbox.winfo_reqheight()//2)
@@ -179,13 +174,11 @@ class InteractiveInstallWizard:
         try:
             status_info = []
 
-            # Check each host for accessibility and sudo password requirement
             for host in self.selected_hosts:
                 accessible = self.check_host_accessibility(host)
                 needs_sudo_password = self.check_sudo_password_requirement(host, self.config_path)
                 status_info.append((host, accessible, needs_sudo_password))
 
-            # Display installation status in a table format
             status_frame = ctk.CTkFrame(self.parent)
             status_frame.pack(fill="both", expand=True)
 
@@ -199,6 +192,13 @@ class InteractiveInstallWizard:
 
             status_table.pack(fill="both", expand=True)
 
+            print("#####################################################################")
+            print(host)
+            print(accessible)
+            print(needs_sudo_password)
+            print(status_info)
+            print()
+            print("#####################################################################")
             def on_finish():
                 for host, accessible, needs_sudo_password in status_info:
                     if accessible and not needs_sudo_password:
@@ -210,6 +210,17 @@ class InteractiveInstallWizard:
                         except Exception as e:
                             console.print_exception()
                             messagebox.showerror("Installation Error", f"Failed to install tool on {host}: {e}")
+                    elif accessible and needs_sudo_password:
+                        sudo_password = self.prompt_for_password(host)
+                        if sudo_password:
+                            role_name = Tools[self.selected_tool].value['default']
+                            try:
+                                console.log(f"Installing tool {self.selected_tool} on host {host} with role {role_name} using sudo password")
+                                install_tool([host], role_name, sudo_password=sudo_password)
+                                log_installation(host, self.selected_tool, "latest")
+                            except Exception as e:
+                                console.print_exception()
+                                messagebox.showerror("Installation Error", f"Failed to install tool on {host}: {e}")
 
                 messagebox.showinfo("Status", "Check the status of the installation on the hosts.")
                 show_main_buttons(self.parent)
@@ -248,7 +259,6 @@ class InteractiveInstallWizard:
             ssh = paramiko.SSHClient()
             ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 
-            # Load private key if specified
             pkey = None
             if 'identityfile' in host_config:
                 console.log(f"Loading private key from {host_config['identityfile'][0]}")
@@ -262,7 +272,7 @@ class InteractiveInstallWizard:
                 username=host_config.get('user'),
                 pkey=pkey,
                 look_for_keys=True,
-                timeout=10  # Add a timeout for the connection attempt
+                timeout=10
             )
 
             ssh_transport = ssh.get_transport()
@@ -295,12 +305,14 @@ class InteractiveInstallWizard:
             console.print_exception()
             return None
 
+    def prompt_for_password(self, hostname):
+        return getpass.getpass(prompt=f"Enter sudo password for {hostname}: ")
+
     def load_private_key(self, path):
         try:
             return paramiko.RSAKey.from_private_key_file(path)
         except paramiko.SSHException:
             return paramiko.Ed25519Key.from_private_key_file(path)
-
 
 def show_interactive_install(frame):
     InteractiveInstallWizard(frame)

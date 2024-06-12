@@ -5,30 +5,25 @@ import sys
 import tempfile
 
 def setup_runner_environment(nicknames, play_source):
-    # Create a temporary directory
     base_path = tempfile.mkdtemp(prefix="ansible_runner_")
     project_path = os.path.join(base_path, 'project')
     roles_path = os.path.join(project_path, 'roles')
     inventory_path = os.path.join(base_path, 'inventories')
 
-    # Ensure directories exist
     os.makedirs(project_path, exist_ok=True)
     os.makedirs(roles_path, exist_ok=True)
     os.makedirs(inventory_path, exist_ok=True)
 
-    # Write the playbook
     playbook_path = os.path.join(project_path, 'playbook.yml')
     with open(playbook_path, 'w') as playbook_file:
         playbook_file.write(play_source)
 
-    # Copy roles to roles_path
-    roles_src_path = os.path.join(sys._MEIPASS, 'ansible_utils', 'roles')  # Use sys._MEIPASS to reference the bundled directory
+    roles_src_path = os.path.join(sys._MEIPASS, 'ansible_utils', 'roles')
     if os.path.exists(roles_src_path):
         shutil.copytree(roles_src_path, roles_path, dirs_exist_ok=True)
     else:
-        print(f"Roles directory does not exist at {roles_src_path}")
+        logging.warning(f"Roles directory does not exist at {roles_src_path}")
 
-    # Write the inventory
     hosts_path = os.path.join(inventory_path, 'hosts')
     if nicknames:
         with open(hosts_path, 'w') as hosts_file:
@@ -37,14 +32,13 @@ def setup_runner_environment(nicknames, play_source):
         with open(hosts_path, 'w') as hosts_file:
             hosts_file.write('[all]\nlocalhost')
 
-    # Debugging: Print the contents of the inventory file
-    print("Contents of inventory file:")
+    logging.debug("Contents of inventory file:")
     with open(hosts_path, 'r') as file:
-        print(file.read())
+        logging.debug(file.read())
 
     return base_path, 'playbook.yml', inventory_path
 
-def install_tool(nicknames, role_name):
+def install_tool(nicknames, role_name, sudo_password=None):
     play_source = f"""
 ---
 - name: Install and configure {role_name}
@@ -53,14 +47,17 @@ def install_tool(nicknames, role_name):
   roles:
     - {role_name}
     """
-    print(f"Generated Playbook:\n{play_source}")  # Print playbook for debugging
+    logging.debug(f"Generated Playbook:\n{play_source}")
     base_path, playbook_name, inventory_path = setup_runner_environment(nicknames, play_source)
-    print(f"Running Ansible Runner with playbook at {os.path.join(base_path, playbook_name)}")  # Debug print statement
+    logging.debug(f"Running Ansible Runner with playbook at {os.path.join(base_path, playbook_name)}")
 
     envvars = {
-        'ANSIBLE_STDOUT_CALLBACK': 'default',  # Avoid using awx_display callback
-        'ANSIBLE_LOAD_CALLBACK_PLUGINS': 'True',  # Ensure callback plugins are loaded
+        'ANSIBLE_STDOUT_CALLBACK': 'default',
+        'ANSIBLE_LOAD_CALLBACK_PLUGINS': 'True',
     }
+
+    if sudo_password:
+        envvars['ANSIBLE_BECOME_PASSWORD'] = sudo_password
 
     r = ansible_runner.run(private_data_dir=base_path, playbook=playbook_name, inventory=inventory_path, envvars=envvars)
     return r
