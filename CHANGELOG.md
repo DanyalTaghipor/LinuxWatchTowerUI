@@ -2,6 +2,13 @@
 
 
 
+## v1.149.1 (2024-06-12)
+
+### Fix
+
+* fix(text): sad ([`407d794`](https://github.com/DanyalTaghipor/LinuxWatchTowerUI/commit/407d794c5d29ce0e10f25be8a5ca35d68f40b8b1))
+
+
 ## v1.149.0 (2024-06-12)
 
 ### Feature
