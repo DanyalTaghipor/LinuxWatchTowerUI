@@ -247,7 +247,7 @@ class InteractiveInstallWizard:
             pkey = None
             if 'identityfile' in host_config:
                 console.log(f"Loading private key from {host_config['identityfile'][0]}")
-                pkey = self.load_private_key(host_config['identityfile'][0])
+                pkey = load_private_key(host_config['identityfile'][0])
 
             console.log(f"Connecting to {host_config['hostname']} on port {host_config.get('port', 22)} as user {host_config.get('user')}")
 
