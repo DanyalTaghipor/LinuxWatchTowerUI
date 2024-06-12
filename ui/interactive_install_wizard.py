@@ -229,12 +229,16 @@ class InteractiveInstallWizard:
             ssh = paramiko.SSHClient()
             ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 
-            print(host_config)
+            # Load private key if specified
+            pkey = None
+            if 'identityfile' in host_config:
+                pkey = paramiko.RSAKey(filename=host_config['identityfile'][0])
+
             ssh.connect(
                 hostname=host_config['hostname'],
                 port=int(host_config.get('port', 22)),
                 username=host_config.get('user'),
-                key_filename=host_config.get('identityfile'),
+                pkey=pkey,
                 look_for_keys=True
             )
 
