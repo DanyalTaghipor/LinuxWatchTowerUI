@@ -203,8 +203,13 @@ class InteractiveInstallWizard:
                 for host, accessible, needs_sudo_password in status_info:
                     if accessible and not needs_sudo_password:
                         role_name = Tools[self.selected_tool].value['default']
-                        install_tool([host], role_name)
-                        log_installation(host, self.selected_tool, "latest")
+                        try:
+                            console.log(f"Installing tool {self.selected_tool} on host {host} with role {role_name}")
+                            install_tool([host], role_name)
+                            log_installation(host, self.selected_tool, "latest")
+                        except Exception as e:
+                            console.print_exception()
+                            messagebox.showerror("Installation Error", f"Failed to install tool on {host}: {e}")
 
                 messagebox.showinfo("Status", "Check the status of the installation on the hosts.")
                 show_main_buttons(self.parent)
