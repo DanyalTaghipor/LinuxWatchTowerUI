@@ -12,6 +12,17 @@ import paramiko
 import subprocess
 import time
 import paramiko.config
+import socket
+import logging
+
+logger = logging.getLogger()
+logger.setLevel(logging.DEBUG)
+console_handler = logging.StreamHandler()
+console_handler.setLevel(logging.DEBUG)
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+console_handler.setFormatter(formatter)
+logger.addHandler(console_handler)
+
 
 console = Console()
 
@@ -228,7 +239,7 @@ class InteractiveInstallWizard:
         try:
             host_config = self.load_ssh_config(hostname, config_path)
             console.log(f"Loaded SSH config for {hostname}: {host_config}")
-            
+
             ssh = paramiko.SSHClient()
             ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 
@@ -236,15 +247,17 @@ class InteractiveInstallWizard:
             pkey = None
             if 'identityfile' in host_config:
                 console.log(f"Loading private key from {host_config['identityfile'][0]}")
-                pkey = load_private_key(host_config['identityfile'][0])
+                pkey = self.load_private_key(host_config['identityfile'][0])
 
             console.log(f"Connecting to {host_config['hostname']} on port {host_config.get('port', 22)} as user {host_config.get('user')}")
+
             ssh.connect(
                 hostname=host_config['hostname'],
                 port=int(host_config.get('port', 22)),
                 username=host_config.get('user'),
                 pkey=pkey,
-                look_for_keys=True
+                look_for_keys=True,
+                timeout=10  # Add a timeout for the connection attempt
             )
 
             ssh_transport = ssh.get_transport()
@@ -267,9 +280,13 @@ class InteractiveInstallWizard:
                 return True
             console.log(f"No sudo password required for {hostname}")
             return False
+        except socket.timeout:
+            console.log(f"Connection to {hostname} timed out")
+            return None
         except Exception as e:
             console.print_exception()
             return None
+
 
 def show_interactive_install(frame):
     InteractiveInstallWizard(frame)
