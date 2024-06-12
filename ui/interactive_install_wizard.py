@@ -11,6 +11,7 @@ from db.database import init_db, log_installation, check_installation
 import paramiko
 import subprocess
 import time
+import paramiko.config
 
 console = Console()
 
@@ -215,11 +216,26 @@ class InteractiveInstallWizard:
             console.print_exception()
             return False
 
+    def load_ssh_config(self, hostname, config_path):
+        ssh_config = paramiko.SSHConfig()
+        with open(config_path) as f:
+            ssh_config.parse(f)
+        host_config = ssh_config.lookup(hostname)
+        return host_config
+
     def check_sudo_password_requirement(self, hostname, config_path):
         try:
+            host_config = self.load_ssh_config(hostname, config_path)
             ssh = paramiko.SSHClient()
             ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-            ssh.connect(hostname, look_for_keys=True, config_file=config_path)  # Change 'config' to 'config_file'
+
+            ssh.connect(
+                hostname=host_config['hostname'],
+                port=int(host_config.get('port', 22)),
+                username=host_config.get('user'),
+                key_filename=host_config.get('identityfile'),
+                look_for_keys=True
+            )
 
             ssh_transport = ssh.get_transport()
             channel = ssh_transport.open_session()
