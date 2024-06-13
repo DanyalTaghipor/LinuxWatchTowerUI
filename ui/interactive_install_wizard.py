@@ -328,18 +328,20 @@ class InteractiveInstallWizard:
         password_entry = ctk.CTkEntry(password_prompt, show="*")
         password_entry.pack(pady=5)
 
+        sudo_password = tk.StringVar()
+
         def on_submit():
-            sudo_password = password_entry.get()
+            sudo_password.set(password_entry.get())
             password_prompt.destroy()
-            return sudo_password
 
         submit_button = ctk.CTkButton(password_prompt, text="Submit", command=on_submit)
         submit_button.pack(pady=10)
 
+        password_prompt.update_idletasks()  # Force the window to update and become viewable
         password_prompt.grab_set()
-        self.parent.wait_window(password_prompt)
+        password_prompt.wait_window()
 
-        return password_entry.get()
+        return sudo_password.get()
 
     def load_private_key(self, path):
         try:
