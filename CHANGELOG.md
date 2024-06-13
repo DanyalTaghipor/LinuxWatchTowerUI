@@ -2,6 +2,13 @@
 
 
 
+## v1.157.7 (2024-06-13)
+
+### Fix
+
+* fix(fsa): asd ([`429aa4e`](https://github.com/DanyalTaghipor/LinuxWatchTowerUI/commit/429aa4eff69ccf0e4dfaca1a461dc6676e1a723d))
+
+
 ## v1.157.6 (2024-06-13)
 
 ### Fix
