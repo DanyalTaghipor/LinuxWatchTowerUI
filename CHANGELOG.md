@@ -2,6 +2,13 @@
 
 
 
+## v1.157.5 (2024-06-13)
+
+### Fix
+
+* fix(ui): update ([`925e678`](https://github.com/DanyalTaghipor/LinuxWatchTowerUI/commit/925e6783723c00f7a3f244d2dc0fb39bf0058ab9))
+
+
 ## v1.157.4 (2024-06-13)
 
 ### Fix
