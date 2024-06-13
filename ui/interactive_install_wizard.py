@@ -321,6 +321,7 @@ class InteractiveInstallWizard:
     def prompt_for_password(self, host):
         password_prompt = ctk.CTkToplevel(self.parent)
         password_prompt.title("Sudo Password Required")
+        password_prompt.geometry("400x200")  # Set the desired width and height
 
         password_label = ctk.CTkLabel(password_prompt, text=f"Enter sudo password for {host}:")
         password_label.pack(pady=10)
