@@ -208,23 +208,23 @@ class InteractiveInstallWizard:
                     if accessible and not needs_sudo_password:
                         role_name = Tools[self.selected_tool].value['default']
                         try:
-                            console.log(f"Installing tool {self.selected_tool} on host {hostname} with role {role_name}")
-                            install_tool([hostname], role_name)
+                            console.log(f"Installing tool {self.selected_tool} on host {host} with role {role_name}")
+                            install_tool([host], role_name)
                             log_installation(host, self.selected_tool, "latest")
                         except Exception as e:
                             console.print_exception()
-                            messagebox.showerror("Installation Error", f"Failed to install tool on {hostname}: {e}")
+                            messagebox.showerror("Installation Error", f"Failed to install tool on {host}: {e}")
                     elif accessible and needs_sudo_password:
-                        sudo_password = self.prompt_for_password(hostname)
+                        sudo_password = self.prompt_for_password(host)
                         if sudo_password:
                             role_name = Tools[self.selected_tool].value['default']
                             try:
-                                console.log(f"Installing tool {self.selected_tool} on host {hostname} with role {role_name} using sudo password")
-                                install_tool([hostname], role_name, sudo_password=sudo_password)
+                                console.log(f"Installing tool {self.selected_tool} on host {host} with role {role_name} using sudo password")
+                                install_tool([host], role_name, sudo_password=sudo_password)
                                 log_installation(host, self.selected_tool, "latest")
                             except Exception as e:
                                 console.print_exception()
-                                messagebox.showerror("Installation Error", f"Failed to install tool on {hostname}: {e}")
+                                messagebox.showerror("Installation Error", f"Failed to install tool on {host}: {e}")
 
                 messagebox.showinfo("Status", "Check the status of the installation on the hosts.")
                 show_main_buttons(self.parent)
@@ -316,11 +316,11 @@ class InteractiveInstallWizard:
             console.print_exception()
             return None
 
-    def prompt_for_password(self, hostname):
+    def prompt_for_password(self, host):
         password_prompt = ctk.CTkToplevel(self.parent)
         password_prompt.title("Sudo Password Required")
 
-        password_label = ctk.CTkLabel(password_prompt, text=f"Enter sudo password for {hostname}:")
+        password_label = ctk.CTkLabel(password_prompt, text=f"Enter sudo password for {host}:")
         password_label.pack(pady=10)
 
         password_entry = ctk.CTkEntry(password_prompt, show="*")
