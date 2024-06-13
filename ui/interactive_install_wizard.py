@@ -293,6 +293,8 @@ class InteractiveInstallWizard:
 
             time.sleep(1)
             console.log("Sending sudo check command")
+            channel.send('echo "Checking sudo access"\n')
+            time.sleep(1)
             channel.send('sudo -n true\n')
             time.sleep(2)
             output = channel.recv(1024).decode('utf-8')
