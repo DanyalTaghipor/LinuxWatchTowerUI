@@ -2,6 +2,13 @@
 
 
 
+## v1.157.4 (2024-06-13)
+
+### Fix
+
+* fix(change): order ([`1714a71`](https://github.com/DanyalTaghipor/LinuxWatchTowerUI/commit/1714a7189a1fd0899e8ddb4c3c04c401f534ee04))
+
+
 ## v1.157.3 (2024-06-13)
 
 ### Fix
