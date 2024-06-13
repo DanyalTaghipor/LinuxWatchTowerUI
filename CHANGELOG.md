@@ -2,6 +2,13 @@
 
 
 
+## v1.157.3 (2024-06-13)
+
+### Fix
+
+* fix(up): up ([`bfc81e8`](https://github.com/DanyalTaghipor/LinuxWatchTowerUI/commit/bfc81e8c29cf9185f1bd279225e797905f9300e6))
+
+
 ## v1.157.2 (2024-06-13)
 
 ### Fix
