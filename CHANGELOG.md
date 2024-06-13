@@ -2,6 +2,13 @@
 
 
 
+## v1.158.1 (2024-06-13)
+
+### Fix
+
+* fix(ui): lk ([`13d086e`](https://github.com/DanyalTaghipor/LinuxWatchTowerUI/commit/13d086e84e07cbf7c0e72480d4607cb57fe6eb00))
+
+
 ## v1.158.0 (2024-06-13)
 
 ### Feature
