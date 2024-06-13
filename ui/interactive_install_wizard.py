@@ -92,17 +92,17 @@ class InteractiveInstallWizard:
             table_frame = ctk.CTkFrame(self.parent)
             table_frame.pack(fill="both", expand=True)
 
-            table = ttk.Treeview(table_frame, columns=("Number", "Host Nickname"), show='headings')
+            table = ttk.Treeview(table_frame, columns=("Number", "Host"), show='headings')
             table.heading("Number", text="Number")
-            table.heading("Host Nickname", text="Host Nickname")
+            table.heading("Host", text="Host")
 
             self.selected_hosts_vars = []
 
-            for index, nickname in enumerate(self.host_nicknames, start=1):
+            for index, host in enumerate(self.host_nicknames, start=1):
                 var = tk.BooleanVar()
-                self.selected_hosts_vars.append((var, nickname))
+                self.selected_hosts_vars.append((var, host))
                 
-                table.insert("", "end", values=(index, nickname))
+                table.insert("", "end", values=(index, host))
 
             table.pack(fill="both", expand=True)
             table.update_idletasks()
@@ -113,12 +113,12 @@ class InteractiveInstallWizard:
             for index, child in enumerate(table.get_children(), start=1):
                 bbox = table.bbox(child)
                 if bbox:
-                    var, nickname = self.selected_hosts_vars[index - 1]
+                    var, host = self.selected_hosts_vars[index - 1]
                     checkbox = tk.Checkbutton(checkbox_frame, variable=var)
                     checkbox.place(x=5, y=bbox[1] + bbox[3]//2 - checkbox.winfo_reqheight()//2)
 
             def on_next():
-                self.selected_hosts = [nickname for var, nickname in self.selected_hosts_vars if var.get()]
+                self.selected_hosts = [host for var, host in self.selected_hosts_vars if var.get()]
                 if not self.selected_hosts:
                     messagebox.showerror("Error", "Please select at least one host.")
                 else:
@@ -174,11 +174,11 @@ class InteractiveInstallWizard:
         try:
             status_info = []
 
-            for nickname in self.selected_hosts:
-                hostname = self.get_hostname_from_nickname(nickname, self.config_path)
+            for host in self.selected_hosts:
+                hostname = self.get_hostname_from_host(host, self.config_path)
                 accessible = self.check_host_accessibility(hostname)
-                needs_sudo_password = self.check_sudo_password_requirement(hostname, self.config_path)
-                status_info.append((nickname, hostname, accessible, needs_sudo_password))
+                needs_sudo_password = self.check_sudo_password_requirement(host, self.config_path)
+                status_info.append((host, hostname, accessible, needs_sudo_password))
 
             status_frame = ctk.CTkFrame(self.parent)
             status_frame.pack(fill="both", expand=True)
@@ -189,13 +189,13 @@ class InteractiveInstallWizard:
             status_table.heading("Accessible", text="Accessible")
             status_table.heading("Sudo Password Required", text="Sudo Password Required")
 
-            for nickname, hostname, accessible, needs_sudo_password in status_info:
-                status_table.insert("", "end", values=(nickname, hostname, "Yes" if accessible else "No", "Yes" if needs_sudo_password else "No"))
+            for host, hostname, accessible, needs_sudo_password in status_info:
+                status_table.insert("", "end", values=(host, hostname, "Yes" if accessible else "No", "Yes" if needs_sudo_password else "No"))
 
             status_table.pack(fill="both", expand=True)
 
             print("#####################################################################")
-            print(nickname)
+            print(host)
             print(hostname)
             print(accessible)
             print(needs_sudo_password)
@@ -204,13 +204,13 @@ class InteractiveInstallWizard:
             print("#####################################################################")
 
             def on_finish():
-                for nickname, hostname, accessible, needs_sudo_password in status_info:
+                for host, hostname, accessible, needs_sudo_password in status_info:
                     if accessible and not needs_sudo_password:
                         role_name = Tools[self.selected_tool].value['default']
                         try:
                             console.log(f"Installing tool {self.selected_tool} on host {hostname} with role {role_name}")
                             install_tool([hostname], role_name)
-                            log_installation(nickname, self.selected_tool, "latest")
+                            log_installation(host, self.selected_tool, "latest")
                         except Exception as e:
                             console.print_exception()
                             messagebox.showerror("Installation Error", f"Failed to install tool on {hostname}: {e}")
@@ -221,7 +221,7 @@ class InteractiveInstallWizard:
                             try:
                                 console.log(f"Installing tool {self.selected_tool} on host {hostname} with role {role_name} using sudo password")
                                 install_tool([hostname], role_name, sudo_password=sudo_password)
-                                log_installation(nickname, self.selected_tool, "latest")
+                                log_installation(host, self.selected_tool, "latest")
                             except Exception as e:
                                 console.print_exception()
                                 messagebox.showerror("Installation Error", f"Failed to install tool on {hostname}: {e}")
@@ -239,11 +239,11 @@ class InteractiveInstallWizard:
             messagebox.showerror("Error", str(e))
             show_return_button(self.parent)
 
-    def get_hostname_from_nickname(self, nickname, config_path):
+    def get_hostname_from_host(self, host, config_path):
         ssh_config = paramiko.config.SSHConfig()
         with open(config_path) as f:
             ssh_config.parse(f)
-        host_info = ssh_config.lookup(nickname)
+        host_info = ssh_config.lookup(host)
         return host_info.get("hostname")
 
     def check_host_accessibility(self, hostname):
@@ -254,18 +254,18 @@ class InteractiveInstallWizard:
             console.print_exception()
             return False
 
-    def load_ssh_config(self, hostname, config_path):
+    def load_ssh_config(self, host, config_path):
         ssh_config = paramiko.SSHConfig()
         with open(config_path) as f:
             ssh_config.parse(f)
-        host_config = ssh_config.lookup(hostname)
+        host_config = ssh_config.lookup(host)
         return host_config
 
-    def check_sudo_password_requirement(self, hostname, config_path):
-        console.log(f"Checking sudo password requirement for {hostname}")
+    def check_sudo_password_requirement(self, host, config_path):
+        console.log(f"Checking sudo password requirement for {host}")
         try:
-            host_config = self.load_ssh_config(hostname, config_path)
-            console.log(f"Loaded SSH config for {hostname}: {host_config}")
+            host_config = self.load_ssh_config(host, config_path)
+            console.log(f"Loaded SSH config for {host}: {host_config}")
 
             ssh = paramiko.SSHClient()
             ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
@@ -302,12 +302,12 @@ class InteractiveInstallWizard:
             ssh.close()
 
             if 'sudo:' in output:
-                console.log(f"Sudo password required for {hostname}")
+                console.log(f"Sudo password required for {host}")
                 return True
-            console.log(f"No sudo password required for {hostname}")
+            console.log(f"No sudo password required for {host}")
             return False
         except socket.timeout:
-            console.log(f"Connection to {hostname} timed out")
+            console.log(f"Connection to {host} timed out")
             return None
         except paramiko.ssh_exception.SSHException as e:
             console.log(f"SSHException occurred: {e}")
