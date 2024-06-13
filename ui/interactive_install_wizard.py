@@ -174,53 +174,57 @@ class InteractiveInstallWizard:
         try:
             status_info = []
 
-            for host in self.selected_hosts:
-                accessible = self.check_host_accessibility(host)
-                needs_sudo_password = self.check_sudo_password_requirement(host, self.config_path)
-                status_info.append((host, accessible, needs_sudo_password))
+            for nickname in self.selected_hosts:
+                hostname = self.get_hostname_from_nickname(nickname, self.config_path)
+                accessible = self.check_host_accessibility(hostname)
+                needs_sudo_password = self.check_sudo_password_requirement(hostname, self.config_path)
+                status_info.append((nickname, hostname, accessible, needs_sudo_password))
 
             status_frame = ctk.CTkFrame(self.parent)
             status_frame.pack(fill="both", expand=True)
 
-            status_table = ttk.Treeview(status_frame, columns=("Host", "Accessible", "Sudo Password Required"), show='headings')
+            status_table = ttk.Treeview(status_frame, columns=("Host", "Hostname", "Accessible", "Sudo Password Required"), show='headings')
             status_table.heading("Host", text="Host")
+            status_table.heading("Hostname", text="Hostname")
             status_table.heading("Accessible", text="Accessible")
             status_table.heading("Sudo Password Required", text="Sudo Password Required")
 
-            for host, accessible, needs_sudo_password in status_info:
-                status_table.insert("", "end", values=(host, "Yes" if accessible else "No", "Yes" if needs_sudo_password else "No"))
+            for nickname, hostname, accessible, needs_sudo_password in status_info:
+                status_table.insert("", "end", values=(nickname, hostname, "Yes" if accessible else "No", "Yes" if needs_sudo_password else "No"))
 
             status_table.pack(fill="both", expand=True)
 
             print("#####################################################################")
-            print(host)
+            print(nickname)
+            print(hostname)
             print(accessible)
             print(needs_sudo_password)
             print(status_info)
             print()
             print("#####################################################################")
+
             def on_finish():
-                for host, accessible, needs_sudo_password in status_info:
+                for nickname, hostname, accessible, needs_sudo_password in status_info:
                     if accessible and not needs_sudo_password:
                         role_name = Tools[self.selected_tool].value['default']
                         try:
-                            console.log(f"Installing tool {self.selected_tool} on host {host} with role {role_name}")
-                            install_tool([host], role_name)
-                            log_installation(host, self.selected_tool, "latest")
+                            console.log(f"Installing tool {self.selected_tool} on host {hostname} with role {role_name}")
+                            install_tool([hostname], role_name)
+                            log_installation(nickname, self.selected_tool, "latest")
                         except Exception as e:
                             console.print_exception()
-                            messagebox.showerror("Installation Error", f"Failed to install tool on {host}: {e}")
+                            messagebox.showerror("Installation Error", f"Failed to install tool on {hostname}: {e}")
                     elif accessible and needs_sudo_password:
-                        sudo_password = self.prompt_for_password(host)
+                        sudo_password = self.prompt_for_password(hostname)
                         if sudo_password:
                             role_name = Tools[self.selected_tool].value['default']
                             try:
-                                console.log(f"Installing tool {self.selected_tool} on host {host} with role {role_name} using sudo password")
-                                install_tool([host], role_name, sudo_password=sudo_password)
-                                log_installation(host, self.selected_tool, "latest")
+                                console.log(f"Installing tool {self.selected_tool} on host {hostname} with role {role_name} using sudo password")
+                                install_tool([hostname], role_name, sudo_password=sudo_password)
+                                log_installation(nickname, self.selected_tool, "latest")
                             except Exception as e:
                                 console.print_exception()
-                                messagebox.showerror("Installation Error", f"Failed to install tool on {host}: {e}")
+                                messagebox.showerror("Installation Error", f"Failed to install tool on {hostname}: {e}")
 
                 messagebox.showinfo("Status", "Check the status of the installation on the hosts.")
                 show_main_buttons(self.parent)
@@ -234,6 +238,13 @@ class InteractiveInstallWizard:
             console.print_exception()
             messagebox.showerror("Error", str(e))
             show_return_button(self.parent)
+
+    def get_hostname_from_nickname(self, nickname, config_path):
+        ssh_config = paramiko.config.SSHConfig()
+        with open(config_path) as f:
+            ssh_config.parse(f)
+        host_info = ssh_config.lookup(nickname)
+        return host_info.get("hostname")
 
     def check_host_accessibility(self, hostname):
         try:
@@ -306,7 +317,27 @@ class InteractiveInstallWizard:
             return None
 
     def prompt_for_password(self, hostname):
-        return getpass.getpass(prompt=f"Enter sudo password for {hostname}: ")
+        password_prompt = ctk.CTkToplevel(self.parent)
+        password_prompt.title("Sudo Password Required")
+
+        password_label = ctk.CTkLabel(password_prompt, text=f"Enter sudo password for {hostname}:")
+        password_label.pack(pady=10)
+
+        password_entry = ctk.CTkEntry(password_prompt, show="*")
+        password_entry.pack(pady=5)
+
+        def on_submit():
+            sudo_password = password_entry.get()
+            password_prompt.destroy()
+            return sudo_password
+
+        submit_button = ctk.CTkButton(password_prompt, text="Submit", command=on_submit)
+        submit_button.pack(pady=10)
+
+        password_prompt.grab_set()
+        self.parent.wait_window(password_prompt)
+
+        return password_entry.get()
 
     def load_private_key(self, path):
         try:
