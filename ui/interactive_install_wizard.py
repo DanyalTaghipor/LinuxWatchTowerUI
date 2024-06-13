@@ -205,7 +205,7 @@ class InteractiveInstallWizard:
 
             def on_finish():
                 for host, hostname, accessible, needs_sudo_password in status_info:
-                    if accessible and not needs_sudo_password:
+                    if accessible and needs_sudo_password:
                         role_name = Tools[self.selected_tool].value['default']
                         try:
                             console.log(f"Installing tool {self.selected_tool} on host {host} with role {role_name}")
@@ -214,7 +214,7 @@ class InteractiveInstallWizard:
                         except Exception as e:
                             console.print_exception()
                             messagebox.showerror("Installation Error", f"Failed to install tool on {host}: {e}")
-                    elif accessible and needs_sudo_password:
+                    elif accessible and not needs_sudo_password:
                         sudo_password = self.prompt_for_password(host)
                         if sudo_password:
                             role_name = Tools[self.selected_tool].value['default']
