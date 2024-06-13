@@ -2,6 +2,15 @@
 
 
 
+## v1.158.0 (2024-06-13)
+
+### Feature
+
+* feat(ui): ip ([`ce4b272`](https://github.com/DanyalTaghipor/LinuxWatchTowerUI/commit/ce4b27297f62b1b7bc9a875cd4dc41c733e4c631))
+
+* feat(uo): io ([`172bd6c`](https://github.com/DanyalTaghipor/LinuxWatchTowerUI/commit/172bd6c06ece4264f154ab3860e98effacb2077f))
+
+
 ## v1.157.7 (2024-06-13)
 
 ### Fix
