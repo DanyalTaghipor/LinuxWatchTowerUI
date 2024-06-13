@@ -58,6 +58,7 @@ def install_tool(nicknames, role_name, sudo_password=None):
     }
 
     if sudo_password:
+        print(f"Sudo Pass => {sudo_password}")
         envvars['ANSIBLE_BECOME_PASSWORD'] = sudo_password
 
     r = ansible_runner.run(private_data_dir=base_path, playbook=playbook_name, inventory=inventory_path, envvars=envvars)
