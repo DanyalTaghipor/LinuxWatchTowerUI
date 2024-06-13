@@ -3,6 +3,7 @@ import shutil
 import ansible_runner
 import sys
 import tempfile
+import logging
 
 def setup_runner_environment(nicknames, play_source):
     base_path = tempfile.mkdtemp(prefix="ansible_runner_")
