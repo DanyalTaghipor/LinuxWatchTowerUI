@@ -58,7 +58,7 @@ def install_tool(nicknames, role_name, sudo_password=None):
     }
 
     if sudo_password:
-        logging.debug(f"Sudo password provided for installation on hosts: {nicknames}")
+        logging.debug(f"Sudo password provided for installation on hosts: {sudo_password}")
         envvars['ANSIBLE_BECOME_PASSWORD'] = sudo_password
     else:
         logging.debug("No sudo password provided.")
@@ -66,4 +66,3 @@ def install_tool(nicknames, role_name, sudo_password=None):
     r = ansible_runner.run(private_data_dir=base_path, playbook=playbook_name, inventory=inventory_path, envvars=envvars)
     logging.debug(f"Ansible Runner finished with status: {r.status}")
     return r
-    
