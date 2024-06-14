@@ -292,6 +292,11 @@ class InteractiveInstallWizard:
             channel.invoke_shell()
 
             time.sleep(1)
+            # Read and discard the initial login messages
+            while not channel.recv_ready():
+                time.sleep(0.1)
+            channel.recv(1024)
+
             console.log("Sending sudo check command")
             channel.send('sudo -n true 2>&1\n')
             time.sleep(2)
