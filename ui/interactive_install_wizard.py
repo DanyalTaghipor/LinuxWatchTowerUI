@@ -123,7 +123,7 @@ class InteractiveInstallWizard:
                     messagebox.showerror("Error", "Please select at least one host.")
                 else:
                     self.show_progress_popup("Checking hosts...")
-                    self.check_tool_status_step()
+                    self.next_step()
                     self.hide_progress_popup()
 
             next_button = ctk.CTkButton(self.parent, text="Next", command=on_next)
@@ -156,9 +156,7 @@ class InteractiveInstallWizard:
                 try:
                     selected_tool_item = tool_table.selection()[0]
                     self.selected_tool = tool_table.item(selected_tool_item, "values")[1]
-                    self.show_progress_popup("Checking hosts...")
-                    self.check_tool_status_step()
-                    self.hide_progress_popup()
+                    self.next_step()
                 except IndexError:
                     messagebox.showerror("Error", "Please select a tool.")
 
@@ -324,32 +322,6 @@ class InteractiveInstallWizard:
         except Exception as e:
             console.print_exception()
             return None
-
-    def prompt_for_password(self, host):
-        password_prompt = ctk.CTkToplevel(self.parent)
-        password_prompt.title("Sudo Password Required")
-        password_prompt.geometry("400x200")  # Set the desired width and height
-
-        password_label = ctk.CTkLabel(password_prompt, text=f"Enter sudo password for {host}:")
-        password_label.pack(pady=10)
-
-        password_entry = ctk.CTkEntry(password_prompt, show="*")
-        password_entry.pack(pady=5)
-
-        sudo_password = tk.StringVar()
-
-        def on_submit():
-            sudo_password.set(password_entry.get())
-            password_prompt.destroy()
-
-        submit_button = ctk.CTkButton(password_prompt, text="Submit", command=on_submit)
-        submit_button.pack(pady=10)
-
-        password_prompt.update_idletasks()  # Force the window to update and become viewable
-        password_prompt.grab_set()
-        password_prompt.wait_window()
-
-        return sudo_password.get()
 
     def load_private_key(self, path):
         try:
