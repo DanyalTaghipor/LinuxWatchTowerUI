@@ -2,6 +2,13 @@
 
 
 
+## v1.161.1 (2024-06-14)
+
+### Fix
+
+* fix(up): ip ([`55b7253`](https://github.com/DanyalTaghipor/LinuxWatchTowerUI/commit/55b72533852923b5d1ec286c9e0227850b03c425))
+
+
 ## v1.161.0 (2024-06-14)
 
 ### Feature
