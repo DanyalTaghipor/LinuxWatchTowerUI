@@ -293,9 +293,7 @@ class InteractiveInstallWizard:
 
             time.sleep(1)
             console.log("Sending sudo check command")
-            channel.send('echo "Checking sudo access"\n')
-            time.sleep(1)
-            channel.send('sudo -n true\n')
+            channel.send('sudo -n true 2>&1\n')
             time.sleep(2)
             output = channel.recv(1024).decode('utf-8')
             console.log(f"Received output: {output}")
@@ -303,7 +301,7 @@ class InteractiveInstallWizard:
             channel.close()
             ssh.close()
 
-            if 'sudo:' in output:
+            if 'sudo:' in output or 'password' in output.lower():
                 console.log(f"Sudo password required for {host}")
                 return True
             console.log(f"No sudo password required for {host}")
