@@ -2,6 +2,13 @@
 
 
 
+## v1.160.0 (2024-06-14)
+
+### Feature
+
+* feat(up): up ([`5bb1382`](https://github.com/DanyalTaghipor/LinuxWatchTowerUI/commit/5bb1382addd85f2a7b3e4331355a0eeb5f868219))
+
+
 ## v1.159.0 (2024-06-13)
 
 ### Feature
