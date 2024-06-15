@@ -2,6 +2,13 @@
 
 
 
+## v1.169.0 (2024-06-15)
+
+### Feature
+
+* feat(up): ip ([`7918f0f`](https://github.com/DanyalTaghipor/LinuxWatchTowerUI/commit/7918f0fb6f17f0936d687ec53cfdd27e64e2f0af))
+
+
 ## v1.168.0 (2024-06-15)
 
 ### Feature
