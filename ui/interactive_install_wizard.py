@@ -189,21 +189,16 @@ class InteractiveInstallWizard:
             finally:
                 progress_window.destroy()
 
-        def set_grab():
-            try:
-                progress_window.grab_set()
-            except tk.TclError as e:
-                console.print_exception()
-                messagebox.showerror("Error", str(e))
+        def create_progress_window():
+            progress_window = ctk.CTkToplevel(self.parent)
+            progress_window.title("Checking Hosts")
+            progress_window.geometry("300x100")
+            progress_label = ctk.CTkLabel(progress_window, text="Checking host status. Please wait...")
+            progress_label.pack(pady=20)
+            progress_window.after(100, lambda: progress_window.grab_set())
+            return progress_window
 
-        progress_window = ctk.CTkToplevel(self.parent)
-        progress_window.title("Checking Hosts")
-        progress_window.geometry("300x100")
-        progress_label = ctk.CTkLabel(progress_window, text="Checking host status. Please wait...")
-        progress_label.pack(pady=20)
-        progress_window.after(100, set_grab)
-        progress_window.grab_set()
-
+        progress_window = create_progress_window()
         threading.Thread(target=run_check_tool_status).start()
 
     def show_status_info(self, status_info):
