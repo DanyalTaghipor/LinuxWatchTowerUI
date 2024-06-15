@@ -188,7 +188,6 @@ class InteractiveInstallWizard:
                 show_return_button(self.parent)
             finally:
                 progress_window.destroy()
-                self.next_step()  # Transition to the next step
 
         def create_progress_window():
             progress_window = ctk.CTkToplevel(self.parent)
@@ -217,17 +216,21 @@ class InteractiveInstallWizard:
         self.sudo_password_vars = {}
 
         for host, hostname, accessible, needs_sudo_password in status_info:
-            status_table.insert("", "end", values=(host, hostname, "Yes" if accessible else "No", "Yes" if needs_sudo_password else "No"))
-            if needs_sudo_password:
-                self.sudo_password_vars[host] = tk.StringVar()
-                entry = tk.Entry(status_frame, textvariable=self.sudo_password_vars[host], show='*')
-                entry.place(x=status_table.bbox(len(self.sudo_password_vars)-1, column="Sudo Password Required")[0],
-                            y=status_table.bbox(len(self.sudo_password_vars)-1, column="Sudo Password Required")[1])
-            else:
-                self.sudo_password_vars[host] = tk.StringVar(value="Not Required")
-                entry = tk.Entry(status_frame, textvariable=self.sudo_password_vars[host], state='readonly')
-                entry.place(x=status_table.bbox(len(self.sudo_password_vars)-1, column="Sudo Password Required")[0],
-                            y=status_table.bbox(len(self.sudo_password_vars)-1, column="Sudo Password Required")[1])
+            item_id = status_table.insert("", "end", values=(host, hostname, "Yes" if accessible else "No", "Yes" if needs_sudo_password else "No"))
+            self.sudo_password_vars[host] = tk.StringVar()
+
+            # Place the entry widget after the table is rendered
+            status_table.update_idletasks()
+
+            bbox = status_table.bbox(item_id, column=3)
+            if bbox:
+                if needs_sudo_password:
+                    entry = tk.Entry(status_frame, textvariable=self.sudo_password_vars[host], show='*')
+                else:
+                    self.sudo_password_vars[host].set("Not Required")
+                    entry = tk.Entry(status_frame, textvariable=self.sudo_password_vars[host], state='readonly')
+                entry.place(x=bbox[0] + status_table.winfo_rootx() - status_frame.winfo_rootx(),
+                            y=bbox[1] + status_table.winfo_rooty() - status_frame.winfo_rooty())
 
         status_table.pack(fill="both", expand=True)
 
