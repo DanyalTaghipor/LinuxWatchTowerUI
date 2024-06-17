@@ -11,7 +11,6 @@ from db.database import init_db, log_installation, check_installation
 import paramiko
 import subprocess
 import time
-import paramiko.config
 import socket
 import logging
 import threading
@@ -154,7 +153,7 @@ class InteractiveInstallWizard:
                 try:
                     selected_tool_item = tool_table.selection()[0]
                     self.selected_tool = tool_table.item(selected_tool_item, "values")[1]
-                    self.check_tool_status_step()
+                    self.next_step()
                 except IndexError:
                     messagebox.showerror("Error", "Please select a tool.")
 
@@ -215,13 +214,13 @@ class InteractiveInstallWizard:
 
         self.sudo_password_vars = {}
 
+        status_table.pack(fill="both", expand=True)
+
         for host, hostname, accessible, needs_sudo_password in status_info:
             item_id = status_table.insert("", "end", values=(host, hostname, "Yes" if accessible else "No", "Yes" if needs_sudo_password else "No"))
             self.sudo_password_vars[host] = tk.StringVar()
 
-            # Place the entry widget after the table is rendered
             status_table.update_idletasks()
-
             bbox = status_table.bbox(item_id, column=3)
             if bbox:
                 if needs_sudo_password:
@@ -231,8 +230,6 @@ class InteractiveInstallWizard:
                     entry = tk.Entry(status_frame, textvariable=self.sudo_password_vars[host], state='readonly')
                 entry.place(x=bbox[0] + status_table.winfo_rootx() - status_frame.winfo_rootx(),
                             y=bbox[1] + status_table.winfo_rooty() - status_frame.winfo_rooty())
-
-        status_table.pack(fill="both", expand=True)
 
         finish_button = ctk.CTkButton(self.parent, text="Finish", command=self.on_finish)
         finish_button.pack(pady=20)
