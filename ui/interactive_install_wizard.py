@@ -6,8 +6,7 @@ from rich.console import Console
 from ansible_utils.inventory import get_host_nicknames
 from ansible_utils.roles_enum import Tools
 from ansible_utils.ansible_executor import install_tool
-from ansible_utils.check_tool import check_tool_remote
-from db.database import init_db, log_installation, check_installation
+from db.database import init_db, log_installation
 import paramiko
 import subprocess
 import time
@@ -229,22 +228,37 @@ class InteractiveInstallWizard:
                     self.sudo_password_vars[host].set("Not Required")
                     entry = tk.Entry(status_frame, textvariable=self.sudo_password_vars[host], state='readonly')
                 entry.place(x=bbox[0] + status_table.winfo_rootx() - status_frame.winfo_rootx(),
-                            y=bbox[1] + status_table.winfo_rooty() - status_frame.winfo_rooty())
+                            y=bbox[1] + status_table.winfo_rooty() - status_frame.winfo_rooty(),
+                            width=bbox[2], height=bbox[3])
+                entry.bind("<Configure>", lambda e: self.resize_entry(entry, status_table, item_id))
 
-        finish_button = ctk.CTkButton(self.parent, text="Finish", command=self.on_finish)
-        finish_button.pack(pady=20)
+        def on_next():
+            sudo_passwords = {host: var.get() for host, var in self.sudo_password_vars.items() if var.get()}
+            if any(needs_sudo_password == "Yes" and not sudo_passwords.get(host) for host, _, _, needs_sudo_password in status_info):
+                messagebox.showerror("Error", "Please provide sudo passwords for the required hosts.")
+            else:
+                self.on_finish(sudo_passwords)
+
+        next_button = ctk.CTkButton(self.parent, text="Finish", command=on_next)
+        next_button.pack(pady=20)
 
         back_button = ctk.CTkButton(self.parent, text="Back", command=self.previous_step)
         back_button.pack(pady=10)
 
-    def on_finish(self):
+    def resize_entry(self, entry, table, item_id):
+        bbox = table.bbox(item_id, column=3)
+        entry.place(x=bbox[0] + table.winfo_rootx() - entry.winfo_rootx(),
+                    y=bbox[1] + table.winfo_rooty() - entry.winfo_rooty(),
+                    width=bbox[2], height=bbox[3])
+
+    def on_finish(self, sudo_passwords):
         from .buttons import show_main_buttons
 
         for host in self.selected_hosts:
             hostname = self.get_hostname_from_host(host, self.config_path)
             accessible = self.check_host_accessibility(hostname)
             needs_sudo_password = self.check_sudo_password_requirement(host, self.config_path)
-            sudo_password = self.sudo_password_vars[host].get() if needs_sudo_password else None
+            sudo_password = sudo_passwords.get(host) if needs_sudo_password else None
 
             if accessible and (not needs_sudo_password or sudo_password):
                 role_name = Tools[self.selected_tool].value['default']
