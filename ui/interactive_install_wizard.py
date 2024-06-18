@@ -233,9 +233,12 @@ class InteractiveInstallWizard:
                 entry.bind("<Configure>", lambda e: self.resize_entry(entry, status_table, item_id))
 
         def on_next():
-            sudo_passwords = {host: var.get() for host, var in self.sudo_password_vars.items() if var.get()}
-            if any(needs_sudo_password == "Yes" and not sudo_passwords.get(host) for host, _, _, needs_sudo_password in status_info):
-                messagebox.showerror("Error", "Please provide sudo passwords for the required hosts.")
+            sudo_passwords = {host: var.get() for host, var in self.sudo_password_vars.items()}
+
+            missing_sudo_passwords = [host for host, needs_sudo in zip(self.selected_hosts, [var.get() for var in self.sudo_password_vars.values()]) if needs_sudo == '' and status_info[self.selected_hosts.index(host)][3]]
+            
+            if missing_sudo_passwords:
+                messagebox.showerror("Error", f"Please provide sudo passwords for the required hosts: {', '.join(missing_sudo_passwords)}")
             else:
                 self.on_finish(sudo_passwords)
 
