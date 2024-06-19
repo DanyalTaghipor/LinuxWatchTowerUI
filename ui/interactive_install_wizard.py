@@ -31,7 +31,7 @@ class InteractiveInstallWizard:
         self.steps = [self.config_path_step, self.select_host_step, self.select_tool_step, self.check_tool_status_step]
         self.current_step = 0
         self.config_path = ''
-        self.selected_host = ''
+        self.selected_hosts = []
         self.selected_tool = ''
         self.version = ''
         self.host_nicknames = []
@@ -217,17 +217,16 @@ class InteractiveInstallWizard:
 
         for host, hostname, accessible, needs_sudo_password in status_info:
             status_table.insert("", "end", values=(host, hostname, "Yes" if accessible else "No", "Yes" if needs_sudo_password else "No"))
-            self.sudo_password_vars[host] = tk.StringVar()
+            if needs_sudo_password:
+                self.sudo_password_vars[host] = tk.StringVar()
 
         def on_next():
             sudo_passwords = {host: var.get() for host, var in self.sudo_password_vars.items()}
 
-            missing_sudo_passwords = [host for host, var in self.sudo_password_vars.items() if var.get() == '' and status_info[self.selected_hosts.index(host)][3]]
-            
-            if missing_sudo_passwords:
-                messagebox.showerror("Error", f"Please provide sudo passwords for the required hosts: {', '.join(missing_sudo_passwords)}")
-            else:
+            if self.sudo_password_vars:
                 self.check_sudo_passwords(sudo_passwords)
+            else:
+                self.on_finish(sudo_passwords)
 
         next_button = ctk.CTkButton(self.parent, text="Start", command=on_next)
         next_button.pack(pady=20)
@@ -240,11 +239,13 @@ class InteractiveInstallWizard:
             invalid_hosts = []
 
             for host, password in sudo_passwords.items():
-                if password and not self.validate_sudo_password(host, password):
+                if not password or not self.validate_sudo_password(host, password):
                     invalid_hosts.append(host)
 
             if invalid_hosts:
-                messagebox.showerror("Error", f"Invalid sudo password(s) for host(s): {', '.join(invalid_hosts)}")
+                for host in invalid_hosts:
+                    self.sudo_password_entries[host].configure(border_color="red")
+                messagebox.showerror("Error", f"Invalid or missing sudo password(s) for host(s): {', '.join(invalid_hosts)}")
             else:
                 self.on_finish(sudo_passwords)
             popup_window.destroy()
@@ -253,12 +254,16 @@ class InteractiveInstallWizard:
             popup_window = ctk.CTkToplevel(self.parent)
             popup_window.title("Enter Sudo Passwords")
             popup_window.geometry("300x200")
-            for host in self.selected_hosts:
+
+            self.sudo_password_entries = {}
+
+            for host in self.sudo_password_vars:
                 if self.sudo_password_vars[host].get() == '':
                     label = ctk.CTkLabel(popup_window, text=f"Enter sudo password for {host}:")
                     label.pack(pady=5)
                     entry = ctk.CTkEntry(popup_window, textvariable=self.sudo_password_vars[host], show='*')
                     entry.pack(pady=5)
+                    self.sudo_password_entries[host] = entry
 
             check_button = ctk.CTkButton(popup_window, text="Check", command=validate_passwords)
             check_button.pack(pady=20)
