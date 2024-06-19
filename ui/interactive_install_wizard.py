@@ -200,7 +200,12 @@ class InteractiveInstallWizard:
         threading.Thread(target=run_check_tool_status).start()
 
     def show_status_info(self, status_info):
-        from .buttons import show_return_button
+        from .buttons import show_main_buttons, show_return_button
+
+        if not any(host_info[2] for host_info in status_info):
+            messagebox.showerror("Error", "None of the selected hosts are available.")
+            show_main_buttons(self.parent)
+            return
 
         status_frame = ctk.CTkFrame(self.parent)
         status_frame.pack(fill="both", expand=True)
