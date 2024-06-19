@@ -308,6 +308,7 @@ class InteractiveInstallWizard:
     def on_finish(self, sudo_passwords):
         from .buttons import show_main_buttons
 
+        available_hosts = []
         for host in self.selected_hosts:
             hostname = self.get_hostname_from_host(host, self.config_path)
             accessible = self.check_host_accessibility(hostname)
@@ -315,14 +316,22 @@ class InteractiveInstallWizard:
             sudo_password = sudo_passwords.get(host) if needs_sudo_password else None
 
             if accessible and (not needs_sudo_password or sudo_password):
-                role_name = Tools[self.selected_tool].value['default']
-                try:
-                    console.log(f"Installing tool {self.selected_tool} on host {host} with role {role_name}")
-                    install_tool([host], role_name, sudo_password=sudo_password)
-                    log_installation(host, self.selected_tool, "latest")
-                except Exception as e:
-                    console.print_exception()
-                    messagebox.showerror("Installation Error", f"Failed to install tool on {host}: {e}")
+                available_hosts.append((host, hostname, sudo_password))
+
+        if not available_hosts:
+            messagebox.showerror("Error", "No available hosts to install the tool.")
+            show_main_buttons(self.parent)
+            return
+
+        for host, hostname, sudo_password in available_hosts:
+            role_name = Tools[self.selected_tool].value['default']
+            try:
+                console.log(f"Installing tool {self.selected_tool} on host {host} with role {role_name}")
+                install_tool([host], role_name, sudo_password=sudo_password)
+                log_installation(host, self.selected_tool, "latest")
+            except Exception as e:
+                console.print_exception()
+                messagebox.showerror("Installation Error", f"Failed to install tool on {host}: {e}")
 
         messagebox.showinfo("Status", "Check the status of the installation on the hosts.")
         show_main_buttons(self.parent)
