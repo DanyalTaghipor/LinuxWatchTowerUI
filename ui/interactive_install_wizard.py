@@ -216,43 +216,84 @@ class InteractiveInstallWizard:
         status_table.pack(fill="both", expand=True)
 
         for host, hostname, accessible, needs_sudo_password in status_info:
-            item_id = status_table.insert("", "end", values=(host, hostname, "Yes" if accessible else "No", "Yes" if needs_sudo_password else "No"))
+            status_table.insert("", "end", values=(host, hostname, "Yes" if accessible else "No", "Yes" if needs_sudo_password else "No"))
             self.sudo_password_vars[host] = tk.StringVar()
-
-            status_table.update_idletasks()
-            bbox = status_table.bbox(item_id, column=3)
-            if bbox:
-                if needs_sudo_password:
-                    entry = tk.Entry(status_frame, textvariable=self.sudo_password_vars[host], show='*')
-                else:
-                    self.sudo_password_vars[host].set("Not Required")
-                    entry = tk.Entry(status_frame, textvariable=self.sudo_password_vars[host], state='readonly')
-                entry.place(x=bbox[0] + status_table.winfo_rootx() - status_frame.winfo_rootx(),
-                            y=bbox[1] + status_table.winfo_rooty() - status_frame.winfo_rooty(),
-                            width=bbox[2], height=bbox[3])
-                entry.bind("<Configure>", lambda e: self.resize_entry(entry, status_table, item_id))
 
         def on_next():
             sudo_passwords = {host: var.get() for host, var in self.sudo_password_vars.items()}
 
-            missing_sudo_passwords = [host for host, needs_sudo in zip(self.selected_hosts, [var.get() for var in self.sudo_password_vars.values()]) if needs_sudo == '' and status_info[self.selected_hosts.index(host)][3]]
+            missing_sudo_passwords = [host for host, var in self.sudo_password_vars.items() if var.get() == '' and status_info[self.selected_hosts.index(host)][3]]
             
             if missing_sudo_passwords:
                 messagebox.showerror("Error", f"Please provide sudo passwords for the required hosts: {', '.join(missing_sudo_passwords)}")
             else:
-                self.on_finish(sudo_passwords)
+                self.check_sudo_passwords(sudo_passwords)
 
-        next_button = ctk.CTkButton(self.parent, text="Finish", command=on_next)
+        next_button = ctk.CTkButton(self.parent, text="Start", command=on_next)
         next_button.pack(pady=20)
 
         back_button = ctk.CTkButton(self.parent, text="Back", command=self.previous_step)
         back_button.pack(pady=10)
 
-    def resize_entry(self, entry, table, item_id):
-        bbox = table.bbox(item_id, column=3)
-        entry.place(x=bbox[0] + table.winfo_rootx() - entry.winfo_rootx(),
-                    y=bbox[1] + table.winfo_rooty() - entry.winfo_rooty(),
-                    width=bbox[2], height=bbox[3])
+    def check_sudo_passwords(self, sudo_passwords):
+        def validate_passwords():
+            invalid_hosts = []
+
+            for host, password in sudo_passwords.items():
+                if password and not self.validate_sudo_password(host, password):
+                    invalid_hosts.append(host)
+
+            if invalid_hosts:
+                messagebox.showerror("Error", f"Invalid sudo password(s) for host(s): {', '.join(invalid_hosts)}")
+            else:
+                self.on_finish(sudo_passwords)
+            popup_window.destroy()
+
+        def create_popup_window():
+            popup_window = ctk.CTkToplevel(self.parent)
+            popup_window.title("Enter Sudo Passwords")
+            popup_window.geometry("300x200")
+            for host in self.selected_hosts:
+                if self.sudo_password_vars[host].get() == '':
+                    label = ctk.CTkLabel(popup_window, text=f"Enter sudo password for {host}:")
+                    label.pack(pady=5)
+                    entry = ctk.CTkEntry(popup_window, textvariable=self.sudo_password_vars[host], show='*')
+                    entry.pack(pady=5)
+
+            check_button = ctk.CTkButton(popup_window, text="Check", command=validate_passwords)
+            check_button.pack(pady=20)
+            return popup_window
+
+        popup_window = create_popup_window()
+
+    def validate_sudo_password(self, host, password):
+        try:
+            host_config = self.load_ssh_config(host, self.config_path)
+
+            ssh = paramiko.SSHClient()
+            ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+
+            pkey = None
+            if 'identityfile' in host_config:
+                pkey = self.load_private_key(host_config['identityfile'][0])
+
+            ssh.connect(
+                hostname=host_config['hostname'],
+                port=int(host_config.get('port', 22)),
+                username=host_config.get('user'),
+                password=password,
+                pkey=pkey,
+                look_for_keys=True,
+                timeout=10
+            )
+
+            stdin, stdout, stderr = ssh.exec_command("echo 'sudo password valid'")
+            exit_status = stdout.channel.recv_exit_status()
+            ssh.close()
+            return exit_status == 0
+        except Exception as e:
+            console.print_exception()
+            return False
 
     def on_finish(self, sudo_passwords):
         from .buttons import show_main_buttons
