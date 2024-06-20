@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v1.177.0 (2024-06-20)
+
+### Feature
+
+* feat(custom_path): update ([`473eece`](https://github.com/DanyalTaghipor/LinuxWatchTowerUI/commit/473eece2c6154238a78d66422bf7f1b93ea74f9a))
+
 ## v1.176.0 (2024-06-19)
 
 ### Feature
