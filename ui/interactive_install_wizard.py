@@ -68,8 +68,14 @@ class InteractiveInstallWizard:
         config_path_entry = ctk.CTkEntry(self.parent)
         config_path_entry.pack(pady=5)
 
+        custom_roles_path_label = ctk.CTkLabel(self.parent, text="Custom Roles Path (optional):")
+        custom_roles_path_label.pack(pady=5)
+        custom_roles_path_entry = ctk.CTkEntry(self.parent)
+        custom_roles_path_entry.pack(pady=5)
+
         def on_next():
             self.config_path = config_path_entry.get() or default_config_path
+            self.custom_roles_path = custom_roles_path_entry.get() or None
             self.next_step()
 
         next_button = ctk.CTkButton(self.parent, text="Next", command=on_next)
@@ -77,6 +83,7 @@ class InteractiveInstallWizard:
 
         cancel_button = ctk.CTkButton(self.parent, text="Cancel", command=lambda: show_main_buttons(self.parent))
         cancel_button.pack(pady=10)
+
 
     def select_host_step(self):
         from .buttons import show_return_button
@@ -327,7 +334,7 @@ class InteractiveInstallWizard:
             role_name = Tools[self.selected_tool].value['default']
             try:
                 console.log(f"Installing tool {self.selected_tool} on host {host} with role {role_name}")
-                install_tool([host], role_name, sudo_password=sudo_password)
+                install_tool([host], role_name, sudo_password=sudo_password, custom_roles_path=self.custom_roles_path)
                 log_installation(host, self.selected_tool, "latest")
             except Exception as e:
                 console.print_exception()
