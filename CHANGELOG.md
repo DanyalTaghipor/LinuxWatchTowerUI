@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v1.178.0 (2024-06-22)
+
+### Feature
+
+* feat(add): get_available_tools ([`dda462f`](https://github.com/DanyalTaghipor/LinuxWatchTowerUI/commit/dda462f0af09440b31fe17c2f5afa1c1eca5dc34))
+
 ## v1.177.0 (2024-06-20)
 
 ### Feature
