@@ -1,4 +1,4 @@
-import os
+import os, sys
 import customtkinter as ctk
 from tkinter import ttk, messagebox
 import tkinter as tk
