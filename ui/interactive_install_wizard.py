@@ -24,6 +24,26 @@ logger.addHandler(console_handler)
 
 console = Console()
 
+def get_available_tools(custom_roles_path=None):
+    roles_dirs = [
+        os.path.join(sys._MEIPASS, 'ansible_utils', 'roles'),  # Default roles path
+    ]
+
+    if custom_roles_path and os.path.exists(custom_roles_path):
+        roles_dirs.append(custom_roles_path)
+
+    tools = []
+
+    for roles_dir in roles_dirs:
+        if os.path.exists(roles_dir):
+            for role_name in os.listdir(roles_dir):
+                role_path = os.path.join(roles_dir, role_name)
+                if os.path.isdir(role_path):
+                    tools.append(role_name)
+
+    return tools
+
+
 class InteractiveInstallWizard:
 
     def __init__(self, parent):
@@ -35,7 +55,7 @@ class InteractiveInstallWizard:
         self.selected_tool = ''
         self.version = ''
         self.host_nicknames = []
-        self.tool_list = list(Tools)
+        self.tool_list = get_available_tools()  # Initialize with dynamic tool list
         self.init_db()
         self.show_step()
 
@@ -151,7 +171,7 @@ class InteractiveInstallWizard:
             tool_table.heading("Tool", text="Tool")
 
             for index, tool in enumerate(self.tool_list, start=1):
-                tool_table.insert("", "end", values=(index, tool.name))
+                tool_table.insert("", "end", values=(index, tool))
 
             tool_table.pack(fill="both", expand=True)
 
@@ -331,10 +351,9 @@ class InteractiveInstallWizard:
             return
 
         for host, hostname, sudo_password in available_hosts:
-            role_name = Tools[self.selected_tool].value['default']
             try:
-                console.log(f"Installing tool {self.selected_tool} on host {host} with role {role_name}")
-                install_tool([host], role_name, sudo_password=sudo_password, custom_roles_path=self.custom_roles_path)
+                console.log(f"Installing tool {self.selected_tool} on host {host}")
+                install_tool([host], self.selected_tool, sudo_password=sudo_password, custom_roles_path=self.custom_roles_path)
                 log_installation(host, self.selected_tool, "latest")
             except Exception as e:
                 console.print_exception()
