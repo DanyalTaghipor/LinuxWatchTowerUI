@@ -33,10 +33,13 @@ def get_available_tools(custom_roles_path=None):
         roles_dirs.append(custom_roles_path)
 
     tools = []
-
+    print(f"Hey => {custom_roles_path}")
+    print(f"Hey => {roles_dirs} \n")
     for roles_dir in roles_dirs:
+        print(f"Role Status => {os.path.exists(roles_dir)} \n")
         if os.path.exists(roles_dir):
             for role_name in os.listdir(roles_dir):
+                print(f"Role Name => {role_name} \n")
                 role_path = os.path.join(roles_dir, role_name)
                 if os.path.isdir(role_path):
                     tools.append(role_name)
