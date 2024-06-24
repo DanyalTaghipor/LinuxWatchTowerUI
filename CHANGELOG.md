@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v1.179.1 (2024-06-24)
+
+### Fix
+
+* fix(fi): fix ([`8b144c2`](https://github.com/DanyalTaghipor/LinuxWatchTowerUI/commit/8b144c2438f7686aa05d97613fd52ea46b2b6aac))
+
 ## v1.179.0 (2024-06-24)
 
 ### Feature
