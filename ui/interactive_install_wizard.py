@@ -58,7 +58,7 @@ class InteractiveInstallWizard:
         self.selected_tool = ''
         self.version = ''
         self.host_nicknames = []
-        self.tool_list = get_available_tools()  # Initialize with dynamic tool list
+        self.tool_list = []
         self.init_db()
         self.show_step()
 
@@ -99,6 +99,7 @@ class InteractiveInstallWizard:
         def on_next():
             self.config_path = config_path_entry.get() or default_config_path
             self.custom_roles_path = custom_roles_path_entry.get() or None
+            self.tool_list = get_available_tools(custom_roles_path=self.custom_roles_path)
             self.next_step()
 
         next_button = ctk.CTkButton(self.parent, text="Next", command=on_next)
