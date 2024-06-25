@@ -404,39 +404,41 @@ class InteractiveInstallWizard:
 
             console.log(f"Connecting to {host_config['hostname']} on port {host_config.get('port', 22)} as user {host_config.get('user')}")
 
-            ssh.connect(
-                hostname=host_config['hostname'],
-                port=int(host_config.get('port', 22)),
-                username=host_config.get('user'),
-                pkey=pkey,
-                look_for_keys=True,
-                timeout=10
-            )
+            if str(host_config['hostname']) not in ['127.0.0.1', 'localhost']:
+                ssh.connect(
+                    hostname=host_config['hostname'],
+                    port=int(host_config.get('port', 22)),
+                    username=host_config.get('user'),
+                    pkey=pkey,
+                    look_for_keys=True,
+                    timeout=10
+                )
 
-            ssh_transport = ssh.get_transport()
-            channel = ssh_transport.open_session()
-            channel.get_pty()
-            channel.invoke_shell()
+                ssh_transport = ssh.get_transport()
+                channel = ssh_transport.open_session()
+                channel.get_pty()
+                channel.invoke_shell()
 
-            time.sleep(1)
-            # Read and discard the initial login messages
-            while not channel.recv_ready():
-                time.sleep(0.1)
-            channel.recv(1024)
+                time.sleep(1)
+                # Read and discard the initial login messages
+                while not channel.recv_ready():
+                    time.sleep(0.1)
+                channel.recv(1024)
 
-            console.log("Sending sudo check command")
-            channel.send('sudo -n true 2>&1\n')
-            time.sleep(2)
-            output = channel.recv(1024).decode('utf-8')
-            console.log(f"Received output: {output}")
+                console.log("Sending sudo check command")
+                channel.send('sudo -n true 2>&1\n')
+                time.sleep(2)
+                output = channel.recv(1024).decode('utf-8')
+                console.log(f"Received output: {output}")
 
-            channel.close()
-            ssh.close()
+                channel.close()
+                ssh.close()
 
-            if 'sudo:' in output or 'password' in output.lower():
-                console.log(f"Sudo password required for {host}")
-                return True
-            console.log(f"No sudo password required for {host}")
+                if 'sudo:' in output or 'password' in output.lower():
+                    console.log(f"Sudo password required for {host}")
+                    return True
+                console.log(f"No sudo password required for {host}")
+                return False
             return False
         except socket.timeout:
             console.log(f"Connection to {host} timed out")
