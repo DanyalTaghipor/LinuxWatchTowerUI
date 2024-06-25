@@ -7,19 +7,16 @@ def init_db():
     if not os.path.exists(db_file):
         conn = sqlite3.connect(db_file)
         cursor = conn.cursor()
-        
-        # Create installations table
+
         cursor.execute('''
             CREATE TABLE IF NOT EXISTS installations (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 host TEXT NOT NULL,
                 tool TEXT NOT NULL,
-                version TEXT NOT NULL,
                 date TEXT NOT NULL
             )
         ''')
 
-        # Create host statuses table
         cursor.execute('''
             CREATE TABLE IF NOT EXISTS host_statuses (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -33,13 +30,13 @@ def init_db():
         conn.commit()
         conn.close()
 
-def log_installation(host, tool, version):
+def log_installation(host, tool):
     conn = sqlite3.connect('installation_state.db')
     cursor = conn.cursor()
     cursor.execute('''
-        INSERT INTO installations (host, tool, version, date)
-        VALUES (?, ?, ?, ?)
-    ''', (host, tool, version, datetime.now().strftime("%Y-%m-%d %H:%M:%S")))
+        INSERT INTO installations (host, tool, date)
+        VALUES (?, ?, ?)
+    ''', (host, tool, datetime.now().strftime("%Y-%m-%d %H:%M:%S")))
     conn.commit()
     conn.close()
 

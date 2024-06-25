@@ -5,13 +5,6 @@ import sys
 import tempfile
 import logging
 
-import os
-import shutil
-import ansible_runner
-import sys
-import tempfile
-import logging
-
 def setup_runner_environment(nicknames, play_source, custom_roles_path=None):
     base_path = tempfile.mkdtemp(prefix="ansible_runner_")
     project_path = os.path.join(base_path, 'project')
@@ -26,14 +19,12 @@ def setup_runner_environment(nicknames, play_source, custom_roles_path=None):
     with open(playbook_path, 'w') as playbook_file:
         playbook_file.write(play_source)
 
-    # Copy internal roles
     roles_src_path = os.path.join(sys._MEIPASS, 'ansible_utils', 'roles')
     if os.path.exists(roles_src_path):
         shutil.copytree(roles_src_path, roles_path, dirs_exist_ok=True)
     else:
         logging.warning(f"Roles directory does not exist at {roles_src_path}")
 
-    # Copy custom roles if provided
     if custom_roles_path and os.path.exists(custom_roles_path):
         shutil.copytree(custom_roles_path, roles_path, dirs_exist_ok=True)
     else:
@@ -54,13 +45,12 @@ def setup_runner_environment(nicknames, play_source, custom_roles_path=None):
 
     return base_path, 'playbook.yml', inventory_path
 
-
 def install_tool(nicknames, role_name, sudo_password=None, custom_roles_path=None):
     play_source = f"""
 ---
 - name: Install and configure {role_name}
   hosts: all
-  become: true  # Ensure tasks run with elevated privileges
+  become: true
   roles:
     - {role_name}
   vars:
