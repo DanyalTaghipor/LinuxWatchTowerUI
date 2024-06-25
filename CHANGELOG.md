@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v1.184.1 (2024-06-25)
+
+### Fix
+
+* fix(up): up ([`6d0be86`](https://github.com/DanyalTaghipor/LinuxWatchTowerUI/commit/6d0be8634fd0aa9d406dbd58fa32c5af2e598b70))
+
 ## v1.184.0 (2024-06-25)
 
 ### Feature
