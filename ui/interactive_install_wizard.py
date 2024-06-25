@@ -99,7 +99,7 @@ class InteractiveInstallWizard:
             self.tool_list = get_available_tools(custom_roles_path=self.custom_roles_path)
             self.next_step()
 
-        next_button = ctk.CTkButton(self.parent, text="Next", command(on_next))
+        next_button = ctk.CTkButton(self.parent, text="Next", command=on_next)
         next_button.pack(pady=20)
 
         cancel_button = ctk.CTkButton(self.parent, text="Cancel", command=lambda: show_main_buttons(self.parent))
@@ -148,7 +148,7 @@ class InteractiveInstallWizard:
                 else:
                     self.next_step()
 
-            next_button = ctk.CTkButton(self.parent, text="Next", command(on_next))
+            next_button = ctk.CTkButton(self.parent, text="Next", command=on_next)
             next_button.pack(pady=20)
 
             back_button = ctk.CTkButton(self.parent, text="Back", command=self.previous_step)
@@ -200,7 +200,7 @@ class InteractiveInstallWizard:
                 else:
                     self.next_step()
 
-            next_button = ctk.CTkButton(self.parent, text="Next", command(on_next))
+            next_button = ctk.CTkButton(self.parent, text="Next", command=on_next)
             next_button.pack(pady=20)
 
             back_button = ctk.CTkButton(self.parent, text="Back", command=self.previous_step)
