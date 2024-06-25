@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v1.182.0 (2024-06-25)
+
+### Feature
+
+* feat(up): up ([`ecbbe84`](https://github.com/DanyalTaghipor/LinuxWatchTowerUI/commit/ecbbe84a2e6c5365370a3db4ff92283ca80c00a4))
+
 ## v1.181.0 (2024-06-25)
 
 ### Feature
