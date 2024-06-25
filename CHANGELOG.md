@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v1.180.0 (2024-06-25)
+
+### Feature
+
+* feat(local): host ([`ac2bc10`](https://github.com/DanyalTaghipor/LinuxWatchTowerUI/commit/ac2bc10c9a4549f8cbaad79e7503b100e5e86530))
+
 ## v1.179.1 (2024-06-24)
 
 ### Fix
