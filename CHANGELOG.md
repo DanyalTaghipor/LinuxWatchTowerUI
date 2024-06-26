@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v1.186.5 (2024-06-26)
+
+### Fix
+
+* fix(sf): oi ([`aa7daf3`](https://github.com/DanyalTaghipor/LinuxWatchTowerUI/commit/aa7daf39853f8af96f8ebe6f320635f084b1fcd1))
+
 ## v1.186.4 (2024-06-26)
 
 ### Fix
