@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v1.186.3 (2024-06-26)
+
+### Fix
+
+* fix(io): jg ([`6461f64`](https://github.com/DanyalTaghipor/LinuxWatchTowerUI/commit/6461f640cd57653b629d74732616ac1bffb4e150))
+
 ## v1.186.2 (2024-06-26)
 
 ### Fix
