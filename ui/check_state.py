@@ -86,8 +86,8 @@ def show_check_state(frame):
                     tool_list = get_available_tools(custom_roles_path=custom_roles_path)
 
                     for index, tool in enumerate(tool_list, start=1):
-                        state = check_tool_remote(selected_host, tool.name)
-                        state_table.insert("", "end", values=(index, tool.name, state))
+                        state = check_tool_remote(selected_host, tool)
+                        state_table.insert("", "end", values=(index, tool, state))
                     
                     state_table.pack(fill="both", expand=True)
                 except IndexError:
