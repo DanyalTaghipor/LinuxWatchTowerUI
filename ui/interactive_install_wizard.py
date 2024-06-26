@@ -163,8 +163,11 @@ class InteractiveInstallWizard:
                                 if needs_sudo_password is None:
                                     needs_sudo_password = "Unknown"
                                 update_host_status(host, accessible, needs_sudo_password)
+                                print(f'hoy!!! => {host} | {accessible} | {needs_sudo_password} \n')
+
                         messagebox.showinfo("Info", "Host statuses updated.")
                     except Exception as e:
+                        print(f'hey!!! => {e}')
                         console.print_exception()
                         messagebox.showerror("Error", str(e))
                     finally:
@@ -206,17 +209,19 @@ class InteractiveInstallWizard:
 
     def check_host_status(self, host):
         accessible = False
-        needs_sudo_password = False
+        needs_sudo_password = "Unknown"
 
         try:
             hostname = self.get_hostname_from_host(host, self.config_path)
             accessible = self.check_host_accessibility(hostname)
             needs_sudo_password = self.check_sudo_password_requirement(host, self.config_path)
-
+        except socket.timeout:
+            console.log(f"Connection to {host} timed out")
+            accessible = "Unknown"
+            needs_sudo_password = "Unknown"
         except Exception as e:
             console.print_exception()
-
-
+        
         return accessible, needs_sudo_password
 
 
