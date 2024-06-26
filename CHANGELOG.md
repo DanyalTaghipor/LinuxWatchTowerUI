@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v1.188.2 (2024-06-26)
+
+### Fix
+
+* fix(sad): dsa ([`dbbfbcb`](https://github.com/DanyalTaghipor/LinuxWatchTowerUI/commit/dbbfbcb1275d2398ba52f6b6fc9719546e6e4e32))
+
 ## v1.188.1 (2024-06-26)
 
 ### Fix
