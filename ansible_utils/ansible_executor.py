@@ -73,4 +73,12 @@ def install_tool(nicknames, role_name, sudo_password=None, custom_roles_path=Non
 
     r = ansible_runner.run(private_data_dir=base_path, playbook=playbook_name, inventory=inventory_path, envvars=envvars, verbosity=3)
     logging.debug(f"Ansible Runner finished with status: {r.status}")
-    return r
+    
+    log_file = os.path.join(base_path, 'artifacts', 'ansible.log')
+    if os.path.exists(log_file):
+        with open(log_file, 'r') as f:
+            logs = f.read()
+    else:
+        logs = "No log file found."
+    
+    return r.status, logs

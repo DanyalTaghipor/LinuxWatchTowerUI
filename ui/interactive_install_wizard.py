@@ -310,9 +310,12 @@ class InteractiveInstallWizard:
             def install_on_host(host):
                 try:
                     sudo_password = self.sudo_passwords.get(host, None)
-                    install_tool(host, self.selected_tool, sudo_password, self.custom_roles_path)
+                    status, logs = install_tool(host, self.selected_tool, sudo_password, custom_roles_path)
                     log_installation(host, self.selected_tool)
-                    output_text.insert(tk.END, f"Tool {self.selected_tool} installed successfully on host {host}.\n")
+                    if status == 'failed':
+                        output_text.insert(tk.END, f"Failed to install {self.selected_tool} on host {host}. Logs:\n{logs}\n")
+                    else:
+                        output_text.insert(tk.END, f"Tool {self.selected_tool} installed successfully on host {host}.\n")
                 except Exception as e:
                     output_text.insert(tk.END, f"Failed to install {self.selected_tool} on host {host}: {str(e)}\n")
                     console.print_exception()
