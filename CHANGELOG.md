@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v1.190.1 (2024-06-26)
+
+### Fix
+
+* fix(sadsa): asdasda ([`2d120c1`](https://github.com/DanyalTaghipor/LinuxWatchTowerUI/commit/2d120c12549bcb6483a403f31bf030a32ed2945f))
+
 ## v1.190.0 (2024-06-26)
 
 ### Feature
