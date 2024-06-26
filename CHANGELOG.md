@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v1.189.9 (2024-06-26)
+
+### Fix
+
+* fix(sada): sadas ([`e57c7da`](https://github.com/DanyalTaghipor/LinuxWatchTowerUI/commit/e57c7dabaa6b03b2d383ece56849799c7a82fdef))
+
 ## v1.189.8 (2024-06-26)
 
 ### Fix
