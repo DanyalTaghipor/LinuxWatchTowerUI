@@ -106,7 +106,7 @@ class InteractiveInstallWizard:
         next_button = ctk.CTkButton(self.parent, text="Next", command=on_next)
         next_button.pack(pady=20)
 
-        cancel_button = ctk.CTkButton(self.parent, text="Cancel", command=lambda: show_main_buttons(frame))
+        cancel_button = ctk.CTkButton(self.parent, text="Cancel", command=lambda: show_main_buttons(self.parent))
         cancel_button.pack(pady=10)
 
     def select_host_step(self):
