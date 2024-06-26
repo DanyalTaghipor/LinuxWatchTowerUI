@@ -299,6 +299,7 @@ class InteractiveInstallWizard:
             messagebox.showerror("Error", str(e))
 
     def install_tools_step(self):
+        from .buttons import show_main_buttons
         try:
             output_text = ctk.CTkTextbox(self.parent)
             output_text.pack(fill="both", expand=True, padx=20, pady=20)
@@ -331,10 +332,11 @@ class InteractiveInstallWizard:
 
                 output_text.insert(tk.END, "Installation process completed.\n")
 
+                return_button = ctk.CTkButton(self.parent, text="Return to Homepage", command=lambda: show_main_buttons(self.parent))
+                return_button.pack(pady=20)
+
             threading.Thread(target=install_on_all_hosts).start()
 
-            back_button = ctk.CTkButton(self.parent, text="Back", command=self.prev_step)
-            back_button.pack(pady=10)
         except Exception as e:
             console.print_exception()
             messagebox.showerror("Error", str(e))

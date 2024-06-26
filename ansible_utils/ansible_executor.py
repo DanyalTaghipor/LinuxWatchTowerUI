@@ -81,12 +81,10 @@ def install_tool(nicknames, role_name, sudo_password=None, custom_roles_path=Non
     if os.path.exists(log_dir):
         for root, dirs, files in os.walk(log_dir):
             for file in files:
-                if file == 'stdout' or file == 'stderr':
+                if file == 'stdout':
                     log_file = os.path.join(root, file)
                     with open(log_file, 'r') as f:
                         logs = f.read()
-                        print(file)
-                        print(logs)
-                        print()
+                        break
 
     return r.status, logs
