@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v1.189.7 (2024-06-26)
+
+### Fix
+
+* fix(jh): hu ([`2d1d2ac`](https://github.com/DanyalTaghipor/LinuxWatchTowerUI/commit/2d1d2ace05545fdefd62784c06da498d24341685))
+
 ## v1.189.6 (2024-06-26)
 
 ### Fix
