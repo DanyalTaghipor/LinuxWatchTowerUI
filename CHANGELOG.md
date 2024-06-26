@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v1.189.0 (2024-06-26)
+
+### Feature
+
+* feat(up): sd ([`76de305`](https://github.com/DanyalTaghipor/LinuxWatchTowerUI/commit/76de305f21a9f2a82a5446cae6fcab26a1a57b4b))
+
 ## v1.188.2 (2024-06-26)
 
 ### Fix
