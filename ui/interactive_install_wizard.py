@@ -136,6 +136,8 @@ class InteractiveInstallWizard:
                 accessible, needs_sudo_password, last_checked = host_status if host_status else ("Unknown", "Unknown", "Never")
                 table.insert("", "end", values=(index, host, accessible, needs_sudo_password, last_checked))
 
+            self.selected_hosts = [host for var, host in self.selected_hosts_vars if var.get()]
+
             table.pack(fill="both", expand=True)
             table.update_idletasks()
 
@@ -150,12 +152,16 @@ class InteractiveInstallWizard:
                     checkbox.place(x=5, y=bbox[1] + bbox[3] // 2 - checkbox.winfo_reqheight() // 2)
 
             def update_host_statuses():
+                if not self.selected_hosts:
+                    messagebox.showerror("Error", "Please select at least one host.")
+                    return
+
                 output_text.insert(tk.END, "Updating host statuses...\n")
                 progress_bar['value'] = 0
-                total_hosts = len(self.selected_hosts_vars)
+                total_hosts = len(self.selected_hosts)
                 progress_increment = 100 / total_hosts
 
-                for var, host in self.selected_hosts_vars:
+                for var, host in self.selected_hosts:
                     if var.get():
                         accessible, needs_sudo_password = self.check_host_status(host)
                         update_host_status(host, accessible, needs_sudo_password)
@@ -166,7 +172,6 @@ class InteractiveInstallWizard:
                 output_text.insert(tk.END, "Host statuses updated.\n")
 
             def on_next():
-                self.selected_hosts = [host for var, host in self.selected_hosts_vars if var.get()]
                 if not self.selected_hosts:
                     messagebox.showerror("Error", "Please select at least one host.")
                 else:
