@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v1.188.0 (2024-06-26)
+
+### Feature
+
+* feat(uio): ok ([`9627b58`](https://github.com/DanyalTaghipor/LinuxWatchTowerUI/commit/9627b58163e6c6ed878ed8392751614df1adb3c2))
+
 ## v1.187.0 (2024-06-26)
 
 ### Feature
