@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v1.185.1 (2024-06-26)
+
+### Fix
+
+* fix(fi): ui ([`e9963f7`](https://github.com/DanyalTaghipor/LinuxWatchTowerUI/commit/e9963f7af38ae29f690333b607009027fec248e5))
+
 ## v1.185.0 (2024-06-26)
 
 ### Feature
