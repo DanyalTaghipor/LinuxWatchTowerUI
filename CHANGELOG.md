@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v1.190.2 (2024-06-26)
+
+### Fix
+
+* fix(sadas): asdasqrw ([`ee213f5`](https://github.com/DanyalTaghipor/LinuxWatchTowerUI/commit/ee213f553eb4b34e9db02f5a776f963084be5b1f))
+
 ## v1.190.1 (2024-06-26)
 
 ### Fix
