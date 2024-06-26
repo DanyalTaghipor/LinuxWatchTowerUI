@@ -309,7 +309,7 @@ class InteractiveInstallWizard:
 
             def install_on_host(host):
                 try:
-                    sudo_password = sudo_passwords.get(host, None)
+                    sudo_password = self.sudo_passwords.get(host, None)
                     install_tool(host, self.selected_tool, sudo_password, self.custom_roles_path)
                     log_installation(host, self.selected_tool)
                     output_text.insert(tk.END, f"Tool {self.selected_tool} installed successfully on host {host}.\n")
