@@ -39,9 +39,9 @@ def show_check_state(frame):
     config_path_entry = ctk.CTkEntry(frame)
     config_path_entry.pack(pady=5)
 
-    custom_roles_path_label = ctk.CTkLabel(self.parent, text="Custom Roles Path (optional):")
+    custom_roles_path_label = ctk.CTkLabel(frame, text="Custom Roles Path (optional):")
     custom_roles_path_label.pack(pady=5)
-    custom_roles_path_entry = ctk.CTkEntry(self.parent)
+    custom_roles_path_entry = ctk.CTkEntry(frame)
     custom_roles_path_entry.pack(pady=5)
 
     def start_check():
