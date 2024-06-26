@@ -85,6 +85,8 @@ def install_tool(nicknames, role_name, sudo_password=None, custom_roles_path=Non
                     log_file = os.path.join(root, file)
                     with open(log_file, 'r') as f:
                         logs = f.read()
-                        break
+                        print(file)
+                        print(logs)
+                        print()
 
     return r.status, logs
