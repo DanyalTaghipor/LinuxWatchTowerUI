@@ -149,48 +149,46 @@ class InteractiveInstallWizard:
                     checkbox = tk.Checkbutton(checkbox_frame, variable=var)
                     checkbox.place(x=5, y=bbox[1] + bbox[3] // 2 - checkbox.winfo_reqheight() // 2)
 
-            def update_selected_hosts():
-                self.selected_hosts = [host for var, host in self.selected_hosts_vars if var.get()]
-
             def update_host_statuses():
-                update_selected_hosts()
-                if not self.selected_hosts:
+                selected_hosts = [host for var, host in self.selected_hosts_vars if var.get()]
+                if not selected_hosts:
                     messagebox.showerror("Error", "Please select at least one host.")
                     return
 
-                output_text.insert(tk.END, "Updating host statuses...\n")
-                progress_bar['value'] = 0
-                total_hosts = len(self.selected_hosts)
-                progress_increment = 100 / total_hosts
+                def run_update_host_statuses():
+                    try:
+                        for var, host in self.selected_hosts_vars:
+                            if var.get():
+                                accessible, needs_sudo_password = self.check_host_status(host)
+                                if needs_sudo_password is None:
+                                    needs_sudo_password = "Unknown"
+                                update_host_status(host, accessible, needs_sudo_password)
+                        messagebox.showinfo("Info", "Host statuses updated.")
+                    except Exception as e:
+                        console.print_exception()
+                        messagebox.showerror("Error", str(e))
+                    finally:
+                        progress_window.destroy()
 
-                for var, host in self.selected_hosts_vars:
-                    if var.get():
-                        try:
-                            accessible, needs_sudo_password = self.check_host_status(host)
-                            if needs_sudo_password is None:
-                                needs_sudo_password = "Unknown"  # Set a default value if None
-                            update_host_status(host, accessible, needs_sudo_password)
-                            output_text.insert(tk.END, f"Host: {host}, Accessible: {accessible}, Needs Sudo Password: {needs_sudo_password}\n")
-                            progress_bar['value'] += progress_increment
-                            self.parent.update_idletasks()
-                        except Exception as e:
-                            output_text.insert(tk.END, f"Error updating status for {host}: {str(e)}\n")
-                            console.print_exception()
+                def create_progress_window():
+                    progress_window = ctk.CTkToplevel(self.parent)
+                    progress_window.title("Checking Hosts")
+                    progress_window.geometry("300x100")
+                    progress_label = ctk.CTkLabel(progress_window, text="Updating host statuses. Please wait...")
+                    progress_label.pack(pady=20)
+                    progress_window.after(100, lambda: progress_window.grab_set())
+                    return progress_window
 
-                output_text.insert(tk.END, "Host statuses updated.\n")
+                progress_window = create_progress_window()
+                threading.Thread(target=run_update_host_statuses).start()
 
             def on_next():
-                update_selected_hosts()
+                self.selected_hosts = [host for var, host in self.selected_hosts_vars if var.get()]
                 if not self.selected_hosts:
                     messagebox.showerror("Error", "Please select at least one host.")
                 else:
                     self.next_step()
 
-            output_text = ctk.CTkTextbox(self.parent)
-            output_text.pack(fill="both", expand=True, padx=20, pady=20)
-
-            progress_bar = ttk.Progressbar(self.parent, mode='determinate')
-            progress_bar.pack(fill="x", padx=20, pady=10)
 
             next_button = ctk.CTkButton(self.parent, text="Next", command=on_next)
             next_button.pack(pady=20)
