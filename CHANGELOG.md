@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v1.186.4 (2024-06-26)
+
+### Fix
+
+* fix(up): kh ([`f98d6b3`](https://github.com/DanyalTaghipor/LinuxWatchTowerUI/commit/f98d6b3c7c3eae881e571220b86fc118132d13ef))
+
 ## v1.186.3 (2024-06-26)
 
 ### Fix
