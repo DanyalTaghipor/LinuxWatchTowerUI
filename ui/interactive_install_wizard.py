@@ -149,9 +149,11 @@ class InteractiveInstallWizard:
                     checkbox = tk.Checkbutton(checkbox_frame, variable=var)
                     checkbox.place(x=5, y=bbox[1] + bbox[3] // 2 - checkbox.winfo_reqheight() // 2)
 
-            self.selected_hosts = [host for var, host in self.selected_hosts_vars if var.get()]
+            def update_selected_hosts():
+                self.selected_hosts = [host for var, host in self.selected_hosts_vars if var.get()]
 
             def update_host_statuses():
+                update_selected_hosts()
                 if not self.selected_hosts:
                     messagebox.showerror("Error", "Please select at least one host.")
                     return
@@ -161,7 +163,7 @@ class InteractiveInstallWizard:
                 total_hosts = len(self.selected_hosts)
                 progress_increment = 100 / total_hosts
 
-                for var, host in self.selected_hosts:
+                for var, host in self.selected_hosts_vars:
                     if var.get():
                         accessible, needs_sudo_password = self.check_host_status(host)
                         update_host_status(host, accessible, needs_sudo_password)
@@ -172,6 +174,7 @@ class InteractiveInstallWizard:
                 output_text.insert(tk.END, "Host statuses updated.\n")
 
             def on_next():
+                update_selected_hosts()
                 if not self.selected_hosts:
                     messagebox.showerror("Error", "Please select at least one host.")
                 else:
