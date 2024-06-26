@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v1.190.0 (2024-06-26)
+
+### Feature
+
+* feat(dsada): asdsadsa ([`ef20f9f`](https://github.com/DanyalTaghipor/LinuxWatchTowerUI/commit/ef20f9f3c4ab19e115a08e94be87538a7647ecb3))
+
 ## v1.189.10 (2024-06-26)
 
 ### Fix
