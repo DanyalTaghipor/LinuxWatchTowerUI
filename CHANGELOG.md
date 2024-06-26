@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v1.189.6 (2024-06-26)
+
+### Fix
+
+* fix(ghj): huj ([`50c890b`](https://github.com/DanyalTaghipor/LinuxWatchTowerUI/commit/50c890b694848b3777d7c63b545437c46599be9f))
+
 ## v1.189.5 (2024-06-26)
 
 ### Fix
