@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v1.189.2 (2024-06-26)
+
+### Fix
+
+* fix(sd): sds ([`05341af`](https://github.com/DanyalTaghipor/LinuxWatchTowerUI/commit/05341af280750714b617da2c600df6239d7f4aa2))
+
 ## v1.189.1 (2024-06-26)
 
 ### Fix
