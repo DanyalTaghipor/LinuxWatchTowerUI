@@ -191,7 +191,12 @@ class InteractiveInstallWizard:
                 if not self.selected_hosts:
                     messagebox.showerror("Error", "Please select at least one host.")
 
-                hosts_needing_sudo = [host for host in self.selected_hosts if get_host_status(host)[1] == "Yes"]
+                hosts_needing_sudo = []
+                for host in self.selected_hosts:
+                    status = get_host_status(host)
+                    if status and status[1] == "Yes":
+                        hosts_needing_sudo.append(host)
+
                 if hosts_needing_sudo:
                     self.show_sudo_password_input(hosts_needing_sudo)
                 else:
