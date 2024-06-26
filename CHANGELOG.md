@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v1.189.10 (2024-06-26)
+
+### Fix
+
+* fix(sada): saas ([`265617e`](https://github.com/DanyalTaghipor/LinuxWatchTowerUI/commit/265617e4667f6165a81a9cde39b08581be178fbc))
+
 ## v1.189.9 (2024-06-26)
 
 ### Fix
