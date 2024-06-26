@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v1.189.5 (2024-06-26)
+
+### Fix
+
+* fix(dsa): dsadew ([`1aedaf6`](https://github.com/DanyalTaghipor/LinuxWatchTowerUI/commit/1aedaf64f9ab60d5cb1f497217d4129610a95d3a))
+
 ## v1.189.4 (2024-06-26)
 
 ### Fix
