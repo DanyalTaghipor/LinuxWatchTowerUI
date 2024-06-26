@@ -19,8 +19,7 @@ def init_db():
 
         cursor.execute('''
             CREATE TABLE IF NOT EXISTS host_statuses (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                host TEXT NOT NULL,
+                host TEXT PRIMARY KEY,
                 accessible INTEGER NOT NULL,
                 needs_sudo_password INTEGER NOT NULL,
                 last_checked TEXT NOT NULL
