@@ -136,8 +136,6 @@ class InteractiveInstallWizard:
                 accessible, needs_sudo_password, last_checked = host_status if host_status else ("Unknown", "Unknown", "Never")
                 table.insert("", "end", values=(index, host, accessible, needs_sudo_password, last_checked))
 
-            self.selected_hosts = [host for var, host in self.selected_hosts_vars if var.get()]
-
             table.pack(fill="both", expand=True)
             table.update_idletasks()
 
@@ -150,6 +148,8 @@ class InteractiveInstallWizard:
                     var, host = self.selected_hosts_vars[index - 1]
                     checkbox = tk.Checkbutton(checkbox_frame, variable=var)
                     checkbox.place(x=5, y=bbox[1] + bbox[3] // 2 - checkbox.winfo_reqheight() // 2)
+
+            self.selected_hosts = [host for var, host in self.selected_hosts_vars if var.get()]
 
             def update_host_statuses():
                 if not self.selected_hosts:
