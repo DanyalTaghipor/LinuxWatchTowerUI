@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v1.189.8 (2024-06-26)
+
+### Fix
+
+* fix(asdsa): asde ([`0b582ec`](https://github.com/DanyalTaghipor/LinuxWatchTowerUI/commit/0b582eccae8c471ea047a57e27b0abb9eafb3751))
+
 ## v1.189.7 (2024-06-26)
 
 ### Fix
