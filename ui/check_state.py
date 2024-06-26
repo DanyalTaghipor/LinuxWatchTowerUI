@@ -9,6 +9,25 @@ from rich.console import Console
 
 console = Console()
 
+
+def get_available_tools(custom_roles_path=None):
+    roles_dirs = [
+        os.path.join(sys._MEIPASS, 'ansible_utils', 'roles'),
+    ]
+
+    if custom_roles_path and os.path.exists(custom_roles_path):
+        roles_dirs.append(custom_roles_path)
+
+    tools = []
+    for roles_dir in roles_dirs:
+        if os.path.exists(roles_dir):
+            for role_name in os.listdir(roles_dir):
+                role_path = os.path.join(roles_dir, role_name)
+                if os.path.isdir(role_path):
+                    tools.append(role_name)
+
+    return tools
+
 def show_check_state(frame):
     from .buttons import show_return_button, show_main_buttons
 
@@ -19,10 +38,16 @@ def show_check_state(frame):
     config_path_label.pack(pady=5)
     config_path_entry = ctk.CTkEntry(frame)
     config_path_entry.pack(pady=5)
-    
+
+    custom_roles_path_label = ctk.CTkLabel(self.parent, text="Custom Roles Path (optional):")
+    custom_roles_path_label.pack(pady=5)
+    custom_roles_path_entry = ctk.CTkEntry(self.parent)
+    custom_roles_path_entry.pack(pady=5)
+
     def start_check():
         try:
             config_path = config_path_entry.get() or default_config_path
+            custom_roles_path = custom_roles_path_entry.get() or None    
             host_nicknames = get_host_nicknames(config_path=config_path)
             if not host_nicknames:
                 messagebox.showerror("Error", "No hosts found in the SSH config file.")
@@ -57,7 +82,8 @@ def show_check_state(frame):
                     state_table.heading("Tool", text="Tool")
                     state_table.heading("State", text="State")
                     
-                    tool_list = list(Tools)
+                    tool_list = get_available_tools(custom_roles_path=custom_roles_path)
+
                     for index, tool in enumerate(tool_list, start=1):
                         state = check_tool_remote(selected_host, tool.name)
                         state_table.insert("", "end", values=(index, tool.name, state))

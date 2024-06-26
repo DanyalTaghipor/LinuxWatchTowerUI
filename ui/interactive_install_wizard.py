@@ -61,6 +61,7 @@ class InteractiveInstallWizard:
         self.selected_tool = ''
         self.host_nicknames = []
         self.tool_list = []
+        self.sudo_passwords = {}
         self.init_db()
         self.show_step()
 
@@ -189,6 +190,10 @@ class InteractiveInstallWizard:
                 self.selected_hosts = [host for var, host in self.selected_hosts_vars if var.get()]
                 if not self.selected_hosts:
                     messagebox.showerror("Error", "Please select at least one host.")
+
+                hosts_needing_sudo = [host for host in self.selected_hosts if get_host_status(host)[1] == "Yes"]
+                if hosts_needing_sudo:
+                    self.show_sudo_password_input(hosts_needing_sudo)
                 else:
                     self.next_step()
 
@@ -206,6 +211,31 @@ class InteractiveInstallWizard:
             console.print_exception()
             messagebox.showerror("Error", str(e))
 
+    def show_sudo_password_input(self, hosts_needing_sudo):
+        popup = ctk.CTkToplevel(self.parent)
+        popup.title("Sudo Password Input")
+        popup.geometry("400x300")
+
+        label = ctk.CTkLabel(popup, text="Please enter sudo passwords for the following hosts:")
+        label.pack(pady=10)
+
+        entries = {}
+
+        for host in hosts_needing_sudo:
+            host_label = ctk.CTkLabel(popup, text=host)
+            host_label.pack(pady=5)
+            entry = ctk.CTkEntry(popup, show="*")
+            entry.pack(pady=5)
+            entries[host] = entry
+
+        def on_submit():
+            for host, entry in entries.items():
+                self.sudo_passwords[host] = entry.get()
+            popup.destroy()
+            self.next_step()
+
+        submit_button = ctk.CTkButton(popup, text="Submit", command=on_submit)
+        submit_button.pack(pady=20)
 
     def check_host_status(self, host):
         accessible = False
@@ -279,12 +309,10 @@ class InteractiveInstallWizard:
 
             def install_on_host(host):
                 try:
-                    if check_installation(host, self.selected_tool):
-                        output_text.insert(tk.END, f"Tool {self.selected_tool} is already installed on host {host}.\n")
-                    else:
-                        install_tool(host, self.selected_tool)
-                        log_installation(host, self.selected_tool)
-                        output_text.insert(tk.END, f"Tool {self.selected_tool} installed successfully on host {host}.\n")
+                    sudo_password = sudo_passwords.get(host, None)
+                    install_tool(host, self.selected_tool, sudo_password, self.custom_roles_path)
+                    log_installation(host, self.selected_tool)
+                    output_text.insert(tk.END, f"Tool {self.selected_tool} installed successfully on host {host}.\n")
                 except Exception as e:
                     output_text.insert(tk.END, f"Failed to install {self.selected_tool} on host {host}: {str(e)}\n")
                     console.print_exception()
