@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v1.186.0 (2024-06-26)
+
+### Feature
+
+* feat(up): up ([`a3046c0`](https://github.com/DanyalTaghipor/LinuxWatchTowerUI/commit/a3046c0a8b8c35ca513f4e6921b35fb460a1e0f0))
+
 ## v1.185.1 (2024-06-26)
 
 ### Fix
