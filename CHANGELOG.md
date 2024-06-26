@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v1.186.1 (2024-06-26)
+
+### Fix
+
+* fix(iu): io ([`208670f`](https://github.com/DanyalTaghipor/LinuxWatchTowerUI/commit/208670f8d9d37ac11587767c5f9bf612b4f491b1))
+
 ## v1.186.0 (2024-06-26)
 
 ### Feature
