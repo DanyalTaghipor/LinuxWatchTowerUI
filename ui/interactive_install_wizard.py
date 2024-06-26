@@ -85,6 +85,7 @@ class InteractiveInstallWizard:
         self.show_step()
 
     def config_path_step(self):
+        from .buttons import show_main_buttons
         default_config_path = os.path.expanduser("~/.ssh/config")
         config_path_label = ctk.CTkLabel(self.parent, text=f"Config Path (default is {default_config_path}):")
         config_path_label.pack(pady=5)
@@ -105,7 +106,7 @@ class InteractiveInstallWizard:
         next_button = ctk.CTkButton(self.parent, text="Next", command=on_next)
         next_button.pack(pady=20)
 
-        cancel_button = ctk.CTkButton(self.parent, text="Cancel", command=self.parent.destroy)
+        cancel_button = ctk.CTkButton(self.parent, text="Cancel", command=lambda: show_main_buttons(frame))
         cancel_button.pack(pady=10)
 
     def select_host_step(self):
