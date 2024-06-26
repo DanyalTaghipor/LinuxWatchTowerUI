@@ -53,7 +53,6 @@ class InteractiveInstallWizard:
             self.config_path_step,
             self.select_host_step,
             self.select_tool_step,
-            self.check_tool_status_step,
             self.install_tools_step
         ]
         self.current_step = 0
@@ -162,7 +161,7 @@ class InteractiveInstallWizard:
                                 accessible, needs_sudo_password = self.check_host_status(host)
                                 if needs_sudo_password is None:
                                     needs_sudo_password = "Unknown"
-                                update_host_status(host, accessible, needs_sudo_password)
+                                log_host_status(host, accessible, needs_sudo_password)
                                 print(f'hoy!!! => {host} | {accessible} | {needs_sudo_password} \n')
 
                         messagebox.showinfo("Info", "Host statuses updated.")
@@ -261,37 +260,6 @@ class InteractiveInstallWizard:
 
             next_button = ctk.CTkButton(self.parent, text="Next", command=on_next)
             next_button.pack(pady=20)
-
-            back_button = ctk.CTkButton(self.parent, text="Back", command=self.prev_step)
-            back_button.pack(pady=10)
-        except Exception as e:
-            console.print_exception()
-            messagebox.showerror("Error", str(e))
-
-    def check_tool_status_step(self):
-        try:
-            output_text = ctk.CTkTextbox(self.parent)
-            output_text.pack(fill="both", expand=True, padx=20, pady=20)
-            output_text.insert(tk.END, "Checking tool status on selected hosts...\n")
-
-            progress_bar = ttk.Progressbar(self.parent, mode='determinate')
-            progress_bar.pack(fill="x", padx=20, pady=10)
-
-            def log_host_statuses():
-                total_hosts = len(self.selected_hosts)
-                progress_increment = 100 / total_hosts
-
-                for host in self.selected_hosts:
-                    accessible, needs_sudo_password = self.check_host_status(host)
-                    log_host_status(host, accessible, needs_sudo_password)
-
-                    output_text.insert(tk.END, f"Host: {host}, Accessible: {accessible}, Needs Sudo Password: {needs_sudo_password}\n")
-                    progress_bar['value'] += progress_increment
-                    self.parent.update_idletasks()
-
-                self.next_step()
-
-            threading.Thread(target=log_host_statuses).start()
 
             back_button = ctk.CTkButton(self.parent, text="Back", command=self.prev_step)
             back_button.pack(pady=10)
