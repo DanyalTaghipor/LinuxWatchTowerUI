@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v1.188.1 (2024-06-26)
+
+### Fix
+
+* fix(sf): sd ([`d3a8abb`](https://github.com/DanyalTaghipor/LinuxWatchTowerUI/commit/d3a8abbef9d02ea8c700b2e760c5e462ae3e2adf))
+
 ## v1.188.0 (2024-06-26)
 
 ### Feature
