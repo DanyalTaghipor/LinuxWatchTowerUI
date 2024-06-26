@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v1.189.4 (2024-06-26)
+
+### Fix
+
+* fix(sad): sadsa ([`567505a`](https://github.com/DanyalTaghipor/LinuxWatchTowerUI/commit/567505ab32f2d71aee6dbb0b51aa6522528e4dcd))
+
 ## v1.189.3 (2024-06-26)
 
 ### Fix
