@@ -195,7 +195,7 @@ class InteractiveInstallWizard:
             next_button = ctk.CTkButton(self.parent, text="Next", command=on_next)
             next_button.pack(pady=20)
 
-            back_button = ctk.CTkButton(self.parent, text="Back", command=self.previous_step)
+            back_button = ctk.CTkButton(self.parent, text="Back", command=self.prev_step)
             back_button.pack(pady=10)
 
             update_status_button = ctk.CTkButton(self.parent, text="Update Statuses", command=update_host_statuses)
