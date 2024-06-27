@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v1.191.2 (2024-06-27)
+
+### Fix
+
+* fix(asdsa): dsawq ([`cbdd737`](https://github.com/DanyalTaghipor/LinuxWatchTowerUI/commit/cbdd737cfc7920a9706a19520c83b621578cb0fc))
+
 ## v1.191.1 (2024-06-27)
 
 ### Fix
