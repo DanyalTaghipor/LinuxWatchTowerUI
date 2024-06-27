@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v1.191.1 (2024-06-27)
+
+### Fix
+
+* fix(asdsa): dadwq ([`236d9a5`](https://github.com/DanyalTaghipor/LinuxWatchTowerUI/commit/236d9a542d606202e4a6f38164bc5ed0e5ead272))
+
 ## v1.191.0 (2024-06-27)
 
 ### Feature
