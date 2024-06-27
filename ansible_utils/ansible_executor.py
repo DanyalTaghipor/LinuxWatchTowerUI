@@ -34,7 +34,10 @@ def setup_runner_environment(host, play_source, custom_roles_path=None):
     hosts_path = os.path.join(inventory_path, 'hosts')
     if host:
         with open(hosts_path, 'w') as hosts_file:
-            hosts_file.write('[all]\n' + '\n'.join(host))
+            if isinstance(host, str):
+                hosts_file.write('[all]\n' + host)
+            else:
+                hosts_file.write('[all]\n' + '\n'.join(host))
     else:
         with open(hosts_path, 'w') as hosts_file:
             hosts_file.write('[all]\nlocalhost')

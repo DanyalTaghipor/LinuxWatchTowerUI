@@ -195,9 +195,6 @@ class InteractiveInstallWizard:
                 hosts_needing_sudo = []
                 for host in self.selected_hosts:
                     status = get_host_status(host)
-                    print(f'Host => {host}')
-                    print(f'Status => {status}')
-                    print(f'Status Type => {type(status[1])}\n')
                     if status and int(status[1]) == 1:
                         hosts_needing_sudo.append(host)
 
