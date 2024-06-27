@@ -128,14 +128,7 @@ class InteractiveInstallWizard:
             table.heading("Last Checked", text="Last Checked")
 
             self.selected_hosts_vars = []
-
-            for index, host in enumerate(self.host_nicknames, start=1):
-                var = tk.BooleanVar()
-                self.selected_hosts_vars.append((var, host))
-
-                host_status = get_host_status(host)
-                accessible, needs_sudo_password, last_checked = host_status if host_status else ("Unknown", "Unknown", "Never")
-                table.insert("", "end", values=(index, host, accessible, needs_sudo_password, last_checked))
+            self.populate_table(table)
 
             table.pack(fill="both", expand=True)
             table.update_idletasks()
@@ -167,6 +160,7 @@ class InteractiveInstallWizard:
                                 print(f'hoy!!! => {host} | {accessible} | {needs_sudo_password} \n')
 
                         messagebox.showinfo("Info", "Host statuses updated.")
+                        self.refresh_table(table)  # Refresh the table after updating statuses
                     except Exception as e:
                         print(f'hey!!! => {e}')
                         console.print_exception()
@@ -203,7 +197,6 @@ class InteractiveInstallWizard:
                 else:
                     self.next_step()
 
-
             next_button = ctk.CTkButton(self.parent, text="Next", command=on_next)
             next_button.pack(pady=20)
 
@@ -216,6 +209,32 @@ class InteractiveInstallWizard:
         except Exception as e:
             console.print_exception()
             messagebox.showerror("Error", str(e))
+
+    def populate_table(self, table):
+        table.delete(*table.get_children())
+        self.selected_hosts_vars.clear()
+
+        for index, host in enumerate(self.host_nicknames, start=1):
+            var = tk.BooleanVar()
+            self.selected_hosts_vars.append((var, host))
+
+            host_status = get_host_status(host)
+            accessible, needs_sudo_password, last_checked = host_status if host_status else ("Unknown", "Unknown", "Never")
+            table.insert("", "end", values=(index, host, accessible, needs_sudo_password, last_checked))
+
+    def refresh_table(self, table):
+        self.populate_table(table)
+        table.update_idletasks()
+
+        for widget in self.checkbox_frame.winfo_children():
+            widget.destroy()
+
+        for index, child in enumerate(table.get_children(), start=1):
+            bbox = table.bbox(child)
+            if bbox:
+                var, host = self.selected_hosts_vars[index - 1]
+                checkbox = tk.Checkbutton(self.checkbox_frame, variable=var)
+                checkbox.place(x=5, y=bbox[1] + bbox[3] // 2 - checkbox.winfo_reqheight() // 2)
 
     def show_sudo_password_input(self, hosts_needing_sudo):
         popup = ctk.CTkToplevel(self.parent)
