@@ -160,7 +160,7 @@ class InteractiveInstallWizard:
                                 print(f'hoy!!! => {host} | {accessible} | {needs_sudo_password} \n')
 
                         messagebox.showinfo("Info", "Host statuses updated.")
-                        self.refresh_table(table)  # Refresh the table after updating statuses
+                        self.refresh_table(table, checkbox_frame)  # Refresh the table after updating statuses
                     except Exception as e:
                         print(f'hey!!! => {e}')
                         console.print_exception()
@@ -222,18 +222,18 @@ class InteractiveInstallWizard:
             accessible, needs_sudo_password, last_checked = host_status if host_status else ("Unknown", "Unknown", "Never")
             table.insert("", "end", values=(index, host, accessible, needs_sudo_password, last_checked))
 
-    def refresh_table(self, table):
+    def refresh_table(self, table, checkbox_frame):
         self.populate_table(table)
         table.update_idletasks()
 
-        for widget in self.checkbox_frame.winfo_children():
+        for widget in checkbox_frame.winfo_children():
             widget.destroy()
 
         for index, child in enumerate(table.get_children(), start=1):
             bbox = table.bbox(child)
             if bbox:
                 var, host = self.selected_hosts_vars[index - 1]
-                checkbox = tk.Checkbutton(self.checkbox_frame, variable=var)
+                checkbox = tk.Checkbutton(checkbox_frame, variable=var)
                 checkbox.place(x=5, y=bbox[1] + bbox[3] // 2 - checkbox.winfo_reqheight() // 2)
 
     def show_sudo_password_input(self, hosts_needing_sudo):
