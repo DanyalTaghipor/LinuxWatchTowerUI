@@ -70,5 +70,5 @@ def show_set_target(frame):
     save_button = ctk.CTkButton(frame, text="Save", command=save_target)
     save_button.pack(pady=20)
 
-    cancel_button = ctk.CTkButton(frame, text="Cancel", command=lambda: show_main_buttons(frame))
+    cancel_button = ctk.CTkButton(frame, text="Return to Homepage", command=lambda: show_main_buttons(frame))
     cancel_button.pack(pady=10)
