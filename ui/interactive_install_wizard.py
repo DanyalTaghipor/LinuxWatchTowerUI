@@ -341,7 +341,7 @@ class InteractiveInstallWizard:
                     if status == 'failed':
                         output_text.insert(tk.END, f"Failed to install {self.selected_tool} on host {host}. Logs:\n{logs}\n")
                     else:
-                        output_text.insert(tk.END, f"Tool {self.selected_tool} installed successfully on host {host}.\n")
+                        output_text.insert(tk.END, f"Tool {self.selected_tool} installed successfully on host {host}. Logs:\n{logs}\n")
                 except Exception as e:
                     output_text.insert(tk.END, f"Failed to install {self.selected_tool} on host {host}: {str(e)}\n")
                     console.print_exception()
