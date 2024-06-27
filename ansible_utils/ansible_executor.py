@@ -5,7 +5,7 @@ import sys
 import tempfile
 import logging
 
-def setup_runner_environment(nicknames, play_source, custom_roles_path=None):
+def setup_runner_environment(host, play_source, custom_roles_path=None):
     base_path = tempfile.mkdtemp(prefix="ansible_runner_")
     project_path = os.path.join(base_path, 'project')
     roles_path = os.path.join(project_path, 'roles')
@@ -32,9 +32,9 @@ def setup_runner_environment(nicknames, play_source, custom_roles_path=None):
             logging.warning(f"Custom roles directory does not exist at {custom_roles_path}")
 
     hosts_path = os.path.join(inventory_path, 'hosts')
-    if nicknames:
+    if host:
         with open(hosts_path, 'w') as hosts_file:
-            hosts_file.write('[all]\n' + '\n'.join(nicknames))
+            hosts_file.write('[all]\n' + '\n'.join(host))
     else:
         with open(hosts_path, 'w') as hosts_file:
             hosts_file.write('[all]\nlocalhost')
@@ -45,7 +45,7 @@ def setup_runner_environment(nicknames, play_source, custom_roles_path=None):
 
     return base_path, 'playbook.yml', inventory_path
 
-def install_tool(nicknames, role_name, sudo_password=None, custom_roles_path=None):
+def install_tool(host, role_name, sudo_password=None, custom_roles_path=None):
     play_source = f"""
 ---
 - name: Install and configure {role_name}
@@ -56,8 +56,8 @@ def install_tool(nicknames, role_name, sudo_password=None, custom_roles_path=Non
   vars:
     ansible_become_password: "{{{{ lookup('env', 'ANSIBLE_BECOME_PASSWORD') }}}}"
     """
-    logging.debug(f"Generated Playbook:\n{play_source}")
-    base_path, playbook_name, inventory_path = setup_runner_environment(nicknames, play_source, custom_roles_path)
+    logging.debug(f"Generated Playbook For {host}:\n{play_source}")
+    base_path, playbook_name, inventory_path = setup_runner_environment(host, play_source, custom_roles_path)
     logging.debug(f"Running Ansible Runner with playbook at {os.path.join(base_path, playbook_name)}")
 
     envvars = {
