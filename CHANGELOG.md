@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v1.190.5 (2024-06-27)
+
+### Fix
+
+* fix(dsadas): asfe ([`e9d75e8`](https://github.com/DanyalTaghipor/LinuxWatchTowerUI/commit/e9d75e854328f00c292da877fd506786b941ebbb))
+
 ## v1.190.4 (2024-06-27)
 
 ### Fix
