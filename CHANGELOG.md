@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v1.190.4 (2024-06-27)
+
+### Fix
+
+* fix(asdsa): sada ([`c845f08`](https://github.com/DanyalTaghipor/LinuxWatchTowerUI/commit/c845f08502159a63eb9bd44143f8de1093004ee8))
+
 ## v1.190.3 (2024-06-27)
 
 ### Fix
