@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v1.191.0 (2024-06-27)
+
+### Feature
+
+* feat(ik): sadas ([`0500c17`](https://github.com/DanyalTaghipor/LinuxWatchTowerUI/commit/0500c175692f75ee5c4e01a5f8505d61548e9c03))
+
 ## v1.190.6 (2024-06-27)
 
 ### Fix
