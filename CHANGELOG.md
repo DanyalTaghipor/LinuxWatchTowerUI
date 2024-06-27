@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v1.190.6 (2024-06-27)
+
+### Fix
+
+* fix(dasda): asdwq ([`57cc5a2`](https://github.com/DanyalTaghipor/LinuxWatchTowerUI/commit/57cc5a2ddc2d0837ce22f6f2d64898c523fe46d4))
+
 ## v1.190.5 (2024-06-27)
 
 ### Fix
