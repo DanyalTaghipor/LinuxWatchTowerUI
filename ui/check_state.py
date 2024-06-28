@@ -71,12 +71,24 @@ def check_tool_remote(host, tool, config_path):
 
         if tool_path:
             console.log(f"{tool} is available on {host}")
-            stdin, stdout, stderr = ssh.exec_command(f"{tool} --version")
-            version_output = stdout.read().decode().strip()
-            error_output = stderr.read().decode().strip()
-            console.log(f"Version output: {version_output}")
-            console.log(f"Error output (if any): {error_output}")
-            version = version_output.split("\n")[0] if version_output else "N/A"
+
+            version_commands = [
+                f"{tool} --version",
+                f"{tool} -v",
+            ]
+
+            version = "N/A"
+            for cmd in version_commands:
+                console.log(f"Trying command: {cmd}")
+                stdin, stdout, stderr = ssh.exec_command(cmd)
+                version_output = stdout.read().decode().strip()
+                error_output = stderr.read().decode().strip()
+                console.log(f"Version output: {version_output}")
+                console.log(f"Error output (if any): {error_output}")
+                if version_output:
+                    version = version_output.split("\n")[0]
+                    break
+
             ssh.close()
             return "Available", version
         else:
