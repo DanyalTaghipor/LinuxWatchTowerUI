@@ -1,15 +1,15 @@
 import os
 import sys
+import socket
+import time
+import paramiko
 import customtkinter as ctk
 from tkinter import ttk, messagebox
 from ansible_utils.inventory import get_host_nicknames
-from ansible_utils.roles_enum import Tools
-from ansible_utils.check_tool import check_tool_remote
 from .utils import clear_frame
 from rich.console import Console
 
 console = Console()
-
 
 def get_available_tools(custom_roles_path=None):
     roles_dirs = [
@@ -28,6 +28,58 @@ def get_available_tools(custom_roles_path=None):
                     tools.append(role_name)
 
     return tools
+
+def load_ssh_config(host, config_path):
+    ssh_config = paramiko.SSHConfig()
+    with open(config_path) as f:
+        ssh_config.parse(f)
+    host_config = ssh_config.lookup(host)
+    return host_config
+
+def check_tool_remote(host, tool, config_path):
+    console.log(f"Checking {tool} on {host}")
+    try:
+        host_config = load_ssh_config(host, config_path)
+        console.log(f"Loaded SSH config for {host}: {host_config}")
+
+        ssh = paramiko.SSHClient()
+        ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+
+        pkey = None
+        if 'identityfile' in host_config:
+            console.log(f"Loading private key from {host_config['identityfile'][0]}")
+            pkey = paramiko.RSAKey.from_private_key_file(host_config['identityfile'][0])
+
+        console.log(f"Connecting to {host_config['hostname']} on port {host_config.get('port', 22)} as user {host_config.get('user')}")
+
+        ssh.connect(
+            hostname=host_config['hostname'],
+            port=int(host_config.get('port', 22)),
+            username=host_config.get('user'),
+            pkey=pkey,
+            look_for_keys=True,
+            timeout=10
+        )
+
+        stdin, stdout, stderr = ssh.exec_command(f"command -v {tool}")
+        output = stdout.read().decode().strip()
+        ssh.close()
+
+        if output:
+            console.log(f"{tool} is available on {host}")
+            return "Available"
+        else:
+            console.log(f"{tool} is not available on {host}")
+            return "Not Available"
+    except socket.timeout:
+        console.log(f"Connection to {host} timed out")
+        return "Timeout"
+    except paramiko.ssh_exception.SSHException as e:
+        console.log(f"SSHException occurred: {e}")
+        return f"SSH Error: {e}"
+    except Exception as e:
+        console.print_exception()
+        return f"Error: {e}"
 
 def show_check_state(frame):
     from .buttons import show_return_button, show_main_buttons
@@ -86,10 +138,13 @@ def show_check_state(frame):
                     tool_list = get_available_tools(custom_roles_path=custom_roles_path)
 
                     for index, tool in enumerate(tool_list, start=1):
-                        state = check_tool_remote(selected_host, tool)
+                        state = check_tool_remote(selected_host, tool, config_path)
                         state_table.insert("", "end", values=(index, tool, state))
                     
                     state_table.pack(fill="both", expand=True)
+
+                    return_homepage = ctk.CTkButton(frame, text="Return to Homepage", command=lambda: show_main_buttons(frame))
+                    return_homepage.pack(pady=10)
                 except IndexError:
                     messagebox.showerror("Error", "Please select a host.")
                 except ModuleNotFoundError as mnfe:
