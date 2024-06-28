@@ -62,17 +62,22 @@ def check_tool_remote(host, tool, config_path):
             timeout=10
         )
 
+        if ssh.get_transport() is None or not ssh.get_transport().is_active():
+            console.log(f"Failed to establish SSH connection to {host}")
+            return "SSH Connection Failed", "N/A"
+
         stdin, stdout, stderr = ssh.exec_command(f"command -v {tool}")
         tool_path = stdout.read().decode().strip()
-        ssh.close()
 
         if tool_path:
             console.log(f"{tool} is available on {host}")
             stdin, stdout, stderr = ssh.exec_command(f"{tool} --version")
             version = stdout.read().decode().strip().split("\n")[0]  # Get the first line of the version output
+            ssh.close()
             return "Available", version
         else:
             console.log(f"{tool} is not available on {host}")
+            ssh.close()
             return "Not Available", "N/A"
     except socket.timeout:
         console.log(f"Connection to {host} timed out")
