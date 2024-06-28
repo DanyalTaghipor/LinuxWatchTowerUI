@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v1.193.3 (2024-06-28)
+
+### Fix
+
+* fix(ui): po ([`86ece21`](https://github.com/DanyalTaghipor/LinuxWatchTowerUI/commit/86ece21300ef44a13a710b29b3c9a4fae57e1bc4))
+
 ## v1.193.2 (2024-06-28)
 
 ### Fix
