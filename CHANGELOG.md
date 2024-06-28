@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v1.193.0 (2024-06-28)
+
+### Feature
+
+* feat(up): sdw ([`6592264`](https://github.com/DanyalTaghipor/LinuxWatchTowerUI/commit/65922642b36300f3ffdc42bc1b3b228aa1c6a5d8))
+
 ## v1.192.0 (2024-06-28)
 
 ### Feature
