@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v1.193.2 (2024-06-28)
+
+### Fix
+
+* fix(ui): oi ([`bdae16c`](https://github.com/DanyalTaghipor/LinuxWatchTowerUI/commit/bdae16c42b8292e1bd4036ecd33bee1b6e6d2cf9))
+
 ## v1.193.1 (2024-06-28)
 
 ### Fix
