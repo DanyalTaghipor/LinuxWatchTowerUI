@@ -2,6 +2,7 @@ import os
 import sys
 import socket
 import time
+import threading
 import paramiko
 import customtkinter as ctk
 from tkinter import ttk, messagebox
@@ -62,24 +63,26 @@ def check_tool_remote(host, tool, config_path):
         )
 
         stdin, stdout, stderr = ssh.exec_command(f"command -v {tool}")
-        output = stdout.read().decode().strip()
+        tool_path = stdout.read().decode().strip()
         ssh.close()
 
-        if output:
+        if tool_path:
             console.log(f"{tool} is available on {host}")
-            return "Available"
+            stdin, stdout, stderr = ssh.exec_command(f"{tool} --version")
+            version = stdout.read().decode().strip().split("\n")[0]  # Get the first line of the version output
+            return "Available", version
         else:
             console.log(f"{tool} is not available on {host}")
-            return "Not Available"
+            return "Not Available", "N/A"
     except socket.timeout:
         console.log(f"Connection to {host} timed out")
-        return "Timeout"
+        return "Timeout", "N/A"
     except paramiko.ssh_exception.SSHException as e:
         console.log(f"SSHException occurred: {e}")
-        return f"SSH Error: {e}"
+        return f"SSH Error: {e}", "N/A"
     except Exception as e:
         console.print_exception()
-        return f"Error: {e}"
+        return f"Error: {e}", "N/A"
 
 def show_check_state(frame):
     from .buttons import show_return_button, show_main_buttons
@@ -96,6 +99,15 @@ def show_check_state(frame):
     custom_roles_path_label.pack(pady=5)
     custom_roles_path_entry = ctk.CTkEntry(frame)
     custom_roles_path_entry.pack(pady=5)
+
+    def create_progress_window():
+        progress_window = ctk.CTkToplevel(frame)
+        progress_window.title("Checking Hosts")
+        progress_window.geometry("300x100")
+        progress_label = ctk.CTkLabel(progress_window, text="Checking tool statuses. Please wait...")
+        progress_label.pack(pady=20)
+        progress_window.after(100, lambda: progress_window.grab_set())
+        return progress_window
 
     def start_check():
         try:
@@ -130,16 +142,27 @@ def show_check_state(frame):
                     state_frame = ctk.CTkFrame(frame)
                     state_frame.pack(fill="both", expand=True)
                     
-                    state_table = ttk.Treeview(state_frame, columns=("Number", "Tool", "State"), show='headings')
+                    state_table = ttk.Treeview(state_frame, columns=("Number", "Tool", "State", "Version"), show='headings')
                     state_table.heading("Number", text="Number")
                     state_table.heading("Tool", text="Tool")
                     state_table.heading("State", text="State")
+                    state_table.heading("Version", text="Version")
                     
                     tool_list = get_available_tools(custom_roles_path=custom_roles_path)
 
-                    for index, tool in enumerate(tool_list, start=1):
-                        state = check_tool_remote(selected_host, tool, config_path)
-                        state_table.insert("", "end", values=(index, tool, state))
+                    def run_check_tools():
+                        progress_window = create_progress_window()
+                        try:
+                            for index, tool in enumerate(tool_list, start=1):
+                                state, version = check_tool_remote(selected_host, tool, config_path)
+                                state_table.insert("", "end", values=(index, tool, state, version))
+                        except Exception as e:
+                            console.print_exception()
+                            messagebox.showerror("Error", str(e))
+                        finally:
+                            progress_window.destroy()
+
+                    threading.Thread(target=run_check_tools).start()
                     
                     state_table.pack(fill="both", expand=True)
 
