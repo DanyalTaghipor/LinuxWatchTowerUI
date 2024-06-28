@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v1.192.0 (2024-06-28)
+
+### Feature
+
+* feat(up): j ([`fdb1ad4`](https://github.com/DanyalTaghipor/LinuxWatchTowerUI/commit/fdb1ad4179186b25cdce6e6cdc9b85a3ffb9cba1))
+
 ## v1.191.2 (2024-06-27)
 
 ### Fix
