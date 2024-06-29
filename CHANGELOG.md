@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v1.195.0 (2024-06-29)
+
+### Feature
+
+* feat(up): sder ([`035d6d1`](https://github.com/DanyalTaghipor/LinuxWatchTowerUI/commit/035d6d15a03d3c2e69259d8f9ebb46f4735a3f7d))
+
 ## v1.194.0 (2024-06-29)
 
 ### Feature
