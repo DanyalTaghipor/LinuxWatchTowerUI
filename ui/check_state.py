@@ -1,5 +1,6 @@
 import os
 import sys
+import re
 import socket
 import time
 import threading
@@ -36,6 +37,14 @@ def load_ssh_config(host, config_path):
         ssh_config.parse(f)
     host_config = ssh_config.lookup(host)
     return host_config
+
+def extract_version(output):
+    # Regex pattern to match version numbers, e.g., "1.2.3", "v1.2.3", "nginx/1.24.0"
+    pattern = r"(\d+\.\d+\.\d+)"
+    match = re.search(pattern, output)
+    if match:
+        return match.group(0)
+    return None
 
 def check_tool_remote(host, tool, config_path):
     console.log(f"Checking {tool} on {host}")
@@ -86,12 +95,8 @@ def check_tool_remote(host, tool, config_path):
                 console.log(f"Version output: {version_output}")
                 console.log(f"Error output (if any): {error_output}")
 
-                # Check both stdout and stderr for version information
-                if version_output:
-                    version = version_output.split("\n")[0]
-                    break
-                elif error_output:
-                    version = error_output.split("\n")[0]
+                version = extract_version(version_output) or extract_version(error_output)
+                if version:
                     break
 
             ssh.close()
