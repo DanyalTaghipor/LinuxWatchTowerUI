@@ -85,8 +85,13 @@ def check_tool_remote(host, tool, config_path):
                 error_output = stderr.read().decode().strip()
                 console.log(f"Version output: {version_output}")
                 console.log(f"Error output (if any): {error_output}")
+
+                # Check both stdout and stderr for version information
                 if version_output:
                     version = version_output.split("\n")[0]
+                    break
+                elif error_output:
+                    version = error_output.split("\n")[0]
                     break
 
             ssh.close()
