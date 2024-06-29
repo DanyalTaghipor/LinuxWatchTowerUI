@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v1.194.0 (2024-06-29)
+
+### Feature
+
+* feat(io): sadw ([`3f6ed57`](https://github.com/DanyalTaghipor/LinuxWatchTowerUI/commit/3f6ed57e28e67d2a554256e110a12b80fded0861))
+
 ## v1.193.3 (2024-06-28)
 
 ### Fix
