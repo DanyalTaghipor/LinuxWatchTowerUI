@@ -59,16 +59,6 @@ def update_installation(host, tool, remove=False):
     conn.commit()
     conn.close()
 
-# def log_host_status(host, accessible, needs_sudo_password):
-#     conn = sqlite3.connect('installation_state.db')
-#     cursor = conn.cursor()
-#     cursor.execute('''
-#         INSERT INTO host_statuses (host, accessible, needs_sudo_password, last_checked)
-#         VALUES (?, ?, ?, ?)
-#     ''', (host, accessible, needs_sudo_password, datetime.now().strftime("%Y-%m-%d %H:%M:%S")))
-#     conn.commit()
-#     conn.close()
-
 def log_host_status(host, accessible, needs_sudo_password):
     conn = sqlite3.connect('installation_state.db')
     cursor = conn.cursor()
@@ -80,18 +70,6 @@ def log_host_status(host, accessible, needs_sudo_password):
             needs_sudo_password=excluded.needs_sudo_password,
             last_checked=excluded.last_checked
     ''', (host, accessible, needs_sudo_password, datetime.now().strftime("%Y-%m-%d %H:%M:%S")))
-    conn.commit()
-    conn.close()
-
-
-def update_host_status(host, accessible, needs_sudo_password):
-    conn = sqlite3.connect('installation_state.db')
-    cursor = conn.cursor()
-    cursor.execute('''
-        UPDATE host_statuses
-        SET accessible = ?, needs_sudo_password = ?, last_checked = ?
-        WHERE host = ?
-    ''', (accessible, needs_sudo_password, datetime.now().strftime("%Y-%m-%d %H:%M:%S"), host))
     conn.commit()
     conn.close()
 

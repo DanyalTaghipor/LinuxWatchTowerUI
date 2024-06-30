@@ -64,6 +64,14 @@ def show_set_target(frame):
                 configfile.write(f"   IdentityFile {identity_file}\n")
                 configfile.write(f"   Port {port}\n")
             messagebox.showinfo("Success", "Target set successfully.")
+
+            nickname_entry.delete(0, 'end')
+            server_entry.delete(0, 'end')
+            user_entry.delete(0, 'end')
+            identity_file_entry.delete(0, 'end')
+            port_entry.delete(0, 'end')
+            config_path_entry.delete(0, 'end')
+
         except Exception as e:
             messagebox.showerror("Error", str(e))
 

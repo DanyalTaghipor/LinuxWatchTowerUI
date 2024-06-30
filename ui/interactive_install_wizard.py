@@ -7,7 +7,7 @@ from rich.console import Console
 from ansible_utils.inventory import get_host_nicknames
 from ansible_utils.roles_enum import Tools
 from ansible_utils.ansible_executor import install_tool
-from db.database import init_db, log_installation, log_host_status, get_host_status, update_host_status, check_installation
+from db.database import init_db, log_installation, log_host_status, get_host_status, check_installation
 import paramiko
 import subprocess
 import time
