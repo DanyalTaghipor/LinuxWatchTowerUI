@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v1.195.1 (2024-06-30)
+
+### Fix
+
+* fix(ty): ewq ([`844f3e5`](https://github.com/DanyalTaghipor/LinuxWatchTowerUI/commit/844f3e519b3d6f2ec7ca8473465f0b6d511eb3f8))
+
 ## v1.195.0 (2024-06-29)
 
 ### Feature
