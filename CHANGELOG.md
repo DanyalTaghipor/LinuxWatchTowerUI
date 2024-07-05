@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v1.196.0 (2024-07-05)
+
+### Feature
+
+* feat(Update): main.py ([`aa0139b`](https://github.com/DanyalTaghipor/LinuxWatchTowerUI/commit/aa0139bc8c4fdc361c43399663c78c1635e7d637))
+
 ## v1.195.1 (2024-06-30)
 
 ### Fix
