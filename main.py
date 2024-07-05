@@ -8,7 +8,7 @@ from ui.interactive_install_wizard import show_interactive_install
 
 def main():
     app = ctk.CTk()
-    app.title("Linux Watch Tower")
+    app.title("Taikuri")
     app.geometry("800x600")
 
     # Create a menu bar using standard Tkinter
