@@ -32,8 +32,10 @@ def get_available_tools(custom_roles_path=None):
         os.path.join(sys._MEIPASS, 'ansible_utils', 'roles'),  # Default roles path
     ]
 
-    if custom_roles_path and os.path.exists(custom_roles_path):
-        roles_dirs.append(custom_roles_path)
+    if custom_roles_path: 
+        for custom_role_path in custom_roles_path:
+            if os.path.exists(custom_role_path):
+                roles_dirs.append(custom_role_path)
 
     tools = []
     for roles_dir in roles_dirs:
@@ -115,19 +117,21 @@ class InteractiveInstallWizard:
             local_roles_path = custom_roles_path_entry.get()
             github_repo_url = github_repo_entry.get()
             self.repo_clone_path = clone_path_entry.get() or tmp_path
+            custom_roles_paths = []
 
             if local_roles_path:
-                self.custom_roles_paths.append(local_roles_path)
+                custom_roles_paths.append(local_roles_path)
 
             if github_repo_url:
                 try:
                     cloned_path = self.clone_or_pull_github_repo(github_repo_url, self.repo_clone_path)
-                    self.custom_roles_paths.append(cloned_path)
+                    custom_roles_paths.append(cloned_path)
                 except Exception as e:
                     messagebox.showerror("Error", f"Failed to clone/pull GitHub repository: {e}")
                     return
 
-            self.tool_list = get_available_tools(custom_roles_paths=self.custom_roles_paths)
+            if len(custom_roles_paths):
+                self.tool_list = get_available_tools(custom_roles_paths=custom_roles_paths)
             self.next_step()
 
         next_button = ctk.CTkButton(self.parent, text="Next", command=on_next)
