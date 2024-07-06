@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v1.197.2 (2024-07-06)
+
+### Fix
+
+* fix(sad): saw ([`ef6b6e0`](https://github.com/DanyalTaghipor/LinuxWatchTowerUI/commit/ef6b6e0018084aa6d24b14290da1cc7387a42dce))
+
 ## v1.197.1 (2024-07-06)
 
 ### Fix
