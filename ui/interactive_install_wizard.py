@@ -27,13 +27,13 @@ logger.addHandler(console_handler)
 # Console for rich logging
 console = Console()
 
-def get_available_tools(custom_roles_path=None):
+def get_available_tools(custom_roles_paths=None):
     roles_dirs = [
         os.path.join(sys._MEIPASS, 'ansible_utils', 'roles'),  # Default roles path
     ]
 
-    if custom_roles_path: 
-        for custom_role_path in custom_roles_path:
+    if custom_roles_paths: 
+        for custom_role_path in custom_roles_paths:
             if os.path.exists(custom_role_path):
                 roles_dirs.append(custom_role_path)
 
