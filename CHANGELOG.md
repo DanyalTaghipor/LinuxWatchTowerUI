@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v1.197.1 (2024-07-06)
+
+### Fix
+
+* fix(qwqe): qwe ([`f80c983`](https://github.com/DanyalTaghipor/LinuxWatchTowerUI/commit/f80c983a6b93cde5ce77a57a3ea8e78825834936))
+
 ## v1.197.0 (2024-07-06)
 
 ### Feature
