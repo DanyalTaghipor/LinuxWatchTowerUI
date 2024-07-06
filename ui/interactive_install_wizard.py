@@ -87,7 +87,9 @@ class InteractiveInstallWizard:
 
     def config_path_step(self):
         from .buttons import show_main_buttons
+
         default_config_path = os.path.expanduser("~/.ssh/config")
+        tmp_path = "/tmp"
         config_path_label = ctk.CTkLabel(self.parent, text=f"Config Path (default is {default_config_path}):")
         config_path_label.pack(pady=5)
         config_path_entry = ctk.CTkEntry(self.parent)
@@ -98,10 +100,34 @@ class InteractiveInstallWizard:
         custom_roles_path_entry = ctk.CTkEntry(self.parent)
         custom_roles_path_entry.pack(pady=5)
 
+        github_repo_label = ctk.CTkLabel(self.parent, text="GitHub Repository URL (optional):")
+        github_repo_label.pack(pady=5)
+        github_repo_entry = ctk.CTkEntry(self.parent)
+        github_repo_entry.pack(pady=5)
+
+        clone_path_label = ctk.CTkLabel(self.parent, text=f"Path for Cloning/Pulling Repositories (default is {tmp_path}):")
+        clone_path_label.pack(pady=5)
+        clone_path_entry = ctk.CTkEntry(self.parent)
+        clone_path_entry.pack(pady=5)
+
         def on_next():
             self.config_path = config_path_entry.get() or default_config_path
-            self.custom_roles_path = custom_roles_path_entry.get() or None
-            self.tool_list = get_available_tools(custom_roles_path=self.custom_roles_path)
+            local_roles_path = custom_roles_path_entry.get()
+            github_repo_url = github_repo_entry.get()
+            self.repo_clone_path = clone_path_entry.get() or tmp_path
+
+            if local_roles_path:
+                self.custom_roles_paths.append(local_roles_path)
+
+            if github_repo_url:
+                try:
+                    cloned_path = self.clone_or_pull_github_repo(github_repo_url, self.repo_clone_path)
+                    self.custom_roles_paths.append(cloned_path)
+                except Exception as e:
+                    messagebox.showerror("Error", f"Failed to clone/pull GitHub repository: {e}")
+                    return
+
+            self.tool_list = get_available_tools(custom_roles_paths=self.custom_roles_paths)
             self.next_step()
 
         next_button = ctk.CTkButton(self.parent, text="Next", command=on_next)
@@ -109,6 +135,23 @@ class InteractiveInstallWizard:
 
         cancel_button = ctk.CTkButton(self.parent, text="Cancel", command=lambda: show_main_buttons(self.parent))
         cancel_button.pack(pady=10)
+
+    def clone_or_pull_github_repo(self, repo_url, clone_path):
+        if not os.path.exists(clone_path):
+            os.makedirs(clone_path)
+        repo_name = os.path.basename(repo_url).replace(".git", "")
+        repo_dir = os.path.join(clone_path, repo_name)
+        if os.path.exists(repo_dir):
+            try:
+                subprocess.run(["git", "-C", repo_dir, "pull"], check=True)
+            except subprocess.CalledProcessError as e:
+                raise Exception(f"Failed to pull the repository: {e}")
+        else:
+            try:
+                subprocess.run(["git", "clone", repo_url, repo_dir], check=True)
+            except subprocess.CalledProcessError as e:
+                raise Exception(f"Failed to clone the repository: {e}")
+        return repo_dir
 
     def select_host_step(self):
         try:
