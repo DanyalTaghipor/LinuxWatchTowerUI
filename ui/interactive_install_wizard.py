@@ -32,10 +32,11 @@ def get_available_tools(custom_roles_paths=None):
         os.path.join(sys._MEIPASS, 'ansible_utils', 'roles'),  # Default roles path
     ]
 
-    if custom_roles_paths: 
-        for custom_role_path in custom_roles_paths:
-            if os.path.exists(custom_role_path):
-                roles_dirs.append(custom_role_path)
+    if custom_roles_paths:
+        for path in custom_roles_paths:
+            roles_path = os.path.join(path, "roles")
+            if os.path.exists(roles_path):
+                roles_dirs.append(roles_path)
 
     tools = []
     for roles_dir in roles_dirs:
@@ -49,14 +50,10 @@ def get_available_tools(custom_roles_paths=None):
 
 
 class InteractiveInstallWizard:
+
     def __init__(self, parent):
         self.parent = parent
-        self.steps = [
-            self.config_path_step,
-            self.select_host_step,
-            self.select_tool_step,
-            self.install_tools_step
-        ]
+        self.steps = [self.config_path_step, self.select_host_step, self.select_tool_step, self.check_tool_status_step]
         self.current_step = 0
         self.config_path = ''
         self.selected_hosts = []
@@ -120,12 +117,22 @@ class InteractiveInstallWizard:
             custom_roles_paths = []
 
             if local_roles_path:
-                custom_roles_paths.append(local_roles_path)
+                roles_path = os.path.join(local_roles_path, "roles")
+                if os.path.exists(roles_path):
+                    custom_roles_paths.append(local_roles_path)
+                else:
+                    messagebox.showerror("Error", f"No 'roles' folder found in {local_roles_path}")
+                    return
 
             if github_repo_url:
                 try:
                     cloned_path = self.clone_or_pull_github_repo(github_repo_url, self.repo_clone_path)
-                    custom_roles_paths.append(cloned_path)
+                    roles_path = os.path.join(cloned_path, "roles")
+                    if os.path.exists(roles_path):
+                        custom_roles_paths.append(cloned_path)
+                    else:
+                        messagebox.showerror("Error", f"No 'roles' folder found in {cloned_path}")
+                        return
                 except Exception as e:
                     messagebox.showerror("Error", f"Failed to clone/pull GitHub repository: {e}")
                     return
