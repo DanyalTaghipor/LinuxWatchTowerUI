@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v1.198.0 (2024-07-10)
+
+### Feature
+
+* feat(force): roles ([`fb7b891`](https://github.com/DanyalTaghipor/LinuxWatchTowerUI/commit/fb7b891d369c725268e2e3a625e3553e0954d9cf))
+
 ## v1.197.2 (2024-07-06)
 
 ### Fix
