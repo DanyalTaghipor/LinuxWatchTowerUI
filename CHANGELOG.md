@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v1.198.1 (2024-07-12)
+
+### Fix
+
+* fix(ty): se ([`3a8577f`](https://github.com/DanyalTaghipor/LinuxWatchTowerUI/commit/3a8577fa8c669f447c9715b0e6b178fdfbb1562d))
+
 ## v1.198.0 (2024-07-10)
 
 ### Feature
