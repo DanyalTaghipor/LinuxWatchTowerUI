@@ -53,7 +53,7 @@ class InteractiveInstallWizard:
 
     def __init__(self, parent):
         self.parent = parent
-        self.steps = [self.config_path_step, self.select_host_step, self.select_tool_step, self.check_tool_status_step]
+        self.steps = [self.config_path_step, self.select_host_step, self.select_tool_step, self.install_tools_step]
         self.current_step = 0
         self.config_path = ''
         self.selected_hosts = []
